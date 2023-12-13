@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 CORS(app)  # Enable CORS for all routes
-#app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
+
 db = SQLAlchemy(app)
 
 class BC49(db.Model):
