@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  # Import the CORS module
+from config import Config
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://hma14:Bilibalabon12345@lottotry.com/lottotrydb?driver=ODBC+Driver+17+for+SQL+Server'
+app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
 db = SQLAlchemy(app)
 
 class BC49(db.Model):
