@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  # Import the CORS module
 from config import Config
+from openai_api import get_openai_response, get_string_response
 
 app = Flask(__name__)
 
@@ -60,6 +61,16 @@ def get_data():
         return jsonify({'data': sorted_object_list})
     else:
         return jsonify({'message': 'No data found'})
+    
+
+@app.route('/api/openai', methods=['GET'])
+def get_translation():
+    #response_string = get_openai_response()
+    response_string = get_string_response()
+
+    return response_string
+     
 
 if __name__ == '__main__':
     app.run(debug=True)
+
