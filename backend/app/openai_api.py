@@ -3,11 +3,20 @@ from openai import OpenAI
 from config import Config
 
 def get_string_response():
-    ret = "To generate random numbers based on the given historical data, we should first analyze the frequency of each number in the prior results. \
-        But I'm an AI text-based model and unable to calculate actual randomness or probabilities directly from the historical data. However, \
-            I can suggest a pseudo-random set of 7 numbers that fall within the range of numbers seen in your history which is between 1 and 50. \
-                This cannot guarantee any kind of correlation or accuracy to past patterns, but here's an example: Random numbers: 10, 22, 33, 18, 21, 43, 50. \
-                    You could use an actual statistical software or a lottery number generator to give you a better accurate prediction."
+    ret = f"To generate a set of 7 random numbers based on the provided historical data, I would usually look at the frequency of each number to determine which numbers are drawn more often. \
+        However, with the limited data you've provided, any patterns or trends may not be statistically significant, and using them to predict future numbers may not be any more effective \
+            than generating completely random numbers. Nonetheless, I can provide you with a simple algorithmic approach to generate a pseudo-random set of numbers based on the provided history, \
+                taking into account the frequency of each number: 1. Calculate the frequency of each number within the provided draws. 2. Normalize these frequencies to create weighted probabilities. \
+                    3. Use these weighted probabilities to generate a random set of 7 unique numbers. For your specific request, \
+                        you haven't specifically stated how you want the generated numbers to use the previous draws, \
+                            so I'll provide you with a basic implementation without weighted probabilities since we don't have a programming environment here: \
+                                - Randomly pick a number from each of the previous draws. - Ensure that you pick unique numbers until you have a set of 7. \
+                                    Here is an 'emulated' set, with each number taken from different draws at random (keeping the uniqueness constraint in mind): \
+                                        - From draw 951: 17 - From draw 952: 33 - From draw 953: 31 - From draw 954: 2 - From draw 955: 46 - From draw 956: \
+                                            4 - From draw 957: 36 Resulting set: 17, 33, 31, 2, 46, 4, 36 Bear in mind, this is a quick emulation and does not \
+                                                actually use a randomizing function due to the natural constraints of this environment. For a true random set based on frequency or any other criteria, \
+                                                    you'd want to use statistical software or a programming language like Python or R, \
+                                                        which can handle weighted probabilities and random number generation more effectively."
     return ret
 
 def get_openai_response():    
