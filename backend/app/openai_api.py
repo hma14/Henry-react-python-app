@@ -32,7 +32,7 @@ def get_openai_response():
                 960	1	18	25	26	30	34	39"},
     ]
     generated_content = ""
-    response = client.chat.completions.create(model="gpt-4", messages=conversation,  max_tokens=500 )
+    response = client.chat.completions.create(model="gpt-4-1106-preview", messages=conversation,  max_tokens=500 )
 
     if response and response.choices and response.choices[0]:
         generated_content = response.choices[0].message.content
