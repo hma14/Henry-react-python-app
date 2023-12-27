@@ -64,7 +64,7 @@ def get_data():
     
 
 @app.route('/api/openai', methods=['GET'])
-def get_translation():
+def get_from_openai():
     #response_string = get_openai_response()
     response_string = get_string_response()
 

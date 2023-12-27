@@ -2,6 +2,9 @@ import os
 from openai import OpenAI
 from config import Config
 
+
+
+
 def get_string_response():
     ret = f"To generate a set of 7 random numbers based on the provided historical data, I would usually look at the frequency of each number to determine which numbers are drawn more often. \
         However, with the limited data you've provided, any patterns or trends may not be statistically significant, and using them to predict future numbers may not be any more effective \
