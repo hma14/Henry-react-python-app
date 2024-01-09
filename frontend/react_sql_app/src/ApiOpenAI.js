@@ -19,12 +19,10 @@ const ApiOpenAI = ({ endpoint }) => {
     }, [endpoint]);
 
     return (
-        <div className="container-fluid mt-5">
-            <div className="card mt-4">
-                <h3 className="it">Open AI Response</h3>
-                <div className="card-body bg-success ml-4">
-                    <div className='card-text text-light fs-4'> {data}</div>
-                </div>
+        <div className="card">
+            <h3 className="it">Open AI Response</h3>
+            <div className="card-body bg-success ml-4">
+                <div className='card-text text-light fs-4'> {data}</div>
             </div>
         </div>
     )
