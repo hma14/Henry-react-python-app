@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styled from 'styled-components'
 import './App.css'
 import LottoTryLogo from './images/LottoTryLogo.png'
-import PredictDraws from './lottos/PredictDraws'
+import PredictDraws from './PredictDraws'
 import LottoDraws from './LottoDraws'
 import NumberDrawsInDistance from './NumberDrawsInDistance'
 
