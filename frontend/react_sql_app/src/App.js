@@ -76,12 +76,12 @@ const App = () => {
   const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
  */
 
-  const url = 'http://ed.lottotry.com:5000/api/openai';
-  const url4 = 'http://ed.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-  const url5 = 'http://ed.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url6 = 'http://ed.lottotry.com:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url7 = 'http://ed.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-  const url8 = 'http://ed.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+  const url = 'http://ep.lottotry.com:5000/api/openai';
+  const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+  const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+  const url6 = 'http://ep.lottotry.com:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+  const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+  const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
 
 
   useEffect(() => {
