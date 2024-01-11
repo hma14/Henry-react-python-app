@@ -3,8 +3,9 @@ from flask_cors import CORS  # Import the CORS module
 from config import Config
 from openai_api import get_openai_response, get_string_response
 from datetime import datetime
-from sqlalchemy import SQLAlchemy, and_, or_, func, desc
+from sqlalchemy import and_, or_, func, desc
 from sqlalchemy.orm import joinedload
+from flask_sqlalchemy import SQLAlchemy
 
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
 from predict_draw import next_predict_draw
