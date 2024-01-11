@@ -3,7 +3,7 @@ from flask_cors import CORS  # Import the CORS module
 from config import Config
 from openai_api import get_openai_response, get_string_response
 from datetime import datetime
-from sqlalchemy import and_, or_, func, desc
+from sqlalchemy import SQLAlchemy, and_, or_, func, desc
 from sqlalchemy.orm import joinedload
 
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
@@ -15,9 +15,11 @@ app = Flask(__name__)
 
 app.config.from_object(Config)
 
-CORS(app)  # Enable CORS for all routes
+# frontend url: http://ai.lottotry.com
+CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})  
 
-db.init_app(app)
+#db.init_app(app)
+db = SQLAlchemy(app)
 
 
 
@@ -308,4 +310,4 @@ def retrieve_data(lotto_name, page_size, number_range, start_index):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
