@@ -48,7 +48,7 @@ const PredictDraws = (props) => {
     }
   };
 
-
+/*
   const getPredicts = (cols) => {
 
     var pred = []
@@ -189,7 +189,7 @@ const PredictDraws = (props) => {
 
     return arr
   }
-
+*/
 
   const getHeader = () => {
     return (
