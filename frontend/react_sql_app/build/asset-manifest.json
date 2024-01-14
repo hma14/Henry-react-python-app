@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5df7a817.css",
+    "main.js": "/static/js/main.49cc7d4b.js",
+    "static/js/787.9ddd4eac.chunk.js": "/static/js/787.9ddd4eac.chunk.js",
+    "static/media/LottoTryLogo.png": "/static/media/LottoTryLogo.34a1c9b17e4d841b7d7d.png",
+    "index.html": "/index.html",
+    "main.5df7a817.css.map": "/static/css/main.5df7a817.css.map",
+    "main.49cc7d4b.js.map": "/static/js/main.49cc7d4b.js.map",
+    "787.9ddd4eac.chunk.js.map": "/static/js/787.9ddd4eac.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5df7a817.css",
+    "static/js/main.49cc7d4b.js"
+  ]
+}

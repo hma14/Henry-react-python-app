@@ -20,7 +20,7 @@ const ApiNumbers = (props) => {
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-            
+
     }, [endpoint]);
 
     const types = {
@@ -31,7 +31,7 @@ const ApiNumbers = (props) => {
     const sortProperty = types[sortType]
 
     const getBgColors = (sortType, number) => {
-        
+
         if (sortType.toLowerCase() === types.distance.toLowerCase()) {
             switch (number.Distance) {
                 case 1: return 'bg-color1 text-success fw-bold'
@@ -71,11 +71,13 @@ const ApiNumbers = (props) => {
 
     const getHeader = () => {
         return (
-            <tr>
-                <th className="text-light bg-info">Draws</th>
-                <th className="text-light bg-info">Date</th>
-                {data.slice(0, 1).map(row => [...row.Numbers].sort((a, b) => a.value - b.value).map((no) => <th key={no.Value} className='text-warning bg-success'>{no.Value}</th>))}
-            </tr>
+            <thead className="table-danger text-center">
+                <tr>
+                    <th className="text-light bg-info">Draws</th>
+                    <th className="text-light bg-info">Date</th>
+                    {data.slice(0, 1).map(row => [...row.Numbers].sort((a, b) => a.value - b.value).map((no) => <th key={no.Value} className='text-warning bg-success'>{no.Value}</th>))}
+                </tr>
+            </thead>
         )
     }
 
@@ -104,27 +106,26 @@ const ApiNumbers = (props) => {
 
     return (
 
-        <div>          
+        <div>
             {data.length > 0 &&
-                    <Table responsive className="table-default mb-4" size="sm" hover="true">
-                        {getHeader()}
-                        <tbody className='fw-bold' >
-                            {data.map(draw =>
-                                <tr key={draw.DrawNumber}>
-                                    <td className="text-warning bg-primary">{draw.DrawNumber}</td>
-                                    <td className="text-warning bg-success">{draw.DrawDate}</td>
-                                    {
-                                        [...draw.Numbers].sort((a, b) => (a[sortProperty] === b[sortProperty] ?
-                                            (a.value - b.value) :
-                                            (a[sortProperty] - b[sortProperty]))).map(no => getColors(no))
-                                    }
-                                </tr>
-                            )}
-                        </tbody>
-                        {/* <thead className="table-danger text-center"> {getHeader()} </thead> */}
-                        {getHeader()}
-                    </Table>
-                
+                <Table responsive className="table-default mb-4" size="sm" hover="true">
+                    {getHeader()}
+                    <tbody className='fw-bold'>
+                        {data.map(draw =>
+                            <tr key={draw.DrawNumber}>
+                                <td className="text-warning bg-primary">{draw.DrawNumber}</td>
+                                <td className="text-warning bg-success">{draw.DrawDate}</td>
+                                {
+                                    [...draw.Numbers].sort((a, b) => (a[sortProperty] === b[sortProperty] ?
+                                        (a.value - b.value) :
+                                        (a[sortProperty] - b[sortProperty]))).map(no => getColors(no))
+                                }
+                            </tr>
+                        )}
+                    </tbody>
+                    {getHeader()}
+                </Table>
+
             }
         </div>
     )

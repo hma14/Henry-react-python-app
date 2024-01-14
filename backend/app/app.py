@@ -17,10 +17,11 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 # frontend url: http://ai.lottotry.com
-CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})  
+#CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})  
+CORS(app)
 
-#db.init_app(app)
-db = SQLAlchemy(app)
+db.init_app(app)
+#db = SQLAlchemy(app)
 
 
 
@@ -311,4 +312,5 @@ def retrieve_data(lotto_name, page_size, number_range, start_index):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    #app.run(debug=False, host="184.67.115.214", port=5000)
+    app.run(debug=False, host="0.0.0.0", port=5000)

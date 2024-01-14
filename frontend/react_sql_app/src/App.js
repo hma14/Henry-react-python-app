@@ -67,21 +67,25 @@ const App = () => {
   const [pageSize, setPageSize] = useState(5)
   const [drawNumber, setDrawNumber] = useState(1)
 
-/*   
+
+
+  /*
+    const url = 'http://184.67.115.214:5000/api/openai';
+    const url4 = 'http://184.67.115.214:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+    const url5 = 'http://184.67.115.214:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+    const url6 = 'http://184.67.115.214:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+    const url7 = 'http://184.67.115.214:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+    const url8 = 'http://184.67.115.214:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+   */
+
   const url = 'http://127.0.0.1:5000/api/openai';
   const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
   const url6 = 'http://127.0.0.1:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
   const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
- */
 
-  const url = 'http://ep.lottotry.com:5000/api/openai';
-  const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-  const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url6 = 'http://ep.lottotry.com:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-  const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+
 
 
   useEffect(() => {
@@ -124,14 +128,15 @@ const App = () => {
     <Styles>{
       <div className="container-fluid">
         <nav className="navbar navbar-expand-xl bg-color8 sticky noqII">
+          <a className="nav=item" href="/images">
+            <img src={LottoTryLogo} className="img-fluid" alt="Lottotry Logo" width="60%" />
+          </a>
           <ul className="navbar-nav my-color-1">
             <li className="nav-item">
-              <a className="navbar-brand" href="/images">
-                <img src={LottoTryLogo} className="img-fluid" alt="Lottotry Logo" width="50%" />
-              </a>
+
             </li>
             <li className="nav-item">
-              <div className="mt-2 margin-left margin-right fw-bold">
+              <div className="mt-1 margin-left margin-right fw-bold">
                 <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle margin-right fw-bold"
                   onChange={(e) => selectLotto(e.target.value)}>
                   {['BC49', 'Lotto649', 'LottoMax', 'DailyGrand', 'DailyGrand_GrandNumber'].map(lotto => (
@@ -141,7 +146,7 @@ const App = () => {
               </div>
             </li>
             <li className="nav-item">
-              <div className="mt-2 margin-left margin-right fw-bold">
+              <div className="mt-1 margin-left margin-right fw-bold">
                 <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle  fw-bold"
                   onChange={(e) => setSortType(e.target.value)}>
                   {['number', 'distance', 'totalHits', 'lottoDraws', 'numberDraws', 'predictDraws'].map(sortType => (
@@ -152,7 +157,7 @@ const App = () => {
             </li>
             <li className="nav-item">
               {sortType !== 'predictDraws' ?
-                (<div className="mt-2 margin-left margin-right fw-bold">
+                (<div className="mt-1 margin-left margin-right fw-bold">
                   <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle ps-4 fw-bold"
                     value={pageSize}
                     onChange={(e) => setPageSize(e.target.value)}>
