@@ -6,8 +6,6 @@ from datetime import datetime
 from sqlalchemy import and_, or_, func, desc
 from sqlalchemy.orm import joinedload
 from flask_sqlalchemy import SQLAlchemy
-
-
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
 from predict_draw import PredictDraw
 import json
@@ -18,139 +16,10 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 # frontend url: http://ai.lottotry.com
-#CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})  
+# CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})
 CORS(app)
 
 db.init_app(app)
-#db = SQLAlchemy(app)
-
-
-
-@app.route("/api/lotto/bc49", methods=["GET"])
-def get_data_1():
-    data = BC49.query.all()
-
-    if data:
-        # Convert data to a JSON format that suits your needs
-        result = [
-            {
-                "DrawNumber": entry.DrawNumber,
-                "DrawDate": entry.DrawDate.strftime("%Y-%m-%d"),
-                "Number1": entry.Number1,
-                "Number2": entry.Number2,
-                "Number3": entry.Number3,
-                "Number4": entry.Number4,
-                "Number5": entry.Number5,
-                "Number6": entry.Number6,
-                "Bonus": entry.Bonus,
-            }
-            for entry in data
-        ]
-
-        # Sort 'Number1' through 'Number6' within each dictionary in 'result'
-        for entry in result:
-            entry.update(
-                {
-                    key: value
-                    for key, value in sorted(
-                        entry.items(),
-                        key=lambda x: int(x[0].split("Number")[1])
-                        if "Number" in x[0] and x[0].split("Number")[1].isdigit()
-                        else float("inf"),
-                    )
-                }
-            )
-
-        sorted_object_list = sorted(result, key=lambda x: x["DrawNumber"], reverse=True)
-
-        return jsonify({"data": sorted_object_list})
-    else:
-        return jsonify({"message": "No data found"})
-
-
-@app.route("/api/lotto/lotto649", methods=["GET"])
-def get_data_2():
-    data = Lotto649.query.all()
-
-    if data:
-        # Convert data to a JSON format that suits your needs
-        result = [
-            {
-                "DrawNumber": entry.DrawNumber,
-                "DrawDate": entry.DrawDate.strftime("%Y-%m-%d"),
-                "Number1": entry.Number1,
-                "Number2": entry.Number2,
-                "Number3": entry.Number3,
-                "Number4": entry.Number4,
-                "Number5": entry.Number5,
-                "Number6": entry.Number6,
-                "Bonus": entry.Bonus,
-            }
-            for entry in data
-        ]
-
-        # Sort 'Number1' through 'Number6' within each dictionary in 'result'
-        for entry in result:
-            entry.update(
-                {
-                    key: value
-                    for key, value in sorted(
-                        entry.items(),
-                        key=lambda x: int(x[0].split("Number")[1])
-                        if "Number" in x[0] and x[0].split("Number")[1].isdigit()
-                        else float("inf"),
-                    )
-                }
-            )
-
-        sorted_object_list = sorted(result, key=lambda x: x["DrawNumber"], reverse=True)
-
-        return jsonify({"data": sorted_object_list})
-    else:
-        return jsonify({"message": "No data found"})
-
-
-@app.route("/api/lotto/lottomax", methods=["GET"])
-def get_data_3():
-    data = LottoMax.query.all()
-
-    if data:
-        # Convert data to a JSON format that suits your needs
-        result = [
-            {
-                "DrawNumber": entry.DrawNumber,
-                "DrawDate": entry.DrawDate.strftime("%Y-%m-%d"),
-                "Number1": entry.Number1,
-                "Number2": entry.Number2,
-                "Number3": entry.Number3,
-                "Number4": entry.Number4,
-                "Number5": entry.Number5,
-                "Number6": entry.Number6,
-                "Number7": entry.Number7,
-                "Bonus": entry.Bonus,
-            }
-            for entry in data
-        ]
-
-        # Sort 'Number1' through 'Number6' within each dictionary in 'result'
-        for entry in result:
-            entry.update(
-                {
-                    key: value
-                    for key, value in sorted(
-                        entry.items(),
-                        key=lambda x: int(x[0].split("Number")[1])
-                        if "Number" in x[0] and x[0].split("Number")[1].isdigit()
-                        else float("inf"),
-                    )
-                }
-            )
-
-        sorted_object_list = sorted(result, key=lambda x: x["DrawNumber"], reverse=True)
-
-        return jsonify({"data": sorted_object_list})
-    else:
-        return jsonify({"message": "No data found"})
 
 
 @app.route("/api/lotto/allnumbers", methods=["GET"])
@@ -178,7 +47,10 @@ def get_data_5():
 
 @app.route("/api/openai", methods=["GET"])
 def get_from_openai():
+    # below will call openai web api
     # response_string = get_openai_response()
+    
+    # return simply strings
     response_string = get_string_response()
 
     return response_string
@@ -186,29 +58,30 @@ def get_from_openai():
 
 @app.route("/api/lotto/predict_draw", methods=["POST"])
 def predict_draw():
-
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
     page_size = 100
     start_index = 0
+
     result = retrieve_data(lotto_name, page_size, number_range, start_index)
-    
+
     # Decode the byte string to a regular string
-    json_str = result.data.decode('utf-8')
+    json_str = result.data.decode("utf-8")
 
     # Parse the JSON string
     parsed_data = json.loads(json_str)
 
     # Access the 'data' key, which contains an array
-    numbers = parsed_data['data']
+    numbers = parsed_data["data"]
     columns = int(request.args.get("columns"))
-    
-    #predict_draw = PredictDraw(numbers[0]['Numbers'], columns)
+
+    # predict_draw = PredictDraw(numbers[0]['Numbers'], columns)
     predict_draw = PredictDraw(numbers, columns)
 
     data = predict_draw.next_predict_draw()
 
     return data
+
 
 @app.route("/api/lotto/lottoDraws", methods=["GET"])
 def get_data_7():
@@ -220,6 +93,7 @@ def get_data_7():
     # Calculate the start and end indices for the current page
     start_index = (page_number - 1) * page_size
     return retrieve_data(lotto_name, page_size, number_range, start_index)
+
 
 @app.route("/api/lotto/numberDraws", methods=["GET"])
 def get_data_8():
@@ -233,10 +107,8 @@ def get_data_8():
     return retrieve_data(lotto_name, page_size, number_range, start_index)
 
 
-
-
 def get_lotto_number_range(lotto_name):
-    if lotto_name == 1 or lotto_name == 2:
+    if lotto_name == 1 or lotto_name == 2 or lotto_name == 4:
         return 49
     elif lotto_name == 3:
         return 50
@@ -316,6 +188,5 @@ def retrieve_data(lotto_name, page_size, number_range, start_index):
 
 
 if __name__ == "__main__":
-    #app.run(debug=False, host="184.67.115.214", port=5000)
+    # app.run(debug=False, host="184.67.115.214", port=5000)
     app.run(debug=True, host="0.0.0.0", port=5000)
-

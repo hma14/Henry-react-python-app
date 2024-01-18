@@ -7,6 +7,7 @@ import LottoTryLogo from './images/LottoTryLogo.png'
 import PredictDraws from './PredictDraws'
 import LottoDraws from './LottoDraws'
 import NumberDrawsInDistance from './NumberDrawsInDistance'
+import ApiOpenAI from './ApiOpenAI'
 
 
 
@@ -60,19 +61,21 @@ const App = () => {
   const [selectedLotto, setSelectedLotto] = useState('AllNumbers')
   const [sortType, setSortType] = useState('predictDraws')
   const [numberRange, setNumberRange] = useState(49)
-  
 
-  // change default lotto
+
+  // change default lotto options
   const [lottoName, setLottoName] = useState(1)
   const [lottoColumns, setLottoColumns] = useState(6)
   const [selectedOption, setSelectedOption] = useState('BC49');
+  const [selectedTypeOption, setSelectedTypeOption] = useState('predictDraws');
+
   // end 
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [pageSize, setPageSize] = useState(5)
   const [drawNumber, setDrawNumber] = useState(1)
-  
+
 
 
 
@@ -106,11 +109,14 @@ const App = () => {
     'LottoMax': 3,
     'DailyGrand': 4,
     'DailyGrand_GrandNumber': 5,
+    'openai_saying': 6
   }
 
 
   const selectLotto = (value) => {
     setLottoName(lottoNameToInt[value])
+
+    setSelectedOption(value)
     switch (value) {
       case "BC49":
         setNumberRange(49)
@@ -130,6 +136,12 @@ const App = () => {
       default: return setLottoColumns(7)
     }
   }
+
+  const setPlayType = (value) => {
+    setSelectedTypeOption(value)
+    setSortType(value)
+  }
+
 
   return (
     <Styles>{
@@ -154,9 +166,9 @@ const App = () => {
             </li>
             <li className="nav-item">
               <div className="mt-1 margin-left margin-right fw-bold">
-                <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle  fw-bold"
-                  onChange={(e) => setSortType(e.target.value)}>
-                  {['number', 'distance', 'totalHits', 'lottoDraws', 'numberDraws', 'predictDraws'].map(sortType => (
+                <select value={selectedTypeOption} id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle  fw-bold"
+                  onChange={(e) => setPlayType(e.target.value)}>
+                  {['number', 'distance', 'totalHits', 'lottoDraws', 'numberDraws', 'predictDraws', 'openai_saying'].map(sortType => (
                     <option key={sortType} value={sortType}> By {sortType}</option>
                   ))}
                 </select>
@@ -185,11 +197,11 @@ const App = () => {
                 /* case 'lottoDraws':
                   return (
                     <LottoDraws lottoData={data} columns={lottoColumns} />
-                  )
-                case 'numberDraws':
+                  )*/
+                case 'openai_saying':
                   return (
-                    <NumberDrowsInDistance lottoData={data} rows={pageSize} />
-                  ) */
+                    <ApiOpenAI endpoint={url} />
+                  ) 
                 case 'lottoDraws':
                   return (
                     <LottoDraws endpoint={url7} columns={lottoColumns} />

@@ -6,7 +6,7 @@ import './App.css'
 
 
 function LottoDraws(props) {
-  const { endpoint, page_number, columns} = props
+  const { endpoint, page_number, columns } = props
   const [lottoData, setData] = useState([]);
 
   useEffect(() => {
@@ -18,17 +18,20 @@ function LottoDraws(props) {
       .catch(error => {
         console.error('Error fetching data:', error);
       });
-  }, [page_number,  columns, endpoint]);
+  }, [page_number, columns, endpoint]);
 
   const getHeader = () => {
     return (
-      <tr>
-        <th className="text-light bg-info">Draws</th>
-        <th className="text-light bg-info">Date</th>
-        {lottoData.slice(0, 1).map(row => row.Numbers.sort((a, b) => (a - b)).map((no) => (no.Value < columns ?
-                (<th key={no.Value} className='text-warning bg-success'>{no.Value}</th>) :
-                (no.Value === columns ? (<th key={no.Value} className='text-warning bg-success'>Bonus</th>) : ''))))}
-      </tr>
+      
+      <thead className="table-danger text-center">      
+        <tr>
+          <th className="text-light bg-info">Draws</th>
+          <th className="text-light bg-info">Date</th>
+          {lottoData.slice(0, 1).map(row => row.Numbers.sort((a, b) => (a - b)).map((no) => (no.Value < columns ?
+            (<th key={no.Value} className='text-warning bg-success'>{no.Value}</th>) :
+            (no.Value === columns ? (<th key={no.Value} className='text-warning bg-success'>Bonus ({no.Value})</th>) : ''))))}
+        </tr>
+      </thead >
     )
   }
 
@@ -36,9 +39,10 @@ function LottoDraws(props) {
   return (
 
     <div>
+      {console.log(lottoData)}
       {lottoData &&
-        <Table responsive className="table-primary mb-4"  size="sm" hover="true" striped="true">
-          <thead className="table-danger text-center">{getHeader()}</thead>
+        <Table responsive className="table-primary mb-4" size="sm" hover="true" striped="true">
+          {getHeader()}
           <tbody className='fw-bold' >
             {lottoData.map(row =>
               <tr key={row.DrawNumber}>
@@ -56,7 +60,7 @@ function LottoDraws(props) {
               </tr>
             )}
           </tbody>
-          <thead className="table-danger text-center">{getHeader()}</thead>         
+          {getHeader()}
         </Table>}
 
     </div>

@@ -22,7 +22,7 @@ class PredictDraw:
 
         # take 1 from last hits
         lastHits = self.getLastHitNumbers()
-        index = int(random.random() * len(lastHits))
+        index =  random.randint(0, len(lastHits) - 1)       
         pred.append(lastHits[index]["Value"])
 
         """         
@@ -139,7 +139,7 @@ class PredictDraw:
         print(f"two_cold = {two_cold}")
         """
         pred.sort()
-        print(f"pred = {pred}")
+        #print(f"pred = {pred}")
         return pred
 
 
@@ -160,8 +160,10 @@ class PredictDraw:
         forties.append([x for x in arr if 40 <= x["Value"]])
 
         arrays = [ones, tens, twenties, thirties, forties]
-        index = random.randint(0, len(arrays) - 1)
-        longest_array = max(arrays, key=len)
+        removed_empty_arrays = [sublist for sublist in arrays if any(sublist)]
+        #index = random.randint(0, len(arrays) - 1)
+        longest_array = max(removed_empty_arrays, key=len)
+
         return longest_array[0]
 
     def getTotalHitsNumbers(self):

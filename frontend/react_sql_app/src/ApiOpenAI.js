@@ -4,7 +4,8 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
 
-const ApiOpenAI = ({ endpoint }) => {
+const ApiOpenAI = (props) => {
+    const {endpoint} = props
     const [data, setData] = useState('');
 
     useEffect(() => {
@@ -19,6 +20,7 @@ const ApiOpenAI = ({ endpoint }) => {
     }, [endpoint]);
 
     return (
+        
         <div className="card">
             <h3 className="it">Open AI Response</h3>
             <div className="card-body bg-success ml-4">
