@@ -7,8 +7,9 @@ from sqlalchemy import and_, or_, func, desc
 from sqlalchemy.orm import joinedload
 from flask_sqlalchemy import SQLAlchemy
 
+
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
-from predict_draw import next_predict_draw
+from predict_draw import PredictDraw
 import json
 
 
@@ -188,7 +189,7 @@ def predict_draw():
 
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
-    page_size = 1
+    page_size = 100
     start_index = 0
     result = retrieve_data(lotto_name, page_size, number_range, start_index)
     
@@ -201,8 +202,11 @@ def predict_draw():
     # Access the 'data' key, which contains an array
     numbers = parsed_data['data']
     columns = int(request.args.get("columns"))
+    
+    #predict_draw = PredictDraw(numbers[0]['Numbers'], columns)
+    predict_draw = PredictDraw(numbers, columns)
 
-    data = next_predict_draw(numbers[0]['Numbers'], columns)
+    data = predict_draw.next_predict_draw()
 
     return data
 
@@ -313,4 +317,5 @@ def retrieve_data(lotto_name, page_size, number_range, start_index):
 
 if __name__ == "__main__":
     #app.run(debug=False, host="184.67.115.214", port=5000)
-    app.run(debug=False, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
+

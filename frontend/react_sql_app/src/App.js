@@ -58,14 +58,21 @@ const Styles = styled.div`
 const App = () => {
 
   const [selectedLotto, setSelectedLotto] = useState('AllNumbers')
-  const [sortType, setSortType] = useState('number')
+  const [sortType, setSortType] = useState('predictDraws')
   const [numberRange, setNumberRange] = useState(49)
-  const [lottoColumns, setLottoColumns] = useState(7)
+  
+
+  // change default lotto
   const [lottoName, setLottoName] = useState(1)
+  const [lottoColumns, setLottoColumns] = useState(6)
+  const [selectedOption, setSelectedOption] = useState('BC49');
+  // end 
+
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [pageSize, setPageSize] = useState(5)
   const [drawNumber, setDrawNumber] = useState(1)
+  
 
 
 
@@ -137,9 +144,9 @@ const App = () => {
             </li>
             <li className="nav-item">
               <div className="mt-1 margin-left margin-right fw-bold">
-                <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle margin-right fw-bold"
+                <select value={selectedOption} id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle margin-right fw-bold"
                   onChange={(e) => selectLotto(e.target.value)}>
-                  {['BC49', 'Lotto649', 'LottoMax', 'DailyGrand', 'DailyGrand_GrandNumber'].map(lotto => (
+                  {['BC49', 'LottoMax', 'Lotto649', 'DailyGrand', 'DailyGrand_GrandNumber'].map(lotto => (
                     <option key={lotto} value={lotto}>{lotto}</option>
                   ))}
                 </select>
