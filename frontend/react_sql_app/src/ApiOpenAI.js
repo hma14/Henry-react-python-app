@@ -22,7 +22,7 @@ const ApiOpenAI = (props) => {
     return (
         
         <div className="card">
-            <h3 className="it">Open AI Response</h3>
+            <h3 className="text-info">Open AI Response</h3>
             <div className="card-body bg-success ml-4">
                 <div className='card-text text-light fs-4'> {data}</div>
             </div>
