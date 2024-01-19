@@ -4,10 +4,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styled from 'styled-components'
 import './App.css'
 import LottoTryLogo from './images/LottoTryLogo.png'
-import PredictDraws from './PredictDraws'
-import LottoDraws from './LottoDraws'
-import NumberDrawsInDistance from './NumberDrawsInDistance'
-import ApiOpenAI from './ApiOpenAI'
+import PredictDraws from './Components/PredictDraws'
+import LottoDraws from './Components/LottoDraws'
+import NumberDrawsInDistance from './Components/NumberDrawsInDistance'
+import ApiOpenAI from './Components/ApiOpenAI'
 
 
 
@@ -80,12 +80,13 @@ const App = () => {
 
 
   /*
-    const url = 'http://184.67.115.214:5000/api/openai';
-    const url4 = 'http://184.67.115.214:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-    const url5 = 'http://184.67.115.214:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-    const url6 = 'http://184.67.115.214:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-    const url7 = 'http://184.67.115.214:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-    const url8 = 'http://184.67.115.214:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+    const url = 'http://ep.lottotry.com:5000/api/openai';
+    const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+    const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+    const url6 = 'http://ep.lottotry.com:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+    const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+    const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+  
    */
 
   const url = 'http://127.0.0.1:5000/api/openai';

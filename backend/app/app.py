@@ -188,5 +188,5 @@ def retrieve_data(lotto_name, page_size, number_range, start_index):
 
 
 if __name__ == "__main__":
-    # app.run(debug=False, host="184.67.115.214", port=5000)
+    # app.run(debug=False, host="ep.lottotry.com", port=5000)
     app.run(debug=True, host="0.0.0.0", port=5000)

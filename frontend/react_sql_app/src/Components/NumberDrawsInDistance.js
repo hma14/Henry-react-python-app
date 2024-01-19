@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table } from 'react-bootstrap'
 //import moment   from 'moment'
-import './App.css'
+import '../App.css'
 
 
 
