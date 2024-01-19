@@ -18,14 +18,21 @@ class PredictDraw:
         self.columns = columns
 
     def next_predict_draw(self):
+        flip_coin = random.random() * 2
+        print(f"flip_coin = {flip_coin}")
+        if flip_coin >= 1:
+            return self.next_predict_draw_1()
+        else:
+            return self.next_predict_draw_2()
+
+    def next_predict_draw_1(self):
         pred = []
 
         # take 1 from last hits
         lastHits = self.getLastHitNumbers()
-        index =  random.randint(0, len(lastHits) - 1)       
+        index = random.randint(0, len(lastHits) - 1)
         pred.append(lastHits[index]["Value"])
 
-        """         
         # select 3 groups based on totalHits
         flip_coin = random.random() * 2
 
@@ -38,53 +45,75 @@ class PredictDraw:
         high = arr[2]
 
         # take 1 from low
-        index = int(random.random() * len(low))
+        index = random.randint(0, len(low) - 1)
         pred.append(low[index]["Value"])
 
-        # take 2 from middle
-        index = int(random.random() * len(middle))
-        pred.append(middle[index]["Value"])
-
-        index = int(random.random() * len(middle))
-        pred.append(middle[index]["Value"])
+        # take 1 from middle
+        index = random.randint(0, len(middle) - 1)
+        pred.append(middle[index]["Value"])       
 
         if flip_coin < 1:
-            # add two more
-            index = int(random.random() * len(middle))
-            pred.append(middle[index]["Value"])
-
-            index = int(random.random() * len(middle))
-            pred.append(middle[index]["Value"])
+            # add 2 from DistanceNumbers
+            index = random.randint(0, len(low) - 1)
+            pred.append(low[index]["Value"])
+            index = random.randint(0, len(high) - 1)
+            pred.append(high[index]["Value"])
+        else:
+            # take 2 from TotalHitsNumbers
+            index = random.randint(0, len(high) - 1)
+            pred.append(high[index]["Value"])       
+            index = random.randint(0, len(middle) - 1)
+            pred.append(middle[index]["Value"])      
 
         pred = list(set(pred))  # remove duplicates from pred
 
-        if len(pred) < 4:
-            index = int(random.random() * len(middle))
-            pred.append(middle[index]["Value"])
+        # take 1 from FrequentNumbers
+        frequent = self.getFrequentNumbers()
+        index = random.randint(0, len(frequent) - 1)
+        pred.append(frequent[index]["Value"])
 
-        # take 3 from high
-        index = int(random.random() * len(high))
-        pred.append(high[index]["Value"])
-
-        if flip_coin >= 1:
-            index = int(random.random() * len(high))
-            pred.append(high[index]["Value"])
-
-            index = int(random.random() * len(high))
-            pred.append(high[index]["Value"])
+        # take 1 from Two_Hots_1_Cold_Numbers
+        two_hots_1_cold = self.get_Two_Hots_1_Cold_Numbers()      
+        print(f"two_hots_1_cold = {two_hots_1_cold}") 
+        if two_hots_1_cold != []:
+            index = random.randint(0, len(two_hots_1_cold) - 1)
+            pred.append(two_hots_1_cold[index]["Value"])
+        else:
+            two_cold_numbers = self.get_Two_Cold_Numbers()
+            if two_cold_numbers != []:
+                index = random.randint(0, len(two_cold_numbers) - 1)
+                pred.append(two_cold_numbers[index]["Value"])
 
         pred = list(set(pred))  # remove duplicates from pred
         while len(pred) < self.columns:
-            index = int(random.random() * len(high))
-            pred.append(high[index]["Value"])
+            index = random.randint(0, len(two_hots_1_cold) - 1)
+            pred.append(two_hots_1_cold[index]["Value"])
             pred = list(set(pred))
+
         """
+        # print out
+        print(f"frequent = {frequent}")
+        print(f"two_hots_1_cold = {two_hots_1_cold}")
+        print(f"two_cold = {two_cold}")
+        """
+        pred.sort()
+        print(f"pred 1 = {pred}")
+        return pred
+
+    def next_predict_draw_2(self):
+        pred = []
+
+        # take 1 from last hits
+        lastHits = self.getLastHitNumbers()
+        index = random.randint(0, len(lastHits) - 1)
+        pred.append(lastHits[index]["Value"])
+
 
         # frequent numbers
         frequent = self.getFrequentNumbers()
 
         # take 3 from frequent
-        index = random.randint(0, len(frequent) - 1) 
+        index = random.randint(0, len(frequent) - 1)
         pred.append(frequent[index]["Value"])
 
         index = random.randint(0, len(frequent) - 1)
@@ -126,7 +155,7 @@ class PredictDraw:
             middle = arr[1]
             high = arr[2]
 
-            # take 1 from DistanceNumbers or totalHitsNumbers 
+            # take 1 from DistanceNumbers or totalHitsNumbers
             index = random.randint(0, 2)
             sub_index = random.randint(0, len(arr[index]) - 1)
             pred.append(arr[index][sub_index]["Value"])
@@ -139,9 +168,8 @@ class PredictDraw:
         print(f"two_cold = {two_cold}")
         """
         pred.sort()
-        #print(f"pred = {pred}")
+        print(f"pred 2 = {pred}")
         return pred
-
 
     def getLastHitNumbers(self):
         arr = [x for x in self.numbers if x["IsHit"] == True]
@@ -161,7 +189,7 @@ class PredictDraw:
 
         arrays = [ones, tens, twenties, thirties, forties]
         removed_empty_arrays = [sublist for sublist in arrays if any(sublist)]
-        #index = random.randint(0, len(arrays) - 1)
+        # index = random.randint(0, len(arrays) - 1)
         longest_array = max(removed_empty_arrays, key=len)
 
         return longest_array[0]
