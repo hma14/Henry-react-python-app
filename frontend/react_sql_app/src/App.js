@@ -65,7 +65,7 @@ const App = () => {
 
   // change default lotto options
   const [lottoName, setLottoName] = useState(1)
-  const [lottoColumns, setLottoColumns] = useState(6)
+  const [lottoColumns, setLottoColumns] = useState(7)
   const [selectedOption, setSelectedOption] = useState('BC49');
   const [selectedTypeOption, setSelectedTypeOption] = useState('predictDraws');
 
@@ -84,6 +84,7 @@ const App = () => {
     const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
     const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
     const url6 = 'http://ep.lottotry.com:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+    const url9 = 'http://ep.lottotry.com:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&page_size=' + pageSize;
     const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
     const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   
@@ -93,8 +94,8 @@ const App = () => {
   const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
   const url6 = 'http://127.0.0.1:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&page_size=' + pageSize;
+  const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&columns=' + lottoColumns + '&page_size=' + pageSize;
   const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
 
 

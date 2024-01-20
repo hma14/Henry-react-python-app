@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Table } from 'react-bootstrap'
 import '../App.css'
 
@@ -39,15 +40,15 @@ function LottoDraws(props) {
   return (
 
     <div>
-      {console.log(lottoData)}
       {lottoData &&
-        <Table responsive className="table-primary mb-4" size="sm" hover="true" striped="true">
+        <Table striped bordered hover  className="table-primary mb-4" >
+          {console.log(columns)}
           {getHeader()}
           <tbody className='fw-bold' >
             {lottoData.map(row =>
               <tr key={row.DrawNumber}>
-                <td className="text-warning bg-primary">{row.DrawNumber}</td>
-                <td className="text-warning bg-success">{row.DrawDate}</td>
+                <td className="text-light bg-primary">{row.DrawNumber}</td>
+                <td className="text-light bg-success">{row.DrawDate}</td>
                 {row.Numbers
                   .sort((a, b) => (b.IsBonusNumber === true && a.IsBonusNumber === false && (b.Value - a.Value)))
                   .sort((a, b) => (a.IsBonusNumber === false && b.IsBonusNumber === false && (a.Value - b.Value)))

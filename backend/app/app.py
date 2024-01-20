@@ -87,10 +87,11 @@ def predict_draw():
 def potential_draws():
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
-    page_size = 100
+    page_size = int(request.args.get("page_size", 10))
+    total_page_size = 100
     start_index = 0
 
-    result = retrieve_data(lotto_name, page_size, number_range, start_index)
+    result = retrieve_data(lotto_name, total_page_size, number_range, start_index)
 
     # Decode the byte string to a regular string
     json_str = result.data.decode("utf-8")
@@ -103,12 +104,11 @@ def potential_draws():
     columns = int(request.args.get("columns"))
 
     # potential_draws = PredictDraw(numbers[0]['Numbers'], columns)
-    potential_draws = PotentialDraws(numbers, columns, 20)
+    potential_draws = PotentialDraws(numbers, columns, page_size)
 
     data = potential_draws.next_potential_draws()
-    no_empty_data = [arr for arr in data if arr]
-    print(f"data = {no_empty_data}")
-    return no_empty_data
+    data_exclusive_empty_array = [arr for arr in data if arr]
+    return data_exclusive_empty_array
 
 
 

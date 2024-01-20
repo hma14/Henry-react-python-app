@@ -92,33 +92,6 @@
   color: rgb(252, 249, 252);
 }
 
-table {
-  border-spacing: 1;
-  border: 0px solid black;
-
-  /*   tr {
-    :last-child {
-      td {
-        border-bottom: 2;
-      }
-    }
-  }
-
-  th,
-  td {
-    margin: 1;
-    padding: 0.5rem;
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
-    align-items: center;
-    font-size:0.4rem;
-
-    :last-child {
-      border-right: 2;
-    }
-  }
- */
-}
 
 thead {
   flex: 0 0 auto;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Table } from 'react-bootstrap'
 import '../App.css'
 import classNames from 'classnames'
@@ -221,6 +222,19 @@ const PredictDraws = (props) => {
     )
   }
 
+  const getHeader_2 = () => {
+    return (
+      <thead className="table-danger text-center">
+        <tr>
+          <th className='text-warning bg-primary'>#</th>
+          {Array.from(Array(columns).keys()).map((no) =>
+            (<th key={no} className='text-warning bg-success'>{no + 1}</th>))}
+        </tr>
+      </thead>
+    )
+  }
+
+
   const getRow = (start, end) => {
     return (
       <tr>
@@ -240,47 +254,43 @@ const PredictDraws = (props) => {
   return (
 
     <div>
-
       {numbers &&
-        <Table responsive className="table-primary mb-3" size="lg" >
+        <Table striped bordered hover responsive className="table-primary mb-3" size="lg" >
           {getHeader()}
-
           <tbody className='fw-bold' >
-
             {getRow(0, 10)}
             {getRow(10, 20)}
             {getRow(20, 30)}
             {getRow(30, 40)}
             {getRow(40, 50)}
           </tbody>
-
           {getHeader()}
         </Table>}
-      <div>
-        <Table responsive>
-          <thead className="table-danger text-center">
-            <tr>
-              {Array.from(Array(columns).keys()).map((no) =>
-                (<th key={no} className='text-warning bg-success'>{no + 1}</th>))}
-              <th className='text-warning bg-success'>Bonus</th>
-            </tr>
-          </thead>
-          {predicts.map(row => (
-            <tr>           
-              {row.map((col) => 
-              <td className='bg-color1 text-center text-danger fs-4 fw-bold px-2' key={col}>{col}</td>)}
-            </tr>
-          ))}
-        </Table>
-        <button
-          type="button"
-          onClick={() => fetchData(false)}
-          className="btn btn-primary fw-bold float-end margin-left">Predict Next Draw</button>
-        <button
-          type="button"
-          onClick={() => fetchData(true)}
-          className="btn btn-primary fw-bold float-end margin-right">Generate Potential Draws</button>
-      </div>
+
+      <h1 className='text-primary'>Potential Next Draws</h1>
+
+      {predicts.length > 0 &&
+        <Table striped bordered hover responsive className="table-primary mb-3" size="lg" >
+          {getHeader_2()}
+          <tbody className='fw-bold' >
+            {predicts.map((row, index) => (
+              <tr key={index}>
+                <td className='bg-color3 text-center text-success fs-5'>{index + 1}</td>
+                {row.map((col) =>
+                  <td className='bg-color1 text-center text-danger fs-4 fw-bold px-2' key={col}>{col}</td>)}
+              </tr>
+            ))}
+          </tbody>
+          {getHeader_2()}
+        </Table>}
+      <button
+        type="button"
+        onClick={() => fetchData(false)}
+        className="btn btn-primary fw-bold float-end margin-left">Predict Next Draw</button>
+      <button
+        type="button"
+        onClick={() => fetchData(true)}
+        className="btn btn-primary fw-bold float-end margin-right">Generate Potential Draws</button>
     </div>
   )
 }

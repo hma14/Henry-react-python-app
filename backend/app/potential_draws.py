@@ -17,8 +17,10 @@ class PotentialDraws:
         self.numbers = data[0]["Numbers"]
         self.columns = columns
         self.rows = rows
+        
 
     def next_potential_draws(self):
+        
         results = [[]]
         for n in range(self.rows):            
             flip_coin = random.random() * 2
@@ -26,6 +28,8 @@ class PotentialDraws:
                 results.append(self.next_potential_draws_1())
             else:
                 results.append(self.next_potential_draws_2())
+                
+        print(f"results = {results}")        
         return results
     
     def next_potential_draws_1(self):
@@ -72,12 +76,12 @@ class PotentialDraws:
 
         # take 1 from FrequentNumbers
         frequent = self.getFrequentNumbers()
-        index = random.randint(0, len(frequent) - 1)
-        pred.append(frequent[index]["Value"])
+        if len(frequent) > 0:
+            index = random.randint(0, len(frequent) - 1)
+            pred.append(frequent[index]["Value"])
 
         # take 1 from Two_Hots_1_Cold_Numbers
         two_hots_1_cold = self.get_Two_Hots_1_Cold_Numbers()      
-        print(f"two_hots_1_cold = {two_hots_1_cold}") 
         if two_hots_1_cold != []:
             index = random.randint(0, len(two_hots_1_cold) - 1)
             pred.append(two_hots_1_cold[index]["Value"])
@@ -105,7 +109,6 @@ class PotentialDraws:
         print(f"two_cold = {two_cold}")
         """
         pred.sort()
-        print(f"pred 1 = {pred}")
         return pred
 
     def next_potential_draws_2(self):
@@ -121,14 +124,15 @@ class PotentialDraws:
         frequent = self.getFrequentNumbers()
 
         # take 3 from frequent
-        index = random.randint(0, len(frequent) - 1)
-        pred.append(frequent[index]["Value"])
+        if len(frequent) > 3:
+            index = random.randint(0, len(frequent) - 1)
+            pred.append(frequent[index]["Value"])
 
-        index = random.randint(0, len(frequent) - 1)
-        pred.append(frequent[index]["Value"])
+            index = random.randint(0, len(frequent) - 1)
+            pred.append(frequent[index]["Value"])
 
-        index = random.randint(0, len(frequent) - 1)
-        pred.append(frequent[index]["Value"])
+            index = random.randint(0, len(frequent) - 1)
+            pred.append(frequent[index]["Value"])
 
         # take 1 from two_hots_1_cold
         two_hots_1_cold = self.get_Two_Hots_1_Cold_Numbers()
@@ -176,7 +180,6 @@ class PotentialDraws:
         print(f"two_cold = {two_cold}")
         """
         pred.sort()
-        print(f"pred 2 = {pred}")
         return pred
 
     def getLastHitNumbers(self):
