@@ -93,6 +93,7 @@ const App = () => {
   const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
   const url6 = 'http://127.0.0.1:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
+  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + lottoColumns;
   const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
 
@@ -176,17 +177,16 @@ const App = () => {
               </div>
             </li>
             <li className="nav-item">
-              {sortType !== 'predictDraws' ?
-                (<div className="mt-1 margin-left margin-right fw-bold">
-                  <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle ps-4 fw-bold"
-                    value={pageSize}
-                    onChange={(e) => setPageSize(e.target.value)}>
-                    {[5, 10, 20, 30, 40, 50, 100].map(pageSize => (
-                      <option key={pageSize} value={pageSize}> {pageSize}</option>
-                    ))}
-                  </select>
-                  <span className='bg-color8 my-color-1 ps-2'>draws per page</span>
-                </div>) : ''}
+              <div className="mt-1 margin-left margin-right fw-bold">
+                <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle ps-4 fw-bold"
+                  value={pageSize}
+                  onChange={(e) => setPageSize(e.target.value)}>
+                  {[5, 10, 20, 30, 40, 50, 100].map(pageSize => (
+                    <option key={pageSize} value={pageSize}> {pageSize}</option>
+                  ))}
+                </select>
+                <span className='bg-color8 my-color-1 ps-2'>draws per page</span>
+              </div>
             </li>
           </ul>
         </nav>
@@ -202,7 +202,7 @@ const App = () => {
                 case 'openai_saying':
                   return (
                     <ApiOpenAI endpoint={url} />
-                  ) 
+                  )
                 case 'lottoDraws':
                   return (
                     <LottoDraws endpoint={url7} columns={lottoColumns} />
@@ -213,7 +213,7 @@ const App = () => {
                   )
                 case 'predictDraws':
                   return (
-                    <PredictDraws endpoint={url5} endpoint2={url6} columns={lottoColumns} lotto_name={lottoName} />
+                    <PredictDraws endpoint={url5} endpoint2={url6} endpoint3={url9} columns={lottoColumns} rows={pageSize} />
                   )
                 default: return (
                   <ApiNumbers endpoint={url4} sortType={sortType} />

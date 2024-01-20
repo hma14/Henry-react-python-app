@@ -7,7 +7,7 @@ import classNames from 'classnames'
 
 
 const PredictDraws = (props) => {
-  const { endpoint, endpoint2, columns, lotto_name } = props
+  const { endpoint, endpoint2, endpoint3, columns, rows } = props
 
   const [numbers, setNumbers] = useState()
   const [predicts, setPredicts] = useState([])
@@ -31,16 +31,35 @@ const PredictDraws = (props) => {
       const responses = await Promise.all(promises);
 
       // Extract data from each response
-      const result = responses.map(response => response.data);    
+      const result = responses.map(response => response.data);
+      return result
+    } catch (error) {
+      console.error('Error processing next prediction:', error);
+    }
+  }
+  const processNextPotentialDraws = async () => {
+
+    try {
+      const promises = [await axios.post(endpoint3)]
+      const responses = await Promise.all(promises);
+
+      // Extract data from each response
+      const result = responses.map(response => response.data);
       return result
     } catch (error) {
       console.error('Error processing next prediction:', error);
     }
   }
 
-  const fetchData = async () => {
+  const fetchData = async (isForPotential) => {
     try {
-      const result = await processNextPrediction();
+      var result = null;
+      if (isForPotential) {
+        result = await processNextPotentialDraws();
+      }
+      else {
+        result = await processNextPrediction();
+      }
       setPredicts(result[0]);
       return predicts
     } catch (error) {
@@ -48,148 +67,148 @@ const PredictDraws = (props) => {
     }
   };
 
-/*
-  const getPredicts = (cols) => {
-
-    var pred = []
-
-    // take 1 from last hits
-    let lastHits = getLastHitNumbers()
-    var indx = Math.random() * (lastHits.length)
-    pred.push(lastHits[parseInt(indx)])
-
-    // select 3 groups based on totalHits
-    var flip_coin = Math.random() * 2
-
-    var arr = flip_coin >= 1 ? getTotalHitsNumbers() : getDistanceNumbers()
-    let low = arr[0]
-    let middle = arr[1]
-    let high = arr[2]
-
-
-    // take 1 low
-    indx = Math.random() * low.length
-    pred.push(low[parseInt(indx)].Value)
-
-
-    // take 2 middle
-    indx = Math.random() * middle.length
-    pred.push(middle[parseInt(indx)].Value)
-
-    indx = Math.random() * middle.length
-    pred.push(middle[parseInt(indx)].Value)
-
-    if (flip_coin < 1) {
-      // add two more
+  /*
+    const getPredicts = (cols) => {
+  
+      var pred = []
+  
+      // take 1 from last hits
+      let lastHits = getLastHitNumbers()
+      var indx = Math.random() * (lastHits.length)
+      pred.push(lastHits[parseInt(indx)])
+  
+      // select 3 groups based on totalHits
+      var flip_coin = Math.random() * 2
+  
+      var arr = flip_coin >= 1 ? getTotalHitsNumbers() : getDistanceNumbers()
+      let low = arr[0]
+      let middle = arr[1]
+      let high = arr[2]
+  
+  
+      // take 1 low
+      indx = Math.random() * low.length
+      pred.push(low[parseInt(indx)].Value)
+  
+  
+      // take 2 middle
       indx = Math.random() * middle.length
       pred.push(middle[parseInt(indx)].Value)
+  
       indx = Math.random() * middle.length
       pred.push(middle[parseInt(indx)].Value)
-    }
-
-    pred = [...new Set(pred)]
-    if (pred.length < 4) {
-      indx = Math.random() * middle.length
-      pred.push(middle[parseInt(indx)].Value)
-    }
-
-    // take 3 high
-    indx = Math.random() * high.length
-    pred.push(high[parseInt(indx)].Value)
-    if (flip_coin >= 1) {
-      indx = Math.random() * high.length
-      pred.push(high[parseInt(indx)].Value)
-
-      indx = Math.random() * high.length
-      pred.push(high[parseInt(indx)].Value)
-    }
-
-    pred = [...new Set(pred)]
-    while (pred.length < cols) {
-      indx = Math.random() * high.length
-      pred.push(high[parseInt(indx)].Value)
+  
+      if (flip_coin < 1) {
+        // add two more
+        indx = Math.random() * middle.length
+        pred.push(middle[parseInt(indx)].Value)
+        indx = Math.random() * middle.length
+        pred.push(middle[parseInt(indx)].Value)
+      }
+  
       pred = [...new Set(pred)]
+      if (pred.length < 4) {
+        indx = Math.random() * middle.length
+        pred.push(middle[parseInt(indx)].Value)
+      }
+  
+      // take 3 high
+      indx = Math.random() * high.length
+      pred.push(high[parseInt(indx)].Value)
+      if (flip_coin >= 1) {
+        indx = Math.random() * high.length
+        pred.push(high[parseInt(indx)].Value)
+  
+        indx = Math.random() * high.length
+        pred.push(high[parseInt(indx)].Value)
+      }
+  
+      pred = [...new Set(pred)]
+      while (pred.length < cols) {
+        indx = Math.random() * high.length
+        pred.push(high[parseInt(indx)].Value)
+        pred = [...new Set(pred)]
+      }
+      pred.sort((a, b) => a - b)
+  
+      console.log(pred)
+      return pred
+  
     }
-    pred.sort((a, b) => a - b)
-
-    console.log(pred)
-    return pred
-
-  }
-
-  const getLastHitNumbers = () => {
-    var arr = []
-    for (var i = 0; i < numbers.length; i++) {
-      if (numbers[i].IsHit === true)
-        arr.push(numbers[i].Value)
+  
+    const getLastHitNumbers = () => {
+      var arr = []
+      for (var i = 0; i < numbers.length; i++) {
+        if (numbers[i].IsHit === true)
+          arr.push(numbers[i].Value)
+      }
+  
+      return arr.sort((a, b) => a - b)
     }
-
-    return arr.sort((a, b) => a - b)
-  }
-
-  const getTotalHitsNumbers = () => {
-
-    var tmp = numbers.sort((a, b) => a.TotalHits > b.TotalHits ? 1 : -1)
-    var low = []
-    var middle = []
-    var high = []
-
-    var oneThird = parseInt(tmp.length / 3 + 1)
-    var twoThird = parseInt((tmp.length * 2) / 3 + 1)
-
-    for (var i = 0; i < tmp.length; i++) {
-      if (i < oneThird) {
-        low.push(tmp[i])
+  
+    const getTotalHitsNumbers = () => {
+  
+      var tmp = numbers.sort((a, b) => a.TotalHits > b.TotalHits ? 1 : -1)
+      var low = []
+      var middle = []
+      var high = []
+  
+      var oneThird = parseInt(tmp.length / 3 + 1)
+      var twoThird = parseInt((tmp.length * 2) / 3 + 1)
+  
+      for (var i = 0; i < tmp.length; i++) {
+        if (i < oneThird) {
+          low.push(tmp[i])
+        }
+        else if (i < twoThird) {
+          middle.push(tmp[i])
+        }
+        else {
+          high.push(tmp[i])
+        }
       }
-      else if (i < twoThird) {
-        middle.push(tmp[i])
-      }
-      else {
-        high.push(tmp[i])
-      }
+  
+      var arr = []
+      arr.push(low)
+      arr.push(middle)
+      arr.push(high)
+  
+      return arr
     }
-
-    var arr = []
-    arr.push(low)
-    arr.push(middle)
-    arr.push(high)
-
-    return arr
-  }
-
-
-  const getDistanceNumbers = () => {
-
-    var tmp = numbers.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
-    var low = []
-    var middle = []
-    var high = []
-
-    var oneThird = parseInt(tmp.length / 3 + 1)
-    var twoThird = parseInt((tmp.length * 2) / 3 + 1)
-
-    for (var i = 0; i < tmp.length; i++) {
-      if (tmp[i].Distance === 0) continue
-
-      if (i < oneThird) {
-        low.push(tmp[i])
+  
+  
+    const getDistanceNumbers = () => {
+  
+      var tmp = numbers.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
+      var low = []
+      var middle = []
+      var high = []
+  
+      var oneThird = parseInt(tmp.length / 3 + 1)
+      var twoThird = parseInt((tmp.length * 2) / 3 + 1)
+  
+      for (var i = 0; i < tmp.length; i++) {
+        if (tmp[i].Distance === 0) continue
+  
+        if (i < oneThird) {
+          low.push(tmp[i])
+        }
+        else if (i < twoThird) {
+          middle.push(tmp[i])
+        }
+        else {
+          high.push(tmp[i])
+        }
       }
-      else if (i < twoThird) {
-        middle.push(tmp[i])
-      }
-      else {
-        high.push(tmp[i])
-      }
+  
+      var arr = []
+      arr.push(low)
+      arr.push(middle)
+      arr.push(high)
+  
+      return arr
     }
-
-    var arr = []
-    arr.push(low)
-    arr.push(middle)
-    arr.push(high)
-
-    return arr
-  }
-*/
+  */
 
   const getHeader = () => {
     return (
@@ -246,15 +265,21 @@ const PredictDraws = (props) => {
               <th className='text-warning bg-success'>Bonus</th>
             </tr>
           </thead>
-          <tr>
-            {predicts.map(p => (<td className='bg-color1 text-center text-danger fs-4 fw-bold px-2' key={p}>{p}</td>))}
-          </tr>
+          {predicts.map(row => (
+            <tr>           
+              {row.map((col) => 
+              <td className='bg-color1 text-center text-danger fs-4 fw-bold px-2' key={col}>{col}</td>)}
+            </tr>
+          ))}
         </Table>
         <button
           type="button"
-          /* onClick={() => setPredicts(getPredicts(columns + 1))} */
-          onClick={fetchData}
-          className="btn btn-primary fw-bold float-end">Predict Next Draw</button>
+          onClick={() => fetchData(false)}
+          className="btn btn-primary fw-bold float-end margin-left">Predict Next Draw</button>
+        <button
+          type="button"
+          onClick={() => fetchData(true)}
+          className="btn btn-primary fw-bold float-end margin-right">Generate Potential Draws</button>
       </div>
     </div>
   )

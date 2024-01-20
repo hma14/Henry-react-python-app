@@ -8,6 +8,7 @@ from sqlalchemy.orm import joinedload
 from flask_sqlalchemy import SQLAlchemy
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
 from predict_draw import PredictDraw
+from potential_draws import PotentialDraws
 import json
 
 
@@ -81,6 +82,34 @@ def predict_draw():
     data = predict_draw.next_predict_draw()
 
     return data
+
+@app.route("/api/lotto/potential_draws", methods=["POST"])
+def potential_draws():
+    lotto_name = int(request.args.get("lotto_name", 1))
+    number_range = get_lotto_number_range(lotto_name)
+    page_size = 100
+    start_index = 0
+
+    result = retrieve_data(lotto_name, page_size, number_range, start_index)
+
+    # Decode the byte string to a regular string
+    json_str = result.data.decode("utf-8")
+
+    # Parse the JSON string
+    parsed_data = json.loads(json_str)
+
+    # Access the 'data' key, which contains an array
+    numbers = parsed_data["data"]
+    columns = int(request.args.get("columns"))
+
+    # potential_draws = PredictDraw(numbers[0]['Numbers'], columns)
+    potential_draws = PotentialDraws(numbers, columns, 20)
+
+    data = potential_draws.next_potential_draws()
+    no_empty_data = [arr for arr in data if arr]
+    print(f"data = {no_empty_data}")
+    return no_empty_data
+
 
 
 @app.route("/api/lotto/lottoDraws", methods=["GET"])
