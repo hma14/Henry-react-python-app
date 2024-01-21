@@ -267,7 +267,7 @@ const PredictDraws = (props) => {
           {getHeader()}
         </Table>}
 
-      <h1 className='text-primary'>Potential Next Draws</h1>
+      <h3 className='text-primary'>Potential Next Draws</h3>
 
       {predicts.length > 0 &&
         <Table striped bordered hover responsive className="table-primary mb-3" size="lg" >
@@ -283,10 +283,6 @@ const PredictDraws = (props) => {
           </tbody>
           {getHeader_2()}
         </Table>}
-      <button
-        type="button"
-        onClick={() => fetchData(false)}
-        className="btn btn-primary fw-bold float-end margin-left">Predict Next Draw</button>
       <button
         type="button"
         onClick={() => fetchData(true)}
