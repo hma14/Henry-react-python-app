@@ -88,7 +88,7 @@ def potential_draws():
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get("page_size", 10))
-    total_page_size = 100
+    total_page_size = 200
     start_index = 0
 
     result = retrieve_data(lotto_name, total_page_size, number_range, start_index)
@@ -102,7 +102,7 @@ def potential_draws():
     # Access the 'data' key, which contains an array
     numbers = parsed_data["data"]
     columns = int(request.args.get("columns"))
-
+    print(f"columns= {columns}")
     # potential_draws = PredictDraw(numbers[0]['Numbers'], columns)
     potential_draws = PotentialDraws(numbers, columns, page_size)
 

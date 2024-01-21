@@ -66,6 +66,7 @@ const App = () => {
   // change default lotto options
   const [lottoName, setLottoName] = useState(1)
   const [lottoColumns, setLottoColumns] = useState(7)
+  const [potentialColumns, setPotentialColumns] = useState(6)
   const [selectedOption, setSelectedOption] = useState('BC49');
   const [selectedTypeOption, setSelectedTypeOption] = useState('predictDraws');
 
@@ -83,8 +84,7 @@ const App = () => {
     const url = 'http://ep.lottotry.com:5000/api/openai';
     const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
     const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-    const url6 = 'http://ep.lottotry.com:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-    const url9 = 'http://ep.lottotry.com:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&page_size=' + pageSize;
+    const url9 = 'http://ep.lottotry.com:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize;
     const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
     const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   
@@ -93,8 +93,7 @@ const App = () => {
   const url = 'http://127.0.0.1:5000/api/openai';
   const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
   const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url6 = 'http://127.0.0.1:5000/api/lotto/predict_draw?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&page_size=' + pageSize;
+  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize;
   const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&columns=' + lottoColumns + '&page_size=' + pageSize;
   const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
 
@@ -123,20 +122,24 @@ const App = () => {
     switch (value) {
       case "BC49":
         setNumberRange(49)
+        setPotentialColumns(6)
         return setLottoColumns(7)
       case "Lotto649":
         setNumberRange(49)
+        setPotentialColumns(6)
         return setLottoColumns(7)
       case "LottoMax":
         setNumberRange(50)
+        setPotentialColumns(7)
         return setLottoColumns(8)
       case "DailyGrand":
         setNumberRange(49)
+        setPotentialColumns(5)
         return setLottoColumns(5)
       case "DailyGrand_GrandNumber":
         setNumberRange(7)
         return setLottoColumns(1)
-      default: return setLottoColumns(7)
+      default: return setLottoColumns(6)
     }
   }
 
@@ -194,12 +197,7 @@ const App = () => {
         <>
           {
             (() => {
-
               switch (sortType) {
-                /* case 'lottoDraws':
-                  return (
-                    <LottoDraws lottoData={data} columns={lottoColumns} />
-                  )*/
                 case 'openai_saying':
                   return (
                     <ApiOpenAI endpoint={url} />
@@ -213,28 +211,13 @@ const App = () => {
                     <NumberDrawsInDistance endpoint={url8} rows={pageSize} />
                   )
                 case 'predictDraws':
-                  return (
-                    <PredictDraws endpoint={url5} endpoint2={url6} endpoint3={url9} columns={lottoColumns} rows={pageSize} />
+                  return (                   
+                    <PredictDraws endpoint={url5} endpoint2={url9} columns={potentialColumns} rows={pageSize} />
                   )
                 default: return (
                   <ApiNumbers endpoint={url4} sortType={sortType} />
                 )
               }
-              /* switch (selectedLotto) {
-                case 'BC49':
-                  return (<ApiBc49 endpoint={url1} />)
-                case 'Lotto649':
-                  return (<ApiLotto649 endpoint={url2} />)
-                case 'LottoMax':
-                  return (<ApiLottoMax endpoint={url3} />)
-                case 'Predict Draws':
-                  return (<PredictDraws endpoint={url5} sortType={sortType} />)
-
-                case 'AllNumbers':
-                  return (<ApiNumbers endpoint={url4} sortType={sortType} />)
-
-                default: return (<ApiOpenAI endpoint={url} />)
-              } */
             })()}
         </>
       </div>

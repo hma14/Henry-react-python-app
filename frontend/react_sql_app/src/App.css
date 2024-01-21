@@ -129,6 +129,11 @@ thead {
   color: rgba(245, 9, 88, 0.616);
 }
 
+.my-color-4 {
+  color: rgba(84, 29, 193, 0.616);
+}
+
+
 .bg-greenyellow {
 
   background-color: rgb(240, 222, 164) !important;
@@ -252,4 +257,25 @@ thead {
 .btn:focus {
   outline: none;
   box-shadow: none;
+}
+
+.row-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Optional: Align items vertically in the center */
+}
+
+.three-d-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #3498db;
+  color: #fff;
+  border: 2px solid rgb(218, 218, 227);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: box-shadow 1s ease-in-out;
+}
+
+.three-d-button:hover {
+  box-shadow: 0 0 10px rgba(243, 167, 167, 0.3);
 }

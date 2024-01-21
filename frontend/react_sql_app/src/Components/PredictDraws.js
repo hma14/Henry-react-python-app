@@ -8,7 +8,7 @@ import classNames from 'classnames'
 
 
 const PredictDraws = (props) => {
-  const { endpoint, endpoint2, endpoint3, columns, rows } = props
+  const { endpoint, endpoint2, columns, rows } = props
 
   const [numbers, setNumbers] = useState()
   const [predicts, setPredicts] = useState([])
@@ -19,13 +19,14 @@ const PredictDraws = (props) => {
     (async () => {
       const result = await axios(endpoint)
       setNumbers(result.data.data[0].Numbers)
-      //console.log(numbers)
+      fetchData()
     })()
 
-  }, [columns, endpoint]);
+  }, [columns, endpoint, endpoint2, rows]);
 
 
-  const processNextPrediction = async () => {
+
+  const processNextPotentialDraws = async () => {
 
     try {
       const promises = [await axios.post(endpoint2)]
@@ -38,29 +39,12 @@ const PredictDraws = (props) => {
       console.error('Error processing next prediction:', error);
     }
   }
-  const processNextPotentialDraws = async () => {
 
-    try {
-      const promises = [await axios.post(endpoint3)]
-      const responses = await Promise.all(promises);
-
-      // Extract data from each response
-      const result = responses.map(response => response.data);
-      return result
-    } catch (error) {
-      console.error('Error processing next prediction:', error);
-    }
-  }
-
-  const fetchData = async (isForPotential) => {
+  const fetchData = async () => {
     try {
       var result = null;
-      if (isForPotential) {
-        result = await processNextPotentialDraws();
-      }
-      else {
-        result = await processNextPrediction();
-      }
+      result = await processNextPotentialDraws();
+
       setPredicts(result[0]);
       return predicts
     } catch (error) {
@@ -266,9 +250,14 @@ const PredictDraws = (props) => {
           </tbody>
           {getHeader()}
         </Table>}
-
-      <h3 className='text-primary'>Potential Next Draws</h3>
-
+      <div className='row-container'>
+        <h4 className='text-success fst-italic'>Potential Next Draws</h4>
+        <button
+          type="button"
+          onClick={() => fetchData()}
+          className="btn btn-primary fw-bold mb-2 three-d-button">Generate Potential Draws
+        </button>
+      </div>
       {predicts.length > 0 &&
         <Table striped bordered hover responsive className="table-primary mb-3" size="lg" >
           {getHeader_2()}
@@ -276,17 +265,18 @@ const PredictDraws = (props) => {
             {predicts.map((row, index) => (
               <tr key={index}>
                 <td className='bg-color3 text-center text-success fs-5'>{index + 1}</td>
-                {row.map((col) =>
-                  <td className='bg-color1 text-center text-danger fs-4 fw-bold px-2' key={col}>{col}</td>)}
+                {row.map((number) =>
+                  <td className='bg-color1 text-center text-danger fs-3 fw-bold px-2'
+                    key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-3': (number.Distance === 0) }, { 'text-success fs-3': (number.Distance > 10) })}>{number.Value}</span>
+                    <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
+                    <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
+                  </td>)}
               </tr>
             ))}
           </tbody>
           {getHeader_2()}
         </Table>}
-      <button
-        type="button"
-        onClick={() => fetchData(true)}
-        className="btn btn-primary fw-bold float-end margin-right">Generate Potential Draws</button>
+
     </div>
   )
 }

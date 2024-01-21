@@ -29,7 +29,7 @@ class PotentialDraws:
             else:
                 results.append(self.next_potential_draws_2())
                 
-        print(f"results = {results}")        
+        #print(f"results = {results}")        
         return results
     
     def next_potential_draws_1(self):
@@ -38,9 +38,8 @@ class PotentialDraws:
         # take 1 from last hits
         lastHits = self.getLastHitNumbers()
         index = random.randint(0, len(lastHits) - 1)
-        pred.append(lastHits[index]["Value"])
+        pred.append(lastHits[index])
 
-        # select 3 groups based on totalHits
         flip_coin = random.random() * 2
 
         arr = (
@@ -53,54 +52,49 @@ class PotentialDraws:
 
         # take 1 from low
         index = random.randint(0, len(low) - 1)
-        pred.append(low[index]["Value"])
+        pred.append(low[index])
 
         # take 1 from middle
         index = random.randint(0, len(middle) - 1)
-        pred.append(middle[index]["Value"])       
+        pred.append(middle[index])       
 
         if flip_coin < 1:
             # add 2 from DistanceNumbers
             index = random.randint(0, len(low) - 1)
-            pred.append(low[index]["Value"])
+            pred.append(low[index])
             index = random.randint(0, len(high) - 1)
-            pred.append(high[index]["Value"])
+            pred.append(high[index])
         else:
             # take 2 from TotalHitsNumbers
             index = random.randint(0, len(high) - 1)
-            pred.append(high[index]["Value"])       
+            pred.append(high[index])       
             index = random.randint(0, len(middle) - 1)
-            pred.append(middle[index]["Value"])      
+            pred.append(middle[index])      
 
-        pred = list(set(pred))  # remove duplicates from pred
-
-        # take 1 from FrequentNumbers
-        frequent = self.getFrequentNumbers()
-        if len(frequent) > 0:
-            index = random.randint(0, len(frequent) - 1)
-            pred.append(frequent[index]["Value"])
-
+        pred = remove_duplicates(pred)
+        
         # take 1 from Two_Hots_1_Cold_Numbers
         two_hots_1_cold = self.get_Two_Hots_1_Cold_Numbers()      
         if two_hots_1_cold != []:
             index = random.randint(0, len(two_hots_1_cold) - 1)
-            pred.append(two_hots_1_cold[index]["Value"])
+            pred.append(two_hots_1_cold[index])
         else:
             two_cold_numbers = self.get_Two_Cold_Numbers()
             if two_cold_numbers != []:
                 index = random.randint(0, len(two_cold_numbers) - 1)
-                pred.append(two_cold_numbers[index]["Value"])
+                pred.append(two_cold_numbers[index])
 
-        pred = list(set(pred))  # remove duplicates from pred
+        pred = remove_duplicates(pred)
         while len(pred) < self.columns:
             if len(two_hots_1_cold) > 1:
                 index = random.randint(0, len(two_hots_1_cold) - 1)
-                pred.append(two_hots_1_cold[index]["Value"])
+                pred.append(two_hots_1_cold[index])
             else:
+                frequent = self.getFrequentNumbers()
                 index = random.randint(0, len(frequent) - 1)
-                pred.append(frequent[index]["Value"])
+                pred.append(frequent[index])
                 
-            pred = list(set(pred))
+            pred = remove_duplicates(pred)
 
         """
         # print out
@@ -108,7 +102,7 @@ class PotentialDraws:
         print(f"two_hots_1_cold = {two_hots_1_cold}")
         print(f"two_cold = {two_cold}")
         """
-        pred.sort()
+        pred.sort(key=lambda x: x["Value"], reverse=False)
         return pred
 
     def next_potential_draws_2(self):
@@ -117,7 +111,7 @@ class PotentialDraws:
         # take 1 from last hits
         lastHits = self.getLastHitNumbers()
         index = random.randint(0, len(lastHits) - 1)
-        pred.append(lastHits[index]["Value"])
+        pred.append(lastHits[index])
 
 
         # frequent numbers
@@ -126,35 +120,36 @@ class PotentialDraws:
         # take 3 from frequent
         if len(frequent) > 3:
             index = random.randint(0, len(frequent) - 1)
-            pred.append(frequent[index]["Value"])
+            pred.append(frequent[index])
 
             index = random.randint(0, len(frequent) - 1)
-            pred.append(frequent[index]["Value"])
+            pred.append(frequent[index])
 
             index = random.randint(0, len(frequent) - 1)
-            pred.append(frequent[index]["Value"])
+            pred.append(frequent[index])
 
         # take 1 from two_hots_1_cold
         two_hots_1_cold = self.get_Two_Hots_1_Cold_Numbers()
         if len(two_hots_1_cold) > 0:
             index = random.randint(0, len(two_hots_1_cold) - 1)
-            pred.append(two_hots_1_cold[index]["Value"])
+            pred.append(two_hots_1_cold[index])
         else:
             lastHits = self.getLastHitNumbers()
             index = random.randint(0, len(lastHits) - 1)
-            pred.append(lastHits[index]["Value"])
+            pred.append(lastHits[index])
 
         # take 1 from two_cold
         two_cold = self.get_Two_Cold_Numbers()
         if len(two_cold) > 0:
             index = random.randint(0, len(two_cold) - 1)
-            pred.append(two_cold[index]["Value"])
+            pred.append(two_cold[index])
         else:
             lastHits = self.getLastHitNumbers()
             index = random.randint(0, len(lastHits) - 1)
-            pred.append(lastHits[index]["Value"])
+            pred.append(lastHits[index])
 
-        pred = list(set(pred))
+        
+        pred = remove_duplicates(pred)
         while len(pred) < self.columns:
             flip_coin = random.random() * 2
             arr = (
@@ -170,8 +165,8 @@ class PotentialDraws:
             # take 1 from DistanceNumbers or totalHitsNumbers
             index = random.randint(0, 2)
             sub_index = random.randint(0, len(arr[index]) - 1)
-            pred.append(arr[index][sub_index]["Value"])
-            pred = list(set(pred))
+            pred.append(arr[index][sub_index])
+            pred = remove_duplicates(pred)
 
         """
         # print out
@@ -179,7 +174,8 @@ class PotentialDraws:
         print(f"two_hots_1_cold = {two_hots_1_cold}")
         print(f"two_cold = {two_cold}")
         """
-        pred.sort()
+        
+        pred.sort(key=lambda x: x["Value"], reverse=False)
         return pred
 
     def getLastHitNumbers(self):
@@ -377,3 +373,15 @@ class PotentialDraws:
                 return True
             elif draw_count > self.MAX_ALLOWED_ROWS:
                 return False
+
+def remove_duplicates(objects):
+    #print(f"objects = {objects}")
+    seen_values = set()
+    unique_objects = []
+
+    for obj in objects:
+        if obj['Value'] not in seen_values:
+            seen_values.add(obj['Value'])
+            unique_objects.append(obj)
+
+    return unique_objects 
