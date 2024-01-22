@@ -103,7 +103,7 @@ class PotentialDraws:
                 pred.append(frequent[index])
 
             pred = self.remove_duplicates(pred)
-
+        pred.sort(key=lambda x: x['Value'], reverse=False)
         return pred
 
     def next_potential_draws_2(self):
@@ -166,13 +166,6 @@ class PotentialDraws:
             sub_index = random.randint(0, len(arr[index]) - 1)
             pred.append(arr[index][sub_index])
             pred = self.remove_duplicates(pred)
-
-        """
-        # print out
-        print(f"frequent = {frequent}")
-        print(f"two_hots_1_cold = {two_hots_1_cold}")
-        print(f"two_cold = {two_cold}")
-        """
 
         pred.sort(key=lambda x: x["Value"], reverse=False)
         return pred

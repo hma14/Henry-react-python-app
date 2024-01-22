@@ -266,8 +266,8 @@ const PredictDraws = (props) => {
               <tr key={index}>
                 <td className='bg-color3 text-center text-success fs-5'>{index + 1}</td>
                 {row.map((number) =>
-                  <td className='bg-color1 text-center text-danger fs-3 fw-bold px-2'
-                    key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-3': (number.Distance === 0) }, { 'text-success fs-3': (number.Distance > 10) })}>{number.Value}</span>
+                  <td className='bg-color1 text-center text-success fs-3 fw-bold px-2'
+                    key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-3': (number.Distance === 0) }, { 'text-danger fs-3': (number.Distance > 10) })}>{number.Value}</span>
                     <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
                     <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
                   </td>)}
