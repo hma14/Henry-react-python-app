@@ -239,7 +239,7 @@ const PredictDraws = (props) => {
 
     <div>
       {numbers &&
-        <Table striped bordered hover responsive className="table-primary mb-3" size="lg" >
+        <Table striped bordered hover responsive className="table-light mb-3" size="lg" >
           {getHeader()}
           <tbody className='fw-bold' >
             {getRow(0, 10)}
@@ -255,16 +255,16 @@ const PredictDraws = (props) => {
         <button
           type="button"
           onClick={() => fetchData()}
-          className="btn btn-primary fw-bold mb-2 three-d-button">Generate Potential Draws
+          className="btn btn-success fw-bold mb-2 three-d-button">Generate Potential Draws
         </button>
       </div>
       {predicts.length > 0 &&
-        <Table striped bordered hover responsive className="table-primary mb-3" size="lg" >
+        <Table striped bordered hover responsive className="table-light mb-3" size="lg" >
           {getHeader_2()}
-          <tbody className='fw-bold' >
+          <tbody className='fw-bold align-middle' >
             {predicts.map((row, index) => (
               <tr key={index}>
-                <td className='bg-color3 text-center text-success fs-5'>{index + 1}</td>
+                <td className='bg-color3 text-primary fs-5 fst-italic'>{index + 1}</td>
                 {row.map((number) =>
                   <td className='bg-color1 text-center text-success fs-3 fw-bold px-2'
                     key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-3': (number.Distance === 0) }, { 'text-danger fs-3': (number.Distance > 10) })}>{number.Value}</span>

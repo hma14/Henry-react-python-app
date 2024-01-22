@@ -11,6 +11,7 @@ class PotentialDraws:
 
     TWO_COLD_COLD_DISTANCE = 10
     MAX_ALLOWED_ROWS = 50
+    HITS_MIN_DISTANCE = 1
 
     def __init__(self, data, columns, rows):
         self.data = data
@@ -408,11 +409,11 @@ class PotentialDraws:
         array = []
         if isForHotHitsRange == True:
             for i in range(len(highest_hits_array)):
-                if highest_hits_array[i]["Distance"] > 5:
+                if highest_hits_array[i]["Distance"] > self.HITS_MIN_DISTANCE:
                     array.append(highest_hits_array[i])
         else:
             for i in range(len(lowest_hits_array)):
-                if lowest_hits_array[i]["Distance"] > 5:
+                if lowest_hits_array[i]["Distance"] > self.HITS_MIN_DISTANCE:
                     array.append(lowest_hits_array[i])
 
         return array

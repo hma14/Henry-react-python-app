@@ -74,7 +74,7 @@ const App = () => {
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [pageSize, setPageSize] = useState(5)
+  const [pageSize, setPageSize] = useState(10)
   const [drawNumber, setDrawNumber] = useState(1)
 
 
