@@ -102,8 +102,7 @@ def potential_draws():
     # Access the 'data' key, which contains an array
     numbers = parsed_data["data"]
     columns = int(request.args.get("columns"))
-    print(f"columns= {columns}")
-    # potential_draws = PredictDraw(numbers[0]['Numbers'], columns)
+    
     potential_draws = PotentialDraws(numbers, columns, page_size)
 
     data = potential_draws.next_potential_draws()

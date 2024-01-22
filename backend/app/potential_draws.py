@@ -15,23 +15,31 @@ class PotentialDraws:
     def __init__(self, data, columns, rows):
         self.data = data
         self.numbers = data[0]["Numbers"]
+        self.prev_draw_numbers = data[1]["Numbers"]
         self.columns = columns
         self.rows = rows
-        
 
     def next_potential_draws(self):
-        
         results = [[]]
-        for n in range(self.rows):            
+        for n in range(self.rows):
             flip_coin = random.random() * 2
             if flip_coin >= 1:
-                results.append(self.next_potential_draws_1())
+                flip_coin2 = random.random() * 2
+                if flip_coin2 >= 1:
+                    results.append(self.get_numbers_based_on_total_hits())
+                else:
+                    results.append(self.next_potential_draws_1())
             else:
-                results.append(self.next_potential_draws_2())
-                
-        #print(f"results = {results}")        
-        return results
-    
+                flip_coin2 = random.random() * 2
+                if flip_coin2 >= 1:
+                    results.append(self.get_numbers_based_on_total_hits())
+                else:
+                    results.append(self.next_potential_draws_2())
+
+        no_empty_array_results = [arr for arr in results if arr]
+        results = self.remove_duplicates(no_empty_array_results[0])
+        return no_empty_array_results
+
     def next_potential_draws_1(self):
         pred = []
 
@@ -56,7 +64,7 @@ class PotentialDraws:
 
         # take 1 from middle
         index = random.randint(0, len(middle) - 1)
-        pred.append(middle[index])       
+        pred.append(middle[index])
 
         if flip_coin < 1:
             # add 2 from DistanceNumbers
@@ -67,14 +75,14 @@ class PotentialDraws:
         else:
             # take 2 from TotalHitsNumbers
             index = random.randint(0, len(high) - 1)
-            pred.append(high[index])       
+            pred.append(high[index])
             index = random.randint(0, len(middle) - 1)
-            pred.append(middle[index])      
+            pred.append(middle[index])
 
-        pred = remove_duplicates(pred)
-        
+        pred = self.remove_duplicates(pred)
+
         # take 1 from Two_Hots_1_Cold_Numbers
-        two_hots_1_cold = self.get_Two_Hots_1_Cold_Numbers()      
+        two_hots_1_cold = self.get_Two_Hots_1_Cold_Numbers()
         if two_hots_1_cold != []:
             index = random.randint(0, len(two_hots_1_cold) - 1)
             pred.append(two_hots_1_cold[index])
@@ -84,7 +92,7 @@ class PotentialDraws:
                 index = random.randint(0, len(two_cold_numbers) - 1)
                 pred.append(two_cold_numbers[index])
 
-        pred = remove_duplicates(pred)
+        pred = self.remove_duplicates(pred)
         while len(pred) < self.columns:
             if len(two_hots_1_cold) > 1:
                 index = random.randint(0, len(two_hots_1_cold) - 1)
@@ -93,16 +101,9 @@ class PotentialDraws:
                 frequent = self.getFrequentNumbers()
                 index = random.randint(0, len(frequent) - 1)
                 pred.append(frequent[index])
-                
-            pred = remove_duplicates(pred)
 
-        """
-        # print out
-        print(f"frequent = {frequent}")
-        print(f"two_hots_1_cold = {two_hots_1_cold}")
-        print(f"two_cold = {two_cold}")
-        """
-        pred.sort(key=lambda x: x["Value"], reverse=False)
+            pred = self.remove_duplicates(pred)
+
         return pred
 
     def next_potential_draws_2(self):
@@ -112,7 +113,6 @@ class PotentialDraws:
         lastHits = self.getLastHitNumbers()
         index = random.randint(0, len(lastHits) - 1)
         pred.append(lastHits[index])
-
 
         # frequent numbers
         frequent = self.getFrequentNumbers()
@@ -148,8 +148,7 @@ class PotentialDraws:
             index = random.randint(0, len(lastHits) - 1)
             pred.append(lastHits[index])
 
-        
-        pred = remove_duplicates(pred)
+        pred = self.remove_duplicates(pred)
         while len(pred) < self.columns:
             flip_coin = random.random() * 2
             arr = (
@@ -166,7 +165,7 @@ class PotentialDraws:
             index = random.randint(0, 2)
             sub_index = random.randint(0, len(arr[index]) - 1)
             pred.append(arr[index][sub_index])
-            pred = remove_duplicates(pred)
+            pred = self.remove_duplicates(pred)
 
         """
         # print out
@@ -174,7 +173,7 @@ class PotentialDraws:
         print(f"two_hots_1_cold = {two_hots_1_cold}")
         print(f"two_cold = {two_cold}")
         """
-        
+
         pred.sort(key=lambda x: x["Value"], reverse=False)
         return pred
 
@@ -374,14 +373,181 @@ class PotentialDraws:
             elif draw_count > self.MAX_ALLOWED_ROWS:
                 return False
 
-def remove_duplicates(objects):
-    #print(f"objects = {objects}")
-    seen_values = set()
-    unique_objects = []
+    def get_hits_range_arrays(self, numbers):
+        lowest_hits_array = []
+        two_fifth_array = []
+        three_fifth_array = []
+        four_fifth_array = []
+        highest_hits_array = []
+        array = []
+        arr = sorted(numbers, key=lambda x: x["TotalHits"], reverse=False)
 
-    for obj in objects:
-        if obj['Value'] not in seen_values:
-            seen_values.add(obj['Value'])
-            unique_objects.append(obj)
+        one_fifth = int(len(arr) / 5 + 1)
+        two_fifth = int((len(arr) * 2) / 5 + 1)
+        three_fifth = int((len(arr) * 3) / 5 + 1)
+        four_fifth = int((len(arr) * 4) / 5 + 1)
 
-    return unique_objects 
+        for i in range(len(arr)):
+            if i < one_fifth:
+                lowest_hits_array.append(arr[i])
+
+            elif i < two_fifth:
+                two_fifth_array.append(arr[i])
+            elif i < three_fifth:
+                three_fifth_array.append(arr[i])
+            elif i < four_fifth:
+                four_fifth_array.append(arr[i])
+            else:
+                highest_hits_array.append(arr[i])
+
+        array.append(lowest_hits_array)
+        array.append(two_fifth_array)
+        array.append(three_fifth_array)
+        array.append(four_fifth_array)
+        array.append(highest_hits_array)
+
+        return array
+
+    def get_hits_in_number_range(self, numbers, isForHotHitsRange):
+        arr = self.get_hits_range_arrays(numbers)
+        highest_hits_array = arr[4]
+        lowest_hits_array = arr[0]
+        array = []
+        if isForHotHitsRange == True:
+            for i in range(len(highest_hits_array)):
+                if highest_hits_array[i]["Distance"] > 5:
+                    array.append(highest_hits_array[i])
+        else:
+            for i in range(len(lowest_hits_array)):
+                if lowest_hits_array[i]["Distance"] > 5:
+                    array.append(lowest_hits_array[i])
+
+        return array
+
+    def is_hot_in_highest_hits_range(self, isForPrevious):
+        arr = self.get_hits_in_number_range(
+            self.prev_draw_numbers if isForPrevious else self.numbers, True
+        )
+        filtered_arr = [a for a in arr if a["Distance"] == 0]
+        if len(filtered_arr) <= 1:
+            return False
+        return True
+
+    def is_hot_in_lowest_hits_range(self, isForPrevious):
+        arr = self.get_hits_in_number_range(
+            self.prev_draw_numbers if isForPrevious else self.numbers, False
+        )
+        filtered_arr = [a for a in arr if a["Distance"] == 0]
+        if len(filtered_arr) <= 1:
+            return False
+        return True
+
+    #
+    def get_numbers_based_on_total_hits(self):
+        arr = self.get_hits_range_arrays(self.numbers)
+        lowest_hits_array = arr[0]
+        two_fifth_array = arr[1]
+        three_fifth_array = arr[2]
+        four_fifth_array = arr[3]
+        highest_hits_array = arr[4]
+        array = []
+        # check if previous hot in highest hits range
+        if self.is_hot_in_highest_hits_range(True) == True:
+            # check if previous hot in lowest hits range
+            if self.is_hot_in_lowest_hits_range(True) == True:
+                # now focus on middle ranges
+                index = random.randint(0, len(two_fifth_array) - 1)
+                array.append(two_fifth_array[index])
+                index = random.randint(0, len(three_fifth_array) - 1)
+                array.append(three_fifth_array[index])
+                index = random.randint(0, len(four_fifth_array) - 1)
+                array.append(four_fifth_array[index])
+
+                index = random.randint(0, len(two_fifth_array) - 1)
+                array.append(two_fifth_array[index])
+                index = random.randint(0, len(three_fifth_array) - 1)
+                array.append(three_fifth_array[index])
+                index = random.randint(0, len(four_fifth_array) - 1)
+                array.append(four_fifth_array[index])
+
+            elif self.is_hot_in_lowest_hits_range(True) == False:
+                # now focus on 2 lowest and 3 middle ranges 1 highest
+                # lowest
+                index = random.randint(0, len(lowest_hits_array) - 1)
+                array.append(lowest_hits_array[index])
+                index = random.randint(0, len(lowest_hits_array) - 1)
+                array.append(lowest_hits_array[index])
+
+                # middle
+                index = random.randint(0, len(two_fifth_array) - 1)
+                array.append(two_fifth_array[index])
+                index = random.randint(0, len(three_fifth_array) - 1)
+                array.append(three_fifth_array[index])
+                index = random.randint(0, len(four_fifth_array) - 1)
+                array.append(four_fifth_array[index])
+
+                # highest
+                index = random.randint(0, len(highest_hits_array) - 1)
+                array.append(highest_hits_array[index])
+
+        else:
+            # focus on highest of next draw
+            if self.is_hot_in_lowest_hits_range(True) == True:
+                # now focus on highest and middle ranges
+                # 2 highest
+                index = random.randint(0, len(highest_hits_array) - 1)
+                array.append(highest_hits_array[index])
+                index = random.randint(0, len(highest_hits_array) - 1)
+                array.append(highest_hits_array[index])
+
+                # 1 lowest
+                index = random.randint(0, len(lowest_hits_array) - 1)
+                array.append(lowest_hits_array[index])
+
+                # 3 middle
+                index = random.randint(0, len(two_fifth_array) - 1)
+                array.append(two_fifth_array[index])
+                index = random.randint(0, len(three_fifth_array) - 1)
+                array.append(three_fifth_array[index])
+                index = random.randint(0, len(four_fifth_array) - 1)
+                array.append(four_fifth_array[index])
+
+            elif self.is_hot_in_lowest_hits_range(True) == False:
+                # now focus on lowest and highest
+                # 2 highest
+                index = random.randint(0, len(highest_hits_array) - 1)
+                array.append(highest_hits_array[index])
+                index = random.randint(0, len(highest_hits_array) - 1)
+                array.append(highest_hits_array[index])
+
+                # 2 lowest
+                index = random.randint(0, len(lowest_hits_array) - 1)
+                array.append(lowest_hits_array[index])
+                index = random.randint(0, len(lowest_hits_array) - 1)
+                array.append(lowest_hits_array[index])
+
+                # 2 middle
+                index = random.randint(0, len(two_fifth_array) - 1)
+                array.append(two_fifth_array[index])
+                index = random.randint(0, len(three_fifth_array) - 1)
+                array.append(three_fifth_array[index])
+
+        pred = self.remove_duplicates(array)
+        while len(pred) < self.columns:
+            index = random.randint(0, len(highest_hits_array) - 1)
+            pred.append(highest_hits_array[index])
+            pred = self.remove_duplicates(pred)
+            
+        pred.sort(key=lambda x: x['Value'], reverse=False)
+        return pred
+
+    def remove_duplicates(self, objects):
+        seen_values = set()
+        unique_objects = []
+
+        for obj in objects:
+            if obj["Value"] not in seen_values:
+                seen_values.add(obj["Value"])
+                unique_objects.append(obj)
+
+        return unique_objects
