@@ -107,7 +107,6 @@ def potential_draws():
     if (drawNumber == 1):
         drawNumber = get_target_draw_number(lotto_name)   
         
-    print(f"drawNumber = {drawNumber}")
     total_page_size = 200
     start_index = 0
 
@@ -125,9 +124,14 @@ def potential_draws():
     numbers = parsed_data["data"]
     columns = int(request.args.get("columns"))
 
+   
     potential_draws = PotentialDraws(numbers, columns, page_size)
 
     data = potential_draws.next_potential_draws()
+    for da in data:
+        for d in da:
+            d["NumberOfAppearing"] += 1
+            
     data_exclusive_empty_array = [arr for arr in data if arr]
     return data_exclusive_empty_array
 
@@ -206,6 +210,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
                     "NumberOfDrawsWhenHit": number.NumberOfDrawsWhenHit,  # The line ` "IsBonusNumber":
                     "IsBonusNumber": number.IsBonusNumber,
                     "TotalHits": number.TotalHits,
+                    "NumberOfAppearing":0,
                 }
             )
             if len(numbers_dict[number.lottotype.DrawNumber]) == number_range:
@@ -261,8 +266,6 @@ def get_target_draw_number(lotto_name):
         .order_by(desc(LottoType.DrawNumber))
         .first()
     )
-    
-    print(f"last_draw.DrawNumber = {last_draw.DrawNumber}")
     return  last_draw.DrawNumber 
 
 

@@ -125,8 +125,9 @@ class Numbers(db.Model):
     LottoTypeId = db.Column(db.String, db.ForeignKey('LottoTypes.Id'), nullable=False)
     lottotype = db.relationship('LottoType')
 
+    # Extra fields not related to the database table
+    NumberOfAppearing = 0
     
-
     def __init__(
         self,
         Id,
@@ -136,7 +137,8 @@ class Numbers(db.Model):
         IsHit,
         NumberOfDrawsWhenHit,
         IsBonusNumber,
-        TotalHits
+        TotalHits,
+        NumberOfAppearing
     ):
         self.Id = Id
         self.Value = Value
@@ -146,6 +148,7 @@ class Numbers(db.Model):
         self.NumberOfDrawsWhenHit = NumberOfDrawsWhenHit
         self.IsBonusNumber = IsBonusNumber
         self.TotalHits = TotalHits
+        self.NumberOfAppearing = NumberOfAppearing
         
 class LottoType(db.Model):
     __tablename__ = 'LottoTypes'

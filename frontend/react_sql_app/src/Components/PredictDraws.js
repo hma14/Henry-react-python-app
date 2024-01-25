@@ -18,9 +18,9 @@ const PredictDraws = (props) => {
 
     async function getNumbers() {
       try {
-        const response = await axios(endpoint);        
+        const response = await axios(endpoint);
         setNumbers(response.data.data[0].Numbers);
-        
+
       } catch (error) {
         console.error('Error fetching draw number:', error);
       }
@@ -29,8 +29,6 @@ const PredictDraws = (props) => {
     getNumbers()
 
   }, [columns, endpoint, endpoint2, rows]);
-
-
 
   const processNextPotentialDraws = async () => {
 
@@ -46,17 +44,17 @@ const PredictDraws = (props) => {
     }
   }
 
+
   const fetchData = async () => {
     try {
       var result = null;
       result = await processNextPotentialDraws();
-
       setPredicts(result[0]);
+      console.log(predicts)
       return predicts
     } catch (error) {
       console.error('Error updating predicts:', error);
     }
-
   };
 
   /*
@@ -231,8 +229,8 @@ const PredictDraws = (props) => {
       <tr>
         {numbers
           .map(number => number.Value > start && number.Value <= end ?
-            (<td className='bg-color1 text-center text-success fs-4 fw-bold px-2'
-              key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span>
+            (<td className='bg-color1 text-center text-success fs-5 fw-bold px-2'
+              key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-5': (number.Distance === 0) }, { 'text-danger fs-5': (number.Distance > 10) })}>{number.Value}</span>
               <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
               <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
             </td>)
@@ -275,10 +273,11 @@ const PredictDraws = (props) => {
               <tr key={index}>
                 <td className='bg-color3 text-primary fs-5 fst-italic'>{index + 1}</td>
                 {row.map((number) =>
-                  <td className='bg-color1 text-center text-success fs-2 fw-bold px-2'
-                    key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-2': (number.Distance === 0) }, { 'text-danger fs-2': (number.Distance > 10) })}>{number.Value}</span>
+                  <td className='bg-color1 text-center text-success fs-3 fw-bold px-2'
+                    key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-3': (number.Distance === 0) }, { 'text-danger fs-3': (number.Distance > 10) })}>{number.Value}</span>
                     <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
                     <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
+                    <span className='my-color-2 fst-italic fs-6'>[{number.NumberOfAppearing}]</span>
                   </td>)}
               </tr>
             ))}
