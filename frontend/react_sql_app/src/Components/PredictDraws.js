@@ -8,7 +8,7 @@ import classNames from 'classnames'
 
 
 const PredictDraws = (props) => {
-  const { endpoint, endpoint2, columns, rows } = props
+  const { endpoint, endpoint2, columns, rows, drawNumber } = props
 
   const [numbers, setNumbers] = useState()
   const [predicts, setPredicts] = useState([])
@@ -16,13 +16,19 @@ const PredictDraws = (props) => {
   useEffect(() => {
     // Fetch data from the specified endpoint
 
-    (async () => {
-      const result = await axios(endpoint)
-      setNumbers(result.data.data[0].Numbers)
-      fetchData()
-    })()
+    async function getNumbers() {
+      try {
+        const response = await axios(endpoint);        
+        setNumbers(response.data.data[0].Numbers);
+        
+      } catch (error) {
+        console.error('Error fetching draw number:', error);
+      }
+    }
+    fetchData()
+    getNumbers()
 
-  }, [columns, endpoint, endpoint2, rows]);
+  }, [predicts, columns, endpoint, endpoint2, rows, drawNumber]);
 
 
 
@@ -50,6 +56,7 @@ const PredictDraws = (props) => {
     } catch (error) {
       console.error('Error updating predicts:', error);
     }
+
   };
 
   /*
@@ -253,6 +260,7 @@ const PredictDraws = (props) => {
         </Table>}
       <div className='row-container'>
         <h4 className='text-success fst-italic'>Potential Next Draws</h4>
+        <h4 className='text-primary'>Current Draw: <span className='fst-italic fw-bold text-danger'>{drawNumber}</span></h4>
         <button
           type="button"
           onClick={() => fetchData()}
@@ -276,7 +284,7 @@ const PredictDraws = (props) => {
             ))}
           </tbody>
           {getHeader_2()}
-        </Table>}
+        </Table>}+
 
     </div>
   )

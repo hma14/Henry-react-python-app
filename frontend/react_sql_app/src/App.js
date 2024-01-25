@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ApiNumbers from './Components/ApiNumbers';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styled from 'styled-components'
+import axios from 'axios';
 import './App.css'
 import LottoTryLogo from './images/LottoTryLogo.png'
 import PredictDraws from './Components/PredictDraws'
@@ -59,7 +60,7 @@ const Styles = styled.div`
 const App = () => {
 
   const [selectedLotto, setSelectedLotto] = useState('AllNumbers')
-  const [sortType, setSortType] = useState('predictDraws')
+  const [sortType, setSortType] = useState('number')
   const [numberRange, setNumberRange] = useState(49)
 
 
@@ -68,7 +69,7 @@ const App = () => {
   const [lottoColumns, setLottoColumns] = useState(7)
   const [potentialColumns, setPotentialColumns] = useState(6)
   const [selectedOption, setSelectedOption] = useState('BC49');
-  const [selectedTypeOption, setSelectedTypeOption] = useState('predictDraws');
+  const [selectedTypeOption, setSelectedTypeOption] = useState('number');
 
   // end 
 
@@ -77,8 +78,23 @@ const App = () => {
   const [pageSize, setPageSize] = useState(10)
   const [drawNumber, setDrawNumber] = useState(1)
 
+  const url10 = 'http://127.0.0.1:5000/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName;
 
+  useEffect(() => {
+    async function getCurrentDrawNumber() {
+      try {
+        const response = await axios(url10);
+        setDrawNumber(response.data.drawNumber); 
+      } catch (error) {
+        console.error('Error fetching draw number:', error);
+      }
+    }
 
+    getCurrentDrawNumber()
+
+  }, [selectedLotto, lottoName, lottoName, drawNumber]);
+
+  
 
   /*
     const url = 'http://ep.lottotry.com:5000/api/openai';
@@ -90,19 +106,14 @@ const App = () => {
   
    */
 
+
   const url = 'http://127.0.0.1:5000/api/openai';
-  const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-  const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize;
-  const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&columns=' + lottoColumns + '&page_size=' + pageSize;
-  const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+  const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+  const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&drawNumber=' + drawNumber;
+  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+  const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&columns=' + lottoColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+  const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
 
-
-
-
-  useEffect(() => {
-
-  }, [selectedLotto, sortType, lottoName])
 
 
   const lottoNameToInt = {
@@ -118,6 +129,7 @@ const App = () => {
   const selectLotto = (value) => {
     setLottoName(lottoNameToInt[value])
 
+    console.log()
     setSelectedOption(value)
     switch (value) {
       case "BC49":
@@ -147,6 +159,19 @@ const App = () => {
     setSelectedTypeOption(value)
     setSortType(value)
   }
+
+  const handleDrawNumberChange = (event) => {
+   
+    // Ensure that only numeric values are entered
+    //const numericValue = event.target.value.replace(/[^0-9]/g, '');
+    const numericValue = parseInt(event.target.value)
+    if (!isNaN(numericValue))
+      setDrawNumber(numericValue);
+
+  };
+
+  
+
 
 
   return (
@@ -192,6 +217,23 @@ const App = () => {
                 <span className='bg-color8 my-color-1 ps-2'>draws per page</span>
               </div>
             </li>
+            <li className="nav-item margin-left col-md-4">
+              <div className="margin-left mt-1 row">
+                <div class="col-md-5 mt-1">
+                  <label for="textInput" className="my-color-1 ps-3 fw-bold">Target Draw :</label>
+                </div>
+                <div class="col-md-5">
+                  <input
+                    className='form-control ps-3 fw-bold my-color-3 fst-italic'
+                    type="number"
+                    id="numberInput"
+                    name="numberInput"
+                    value={drawNumber}
+                    onChange={handleDrawNumberChange}
+                  />
+                </div>
+              </div>
+            </li>
           </ul>
         </nav>
         <>
@@ -211,8 +253,8 @@ const App = () => {
                     <NumberDrawsInDistance endpoint={url8} rows={pageSize} />
                   )
                 case 'predictDraws':
-                  return (                   
-                    <PredictDraws endpoint={url5} endpoint2={url9} columns={potentialColumns} rows={pageSize} />
+                  return (
+                    <PredictDraws endpoint={url5} endpoint2={url9} columns={potentialColumns} rows={pageSize} drawNumber={drawNumber} />
                   )
                 default: return (
                   <ApiNumbers endpoint={url4} sortType={sortType} />

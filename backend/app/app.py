@@ -30,27 +30,32 @@ def get_data_4():
 
     page_size = int(request.args.get("page_size", 10))
     page_number = int(request.args.get("page_number", 1))
-
-    # Calculate the start and end indices for the current page
+    drawNumber = int(request.args.get("drawNumber", 1))
+    
+    if (drawNumber == 1):
+        drawNumber = get_target_draw_number(lotto_name)   
     start_index = (page_number - 1) * page_size
 
-    return retrieve_data(lotto_name, page_size, number_range, start_index)
+    data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+
+    return data
 
 
 @app.route("/api/lotto/predict", methods=["GET"])
 def get_data_5():
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
+    drawNumber = int(request.args.get("drawNumber", 1))    
     page_size = 1
     start_index = 0
-    return retrieve_data(lotto_name, page_size, number_range, start_index)
+    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
 
 @app.route("/api/openai", methods=["GET"])
 def get_from_openai():
     # below will call openai web api
     # response_string = get_openai_response()
-    
+
     # return simply strings
     response_string = get_string_response()
 
@@ -61,10 +66,18 @@ def get_from_openai():
 def predict_draw():
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
+    drawNumber = int(request.args.get("drawNumber"))
+        
+    print(f"drawNumber = {drawNumber}")
+    if (drawNumber == 1):
+        drawNumber = get_target_draw_number(lotto_name)   
+    print(f"drawNumber 2 = {drawNumber}")
+
+    
     page_size = 100
     start_index = 0
 
-    result = retrieve_data(lotto_name, page_size, number_range, start_index)
+    result = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
     # Decode the byte string to a regular string
     json_str = result.data.decode("utf-8")
@@ -83,15 +96,23 @@ def predict_draw():
 
     return data
 
+
 @app.route("/api/lotto/potential_draws", methods=["POST"])
 def potential_draws():
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get("page_size", 10))
+    drawNumber = int(request.args.get("drawNumber"))
+    
+    if (drawNumber == 1):
+        drawNumber = get_target_draw_number(lotto_name)   
+        
     total_page_size = 200
     start_index = 0
 
-    result = retrieve_data(lotto_name, total_page_size, number_range, start_index)
+    result = retrieve_data(
+        lotto_name, total_page_size, number_range, start_index, drawNumber
+    )
 
     # Decode the byte string to a regular string
     json_str = result.data.decode("utf-8")
@@ -102,13 +123,12 @@ def potential_draws():
     # Access the 'data' key, which contains an array
     numbers = parsed_data["data"]
     columns = int(request.args.get("columns"))
-    
+
     potential_draws = PotentialDraws(numbers, columns, page_size)
 
     data = potential_draws.next_potential_draws()
     data_exclusive_empty_array = [arr for arr in data if arr]
     return data_exclusive_empty_array
-
 
 
 @app.route("/api/lotto/lottoDraws", methods=["GET"])
@@ -117,10 +137,13 @@ def get_data_7():
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get("page_size", 10))
     page_number = int(request.args.get("page_number", 1))
+    drawNumber = int(request.args.get("drawNumber"))
+    if (drawNumber == 1):
+        drawNumber = get_target_draw_number(lotto_name)  
 
     # Calculate the start and end indices for the current page
     start_index = (page_number - 1) * page_size
-    return retrieve_data(lotto_name, page_size, number_range, start_index)
+    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
 
 @app.route("/api/lotto/numberDraws", methods=["GET"])
@@ -129,10 +152,13 @@ def get_data_8():
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get("page_size", 10))
     page_number = int(request.args.get("page_number", 1))
+    drawNumber = int(request.args.get("drawNumber"))
+    if (drawNumber == 1):
+        drawNumber = get_target_draw_number(lotto_name)  
 
     # Calculate the start and end indices for the current page
     start_index = (page_number - 1) * page_size
-    return retrieve_data(lotto_name, page_size, number_range, start_index)
+    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
 
 def get_lotto_number_range(lotto_name):
@@ -145,10 +171,17 @@ def get_lotto_number_range(lotto_name):
         return 7  # for DailyGrand_GrandNumber
 
 
-def retrieve_data(lotto_name, page_size, number_range, start_index):
+@app.route("/api/lotto/getCurrentDrawNumber", methods=["GET"])
+def get_current_draw_number():
+    lotto_name = int(request.args.get("lotto_name", 1))
+    da = get_target_draw_number(lotto_name)
+    
+    return jsonify({"drawNumber": da})
+
+def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
     data = (
-        Numbers.query.join(LottoType)
-        .filter(LottoType.LottoName == lotto_name)
+        Numbers.query.join(LottoType, LottoType.Id == Numbers.LottoTypeId)
+        .filter(LottoType.LottoName == lotto_name, LottoType.DrawNumber <= drawNumber)
         .options(joinedload(Numbers.lottotype))
         .order_by(desc(LottoType.DrawNumber))
         .limit(page_size * number_range)
@@ -175,7 +208,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index):
                 }
             )
             if len(numbers_dict[number.lottotype.DrawNumber]) == number_range:
-                """print(f"i = {i}, value = {number.lottotype.DrawNumber}")"""
+
                 if number.lottotype.DrawNumber not in drawNumber_dict:
                     drawNumber_dict[number.lottotype.DrawNumber] = []
                 drawNumber_dict[
@@ -209,10 +242,27 @@ def retrieve_data(lotto_name, page_size, number_range, start_index):
             }
             for entry in sorted_list
         ]
-        # print(sorted_result_list)
+
         return jsonify({"data": sorted_result_list})
     else:
         return jsonify({"message": "No data found"})
+
+
+def get_target_draw_number(lotto_name):
+    last_draw = (
+        LottoType.query.join(
+            Numbers, Numbers.LottoTypeId == LottoType.Id
+        )  # Adjust the join condition based on your actual model
+        .filter(LottoType.LottoName == lotto_name)
+        .options(
+            joinedload(LottoType.numbers)
+        )  # Adjust based on your actual relationships
+        .order_by(desc(LottoType.DrawNumber))
+        .first()
+    )
+    
+    print(f"last_draw.DrawNumber = {last_draw.DrawNumber}")
+    return  last_draw.DrawNumber 
 
 
 if __name__ == "__main__":

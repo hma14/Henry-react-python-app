@@ -12,14 +12,25 @@ const ApiNumbers = (props) => {
 
 
     useEffect(() => {
+
         // Fetch data from the specified endpoint
-        axios.get(endpoint)
-            .then(response => {
+      /*   async function fetchData() {
+            try {
+                const response = await axios(endpoint);
                 setData(response.data.data);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+            } catch (error) {
+                console.error('Error fetching draw number:', error);
+            }
+        }
+        fetchData() */
+
+         axios.get(endpoint)
+             .then(response => {
+                 setData(response.data.data);
+             })
+             .catch(error => {
+                 console.error('Error fetching data:', error);
+             });
 
     }, [endpoint]);
 
@@ -107,7 +118,7 @@ const ApiNumbers = (props) => {
     return (
 
         <div>
-            {data.length > 0 &&
+            {data && data.length > 0 &&
                 <Table responsive className="table-default mb-4" size="sm" hover="true">
                     {getHeader()}
                     <tbody className='fw-bold'>
