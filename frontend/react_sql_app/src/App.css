@@ -279,3 +279,13 @@ thead {
 .three-d-button:hover {
   box-shadow: 0 0 10px rgba(243, 167, 167, 0.3);
 }
+
+.my-input {
+    width: 200px; /* Adjust the width as needed */
+    height: 40px; /* Set the height to resemble a scrollbar */
+    padding: 0;
+    margin: 0;
+    border: 2px solid #ccc;
+    overflow-y: scroll; /* Enable vertical scrolling */
+    resize: none; /* Prevent resizing of the input */
+}
