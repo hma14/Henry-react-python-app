@@ -79,6 +79,7 @@ const App = () => {
   const [drawNumber, setDrawNumber] = useState(1)
 
   const url10 = 'http://127.0.0.1:5000/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName;
+  //const url10 = 'http://ep.lottotry.com:5000/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName;
 
   useEffect(() => {
     async function getCurrentDrawNumber() {
@@ -100,11 +101,11 @@ const App = () => {
 
   /*
     const url = 'http://ep.lottotry.com:5000/api/openai';
-    const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-    const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns;
-    const url9 = 'http://ep.lottotry.com:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize;
-    const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
-    const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize;
+    const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+    const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&drawNumber=' + drawNumber;
+    const url9 = 'http://ep.lottotry.com:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+    const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+    const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
   
    */
 
