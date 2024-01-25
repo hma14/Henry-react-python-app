@@ -92,7 +92,9 @@ const App = () => {
 
     getCurrentDrawNumber()
 
-  }, [selectedLotto, lottoName, lottoName, drawNumber]);
+    console.log(drawNumber)
+
+  }, [selectedLotto, lottoName, lottoName]);
 
   
 

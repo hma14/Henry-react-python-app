@@ -28,7 +28,7 @@ const PredictDraws = (props) => {
     fetchData()
     getNumbers()
 
-  }, [predicts, columns, endpoint, endpoint2, rows, drawNumber]);
+  }, [columns, endpoint, endpoint2, rows]);
 
 
 
