@@ -60,7 +60,7 @@ const Styles = styled.div`
 const App = () => {
 
   const [selectedLotto, setSelectedLotto] = useState('AllNumbers')
-  const [sortType, setSortType] = useState('number')
+  const [sortType, setSortType] = useState('predictDraws')
   const [numberRange, setNumberRange] = useState(49)
 
 
@@ -69,7 +69,7 @@ const App = () => {
   const [lottoColumns, setLottoColumns] = useState(7)
   const [potentialColumns, setPotentialColumns] = useState(6)
   const [selectedOption, setSelectedOption] = useState('BC49');
-  const [selectedTypeOption, setSelectedTypeOption] = useState('number');
+  const [selectedTypeOption, setSelectedTypeOption] = useState('predictDraws');
 
   // end 
 
