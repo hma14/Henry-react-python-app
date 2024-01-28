@@ -6,7 +6,8 @@ class PotentialDraws:
     PAST_DRAWS = 8
     HOTS_COLD = 25
     TWO_HOTS_GAP = 5
-    COLD_DISTANCE = 13
+    COLD_DISTANCE = 11
+    FREQUENT_HITS = 3
     PREVIOUS_DISTANCE = 6
 
     TWO_COLD_COLD_DISTANCE = 10
@@ -102,7 +103,7 @@ class PotentialDraws:
                 index = random.randint(0, len(hots_cold) - 1)
                 pred.append(hots_cold[index])
             else:
-                frequent = self.getFrequentNumbers()
+                frequent = self.get_frequent_numbers()
                 index = random.randint(0, len(frequent) - 1)
                 pred.append(frequent[index])
 
@@ -119,7 +120,7 @@ class PotentialDraws:
         pred.append(cold_numbers[index])
 
         # frequent numbers
-        frequent = self.getFrequentNumbers()
+        frequent = self.get_frequent_numbers()
 
         # take 3 from frequent
         if len(frequent) > 3:
@@ -244,13 +245,41 @@ class PotentialDraws:
 
     # new algorithm
 
-    def getFrequentNumbers(self):
+    def get_frequent_numbers(self):
         frequent = []
-        numbers = self.numbers
-        for n in numbers:
-            if n["Distance"] <= self.FREQUENT_GAP and n["IsHit"] == False:
+        for n in self.numbers:
+            if self.get_frequent(n): 
                 frequent.append(n)
+        print(f"frequent = {frequent}")        
         return frequent
+    
+    def get_frequent(self, number):
+        data = self.data
+        draw_count = 0
+        distance_from_previous_hit = 0
+        current_draw = data[0]
+        number_of_hits = 0
+        for da in data:
+            draw_count += 1
+            numbers = da["Numbers"]
+            num = [x for x in numbers if x["Value"] == number["Value"]][0]
+            if (
+                num["Distance"] < self.FREQUENT_GAP
+                and number_of_hits >= self.FREQUENT_HITS
+                and draw_count < self.HOTS_COLD
+                and distance_from_previous_hit < self.FREQUENT_GAP
+            ):
+                return True
+            elif num["Distance"] > self.FREQUENT_GAP or distance_from_previous_hit >= self.FREQUENT_GAP :
+                return False
+
+            if num["IsHit"] == True:
+                number_of_hits += 1
+                distance_from_previous_hit = 0
+            else:
+                distance_from_previous_hit += 1
+
+
 
     def get_hots_cold_numbers(self):
         hots_cold = []
@@ -263,6 +292,7 @@ class PotentialDraws:
 
             if self.get_hots_cold(n):
                 hots_cold.append(n)
+
         return hots_cold
 
     def get_hots_cold(self, number):
@@ -277,13 +307,11 @@ class PotentialDraws:
             num = [x for x in numbers if x["Value"] == number["Value"]][0]
             if num["IsHit"] == True and da["DrawNumber"] == current_draw["DrawNumber"]:
                 return False
-            # elif num["Distance"] >= self.COLD_DISTANCE and draw_count < self.PAST_DRAWS:
-            #    return False
             elif (
                 num["Distance"] >= self.COLD_DISTANCE
                 and number_of_hits > 1
                 and draw_count < self.HOTS_COLD
-                and 1 <= number_of_hits <= 3
+                and 1 <= number_of_hits <= self.FREQUENT_HITS
             ):
                 return True
             elif num["Distance"] < self.COLD_DISTANCE and draw_count > self.HOTS_COLD:
@@ -297,8 +325,7 @@ class PotentialDraws:
 
     def get_cold_numbers(self):
         colds = []
-        numbers = self.data[0]["Numbers"]
-        for n in numbers:
+        for n in self.numbers:
             if n["Distance"] >= self.COLD_DISTANCE:
                 colds.append(n)
 
@@ -306,11 +333,10 @@ class PotentialDraws:
 
     def get_semi_cold_numbers(self):
         semi_cold = []
-        numbers = self.numbers
-        for n in numbers:
+        for n in self.numbers:
             # testing only
-            if n['Value'] != 38:
-                continue
+            # if n['Value'] != 38:
+            # continue
             # end testing
 
             if self.get_semi_cold(n):
@@ -321,7 +347,6 @@ class PotentialDraws:
     def get_semi_cold(self, number):
         data = self.data
         draw_count = 0
-        distance_from_previous_hit = 0
         current_draw = data[0]
         number_of_hits = 0
         for da in data:
@@ -330,22 +355,19 @@ class PotentialDraws:
             num = [x for x in numbers if x["Value"] == number["Value"]][0]
             if num["IsHit"] == True and da["DrawNumber"] == current_draw["DrawNumber"]:
                 return False
-            # elif num["Distance"] >= self.COLD_DISTANCE and draw_count < self.PAST_DRAWS:
-            #    return False
             elif (
                 num["IsHit"] == True
                 and num["NumberOfDrawsWhenHit"] >= self.COLD_DISTANCE
                 and number_of_hits == 0
             ):
                 return True
-            elif num["Distance"] < self.COLD_DISTANCE and draw_count > self.HOTS_COLD:
+            elif number_of_hits > 0:
                 return False
+            # elif num["Distance"] < self.COLD_DISTANCE and draw_count > self.HOTS_COLD:
+            #    return False
 
             if num["IsHit"] == True:
                 number_of_hits += 1
-                distance_from_previous_hit = 0
-            else:
-                distance_from_previous_hit += 1
 
     def get_hits_range_arrays(self, numbers):
         lowest_hits_array = []
@@ -442,13 +464,13 @@ class PotentialDraws:
                 colds = self.get_cold_numbers()
                 index = random.randint(0, len(colds) - 1)
                 array.append(colds[index])
-                
+
                 # 1 semi cold
                 semi_cold = self.get_semi_cold()
                 index = random.randint(0, len(semi_cold) - 1)
                 array.append(semi_cold[index])
-                
-                # 1 hots_cold 
+
+                # 1 hots_cold
                 hots_cold = self.get_hots_cold_numbers()
                 index = random.randint(0, len(hots_cold) - 1)
                 array.append(hots_cold[index])
@@ -469,13 +491,13 @@ class PotentialDraws:
                 colds = self.get_cold_numbers()
                 index = random.randint(0, len(colds) - 1)
                 array.append(colds[index])
-                
+
                 # 1 semi cold
                 semi_cold = self.get_semi_cold()
                 index = random.randint(0, len(semi_cold) - 1)
                 array.append(semi_cold[index])
-                
-                # 1 hots_cold 
+
+                # 1 hots_cold
                 hots_cold = self.get_hots_cold_numbers()
                 index = random.randint(0, len(hots_cold) - 1)
                 array.append(hots_cold[index])
@@ -497,18 +519,18 @@ class PotentialDraws:
                 # 1 middle
                 index = random.randint(0, len(two_fifth_array) - 1)
                 array.append(two_fifth_array[index])
-                
+
                 # 1 cold
                 colds = self.get_cold_numbers()
                 index = random.randint(0, len(colds) - 1)
                 array.append(colds[index])
-                
+
                 # 1 semi cold
                 semi_cold = self.get_semi_cold()
                 index = random.randint(0, len(semi_cold) - 1)
                 array.append(semi_cold[index])
-                
-                # 1 hots_cold 
+
+                # 1 hots_cold
                 hots_cold = self.get_hots_cold_numbers()
                 index = random.randint(0, len(hots_cold) - 1)
                 array.append(hots_cold[index])
@@ -530,7 +552,7 @@ class PotentialDraws:
                 # 1 middle
                 index = random.randint(0, len(two_fifth_array) - 1)
                 array.append(two_fifth_array[index])
-                
+
                 # 1 cold
                 colds = self.get_cold_numbers()
                 index = random.randint(0, len(colds) - 1)
@@ -543,7 +565,7 @@ class PotentialDraws:
             pred = self.remove_duplicates(pred)
 
         pred.sort(key=lambda x: x["Value"], reverse=False)
-        
+
         return pred
 
     def remove_duplicates(self, objects):
