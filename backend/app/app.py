@@ -143,6 +143,7 @@ def get_data_7():
     page_size = int(request.args.get("page_size", 10))
     page_number = int(request.args.get("page_number", 1))
     drawNumber = int(request.args.get("drawNumber"))
+    print(f"drawNumber = {drawNumber}")
     if (drawNumber == 1):
         drawNumber = get_target_draw_number(lotto_name)  
 
@@ -158,6 +159,7 @@ def get_data_8():
     page_size = int(request.args.get("page_size", 10))
     page_number = int(request.args.get("page_number", 1))
     drawNumber = int(request.args.get("drawNumber"))
+    print(f"drawNumber = {drawNumber}")
     if (drawNumber == 1):
         drawNumber = get_target_draw_number(lotto_name)  
 

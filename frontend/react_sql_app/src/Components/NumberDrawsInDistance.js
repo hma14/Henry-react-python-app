@@ -7,9 +7,13 @@ import '../App.css'
 
 
 function NumberDrawsInDistance(props) {
-
   const { endpoint, rows } = props
-  const [lottoData, setData] = useState([]);
+  const cols = 11
+  const newList = Array(rows).fill(0).map(r => new Array(cols + 1).fill(0))
+  const columns = Array.from(Array(cols + 1).keys()).slice(1, cols + 1)
+
+ 
+  const [lottoData, setData] = useState([])
 
   useEffect(() => {
     // Fetch data from the specified endpoint
@@ -22,13 +26,11 @@ function NumberDrawsInDistance(props) {
       });
   }, [rows, endpoint]);
 
-  const cols = 11
-  const newList = Array(rows).fill(0).map(r => new Array(cols + 1).fill(0))
-  const columns = Array.from(Array(cols + 1).keys()).slice(1, cols + 1)
+  
 
-  lottoData.map((row, i) => {
+  lottoData && lottoData.forEach((row, i) => {
     let arr = new Array(cols).fill(0)
-    row.Numbers.map(no => {
+    row.Numbers.forEach(no => {
       if (no.IsHit === true && no.NumberOfDrawsWhenHit < cols) {
         arr[no.NumberOfDrawsWhenHit]++
       }
@@ -40,11 +42,12 @@ function NumberDrawsInDistance(props) {
 
   const getHeader = () => {
     return (
+
       <thead className="table-danger text-center">
         <tr>
           <th className="text-light bg-info">Draws</th>
           <th className="text-light bg-info">Date</th>
-          {columns.map((no) => no < cols ?
+          {columns && columns.map((no) => no < cols ?
             (<th key={no} className='text-warning bg-success'>{no}</th>) :
             (no === cols ?
               (<th className='text-light bg-info'>Sum of Hits</th>) :
@@ -59,11 +62,12 @@ function NumberDrawsInDistance(props) {
 
   return (
     <div>
+
       {lottoData && lottoData.length > 0 &&
         <Table responsive className="table-primary mb-4" size="sm" hover="true" >
           {getHeader()}
           <tbody className='fw-bold' >
-            {newList.map((row) =>
+            {newList && newList.length > 0 && newList.map((row) =>
               <tr key={row[0]}>
                 <td className="text-warning bg-primary">{row[0]}</td>
                 <td className="text-warning bg-success">{row[1]}</td>

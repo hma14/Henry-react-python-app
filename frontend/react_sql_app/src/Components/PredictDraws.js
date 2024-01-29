@@ -50,7 +50,7 @@ const PredictDraws = (props) => {
       var result = null;
       result = await processNextPotentialDraws();
       setPredicts(result[0]);
-      console.log(predicts)
+  
       return predicts
     } catch (error) {
       console.error('Error updating predicts:', error);

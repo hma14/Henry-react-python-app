@@ -95,7 +95,7 @@ const App = () => {
 
     console.log(drawNumber)
 
-  }, [selectedLotto, lottoName, lottoName]);
+  }, [selectedLotto, lottoName]);
 
   
 

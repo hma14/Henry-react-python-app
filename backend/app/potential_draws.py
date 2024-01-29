@@ -250,7 +250,6 @@ class PotentialDraws:
         for n in self.numbers:
             if self.get_frequent(n): 
                 frequent.append(n)
-        print(f"frequent = {frequent}")        
         return frequent
     
     def get_frequent(self, number):
@@ -459,24 +458,8 @@ class PotentialDraws:
                 array.append(three_fifth_array[index])
                 index = random.randint(0, len(four_fifth_array) - 1)
                 array.append(four_fifth_array[index])
-
-                # 1 cold
-                colds = self.get_cold_numbers()
-                index = random.randint(0, len(colds) - 1)
-                array.append(colds[index])
-
-                # 1 semi cold
-                semi_cold = self.get_semi_cold()
-                index = random.randint(0, len(semi_cold) - 1)
-                array.append(semi_cold[index])
-
-                # 1 hots_cold
-                hots_cold = self.get_hots_cold_numbers()
-                index = random.randint(0, len(hots_cold) - 1)
-                array.append(hots_cold[index])
-
             elif self.is_hot_in_lowest_hits_range(True) == False:
-                # now focus on 2 lowest and 3 middle ranges 1 highest
+                # now focus on 2 lowest and 1 middle ranges 1 highest
                 # lowest
                 index = random.randint(0, len(lowest_hits_array) - 1)
                 array.append(lowest_hits_array[index])
@@ -486,22 +469,6 @@ class PotentialDraws:
                 # middle
                 index = random.randint(0, len(four_fifth_array) - 1)
                 array.append(four_fifth_array[index])
-
-                # 1 cold
-                colds = self.get_cold_numbers()
-                index = random.randint(0, len(colds) - 1)
-                array.append(colds[index])
-
-                # 1 semi cold
-                semi_cold = self.get_semi_cold()
-                index = random.randint(0, len(semi_cold) - 1)
-                array.append(semi_cold[index])
-
-                # 1 hots_cold
-                hots_cold = self.get_hots_cold_numbers()
-                index = random.randint(0, len(hots_cold) - 1)
-                array.append(hots_cold[index])
-
         else:
             # focus on highest of next draw
             if self.is_hot_in_lowest_hits_range(True) == True:
@@ -512,34 +479,12 @@ class PotentialDraws:
                 index = random.randint(0, len(highest_hits_array) - 1)
                 array.append(highest_hits_array[index])
 
-                # 1 lowest
-                index = random.randint(0, len(lowest_hits_array) - 1)
-                array.append(lowest_hits_array[index])
-
                 # 1 middle
                 index = random.randint(0, len(two_fifth_array) - 1)
                 array.append(two_fifth_array[index])
-
-                # 1 cold
-                colds = self.get_cold_numbers()
-                index = random.randint(0, len(colds) - 1)
-                array.append(colds[index])
-
-                # 1 semi cold
-                semi_cold = self.get_semi_cold()
-                index = random.randint(0, len(semi_cold) - 1)
-                array.append(semi_cold[index])
-
-                # 1 hots_cold
-                hots_cold = self.get_hots_cold_numbers()
-                index = random.randint(0, len(hots_cold) - 1)
-                array.append(hots_cold[index])
-
             elif self.is_hot_in_lowest_hits_range(True) == False:
                 # now focus on lowest and highest
-                # 2 highest
-                index = random.randint(0, len(highest_hits_array) - 1)
-                array.append(highest_hits_array[index])
+                # 1 highest
                 index = random.randint(0, len(highest_hits_array) - 1)
                 array.append(highest_hits_array[index])
 
@@ -549,14 +494,20 @@ class PotentialDraws:
                 index = random.randint(0, len(lowest_hits_array) - 1)
                 array.append(lowest_hits_array[index])
 
-                # 1 middle
-                index = random.randint(0, len(two_fifth_array) - 1)
-                array.append(two_fifth_array[index])
+        # 1 cold
+        colds = self.get_cold_numbers()
+        index = random.randint(0, len(colds) - 1)
+        array.append(colds[index])
 
-                # 1 cold
-                colds = self.get_cold_numbers()
-                index = random.randint(0, len(colds) - 1)
-                array.append(colds[index])
+        # 1 semi cold
+        semi_cold = self.get_semi_cold_numbers()
+        index = random.randint(0, len(semi_cold) - 1)
+        array.append(semi_cold[index])
+
+        # 1 hots_cold
+        hots_cold = self.get_hots_cold_numbers()
+        index = random.randint(0, len(hots_cold) - 1)
+        array.append(hots_cold[index])
 
         pred = self.remove_duplicates(array)
         while len(pred) < self.columns:
