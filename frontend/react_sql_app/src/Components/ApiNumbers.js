@@ -12,25 +12,13 @@ const ApiNumbers = (props) => {
 
 
     useEffect(() => {
-
-        // Fetch data from the specified endpoint
-      /*   async function fetchData() {
-            try {
-                const response = await axios(endpoint);
+        axios.get(endpoint)
+            .then(response => {
                 setData(response.data.data);
-            } catch (error) {
-                console.error('Error fetching draw number:', error);
-            }
-        }
-        fetchData() */
-
-         axios.get(endpoint)
-             .then(response => {
-                 setData(response.data.data);
-             })
-             .catch(error => {
-                 console.error('Error fetching data:', error);
-             });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
 
     }, [endpoint]);
 
@@ -95,10 +83,10 @@ const ApiNumbers = (props) => {
     const getColors = (number) => {
         if (number.IsHit === true) {
             return (
-                <td className={classNames('bg-color', { 'my-color-2 bg-color12': number.IsBonusNumber }, { 'my-color-2 bg-greenyellow': !number.IsBonusNumber }, { 'bg-color5 bg-greenyellow': number.IsNextPotentialHit === true })}>
+                <td className={classNames('bg-color', { 'my-color-1 bg-color12': number.IsBonusNumber }, { 'my-color-1 bg-color1': !number.IsBonusNumber}, { 'bg-color5': number.IsNextPotentialHit === true })}>
                     {number.Value}<br />
-                    (<span className={classNames('txt-color', { 'my-color-3 fst-italic': (number.NumberOfDrawsWhenHit > 10) }, { 'text-danger fst-italic': (number.NumberOfDrawsWhenHit <= 10) })}>{number.NumberOfDrawsWhenHit}</span>)<br />
-                    (<span className='text-secondary fst-italic'>{number.TotalHits}</span>)
+                    (<span className={classNames('txt-color', { 'my-color-3 fst-italic fs-7': (number.NumberOfDrawsWhenHit > 10) }, { 'text-danger fst-italic fs-7': (number.NumberOfDrawsWhenHit <= 10) }) }>{number.NumberOfDrawsWhenHit}</span>)<br />
+                    (<span className='text-secondary fst-italic fs-7'>{number.TotalHits}</span>)
                     {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
                 </td>
             )
@@ -107,8 +95,8 @@ const ApiNumbers = (props) => {
             return (
                 <td className={getBgColors(sortType, number)}>
                     {number.Value}<br />
-                    (<span className={classNames('txt-color', { 'fst-italic my-color-1': (number.Distance > 10) }, { 'fst-italic text-success': (number.Distance <= 10) })}>{number.Distance}</span>)<br />
-                    (<span className='text-primary fst-italic'>{number.TotalHits}</span>)
+                    (<span className={classNames('txt-color', { 'fst-italic my-color-1 fs-7': (number.Distance > 10) }, { 'fst-italic text-success fs-7': (number.Distance <= 10) })}>{number.Distance}</span>)<br />
+                    (<span className='text-primary fst-italic fs-7'>{number.TotalHits}</span>)
                     {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
                 </td>
             )
@@ -124,8 +112,8 @@ const ApiNumbers = (props) => {
                     <tbody className='fw-bold'>
                         {data.map(draw =>
                             <tr key={draw.DrawNumber}>
-                                <td className="text-warning bg-primary">{draw.DrawNumber}</td>
-                                <td className="text-warning bg-success">{draw.DrawDate}</td>
+                                <td className="text-warning bg-primary fs-7">{draw.DrawNumber}</td>
+                                <td className="text-warning bg-success fs-7">{draw.DrawDate}</td>
                                 {
                                     [...draw.Numbers].sort((a, b) => (a[sortProperty] === b[sortProperty] ?
                                         (a.value - b.value) :

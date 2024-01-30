@@ -135,7 +135,6 @@ thead {
 
 
 .bg-greenyellow {
-
   background-color: rgb(240, 222, 164) !important;
 }
 
@@ -288,4 +287,8 @@ thead {
     border: 2px solid #ccc;
     overflow-y: scroll; /* Enable vertical scrolling */
     resize: none; /* Prevent resizing of the input */
+}
+
+.fs-7 {
+  font-size: 12px;
 }
