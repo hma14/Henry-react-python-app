@@ -310,12 +310,12 @@ const PredictDraws = (props) => {
 
       <h4 className='text-success fst-italic mt-4'>Numbers were hit above</h4>
       {hitting && hitting.length > 0 &&
-        <Table striped bordered className="bg-color3 mt-2" size="lg" >
+        <Table striped bordered className="mt-2" size="lg" >
           {getHeader_3(hitting)}
           <tbody className='fw-bold align-middle' >
             <tr >
               {hitting.map((number) => (
-                <td className=' text-center text-success fs-4 fw-bold px-2'
+                <td className='text-center text-success fs-4 fw-bold px-2'
                   key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
                   <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
                   <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
@@ -328,12 +328,12 @@ const PredictDraws = (props) => {
 
       <h4 className='text-success fst-italic mt-4'>Numbers were NOT hit above</h4>
       {missing && missing.length > 0 &&
-        <Table striped bordered className="bg-color3 mt-2" size="lg" >
+        <Table striped bordered className="mt-2" size="lg" >
           {getHeader_3(missing)}
           <tbody className='fw-bold align-middle' >
             <tr >
               {missing.map((number) => (
-                <td className=' text-center text-success fs-4 fw-bold px-2'
+                <td className='bg-color13 text-center text-success fs-4 fw-bold px-2'
                   key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
                   <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
                   <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
