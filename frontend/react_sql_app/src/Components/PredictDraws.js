@@ -12,6 +12,7 @@ const PredictDraws = (props) => {
 
   const [numbers, setNumbers] = useState()
   const [predicts, setPredicts] = useState([])
+  const [remain, setRemain] = useState([])
 
   useEffect(() => {
     // Fetch data from the specified endpoint
@@ -19,7 +20,7 @@ const PredictDraws = (props) => {
     async function getNumbers() {
       try {
         const response = await axios(endpoint);
-        setNumbers(response.data.data[0].Numbers);
+        setNumbers(response.data.data[0]?.Numbers);
 
       } catch (error) {
         console.error('Error fetching draw number:', error);
@@ -49,13 +50,17 @@ const PredictDraws = (props) => {
     try {
       var result = null;
       result = await processNextPotentialDraws();
-      setPredicts(result[0]);
-  
-      return predicts
+      var data = result[0]
+      var rem = data.pop()
+      setRemain(rem)
+      setPredicts(data)
+
     } catch (error) {
       console.error('Error updating predicts:', error);
     }
   };
+
+
 
   /*
     const getPredicts = (cols) => {
@@ -222,6 +227,16 @@ const PredictDraws = (props) => {
       </thead>
     )
   }
+  const getHeader_3 = () => {
+    return (
+      <thead className="table-danger text-center">
+        <tr>
+          {Array.from(Array(remain.length).keys()).map((no) =>
+            (<th key={no} className='text-warning bg-success'>{no+1}</th>))}
+        </tr>
+      </thead>
+    )
+  }
 
 
   const getRow = (start, end) => {
@@ -257,15 +272,16 @@ const PredictDraws = (props) => {
           {getHeader()}
         </Table>}
       <div className='row-container'>
-        <h4 className='text-success fst-italic'>Potential Next Draws</h4>
+        <h4 className='text-success fst-italic'>Potential next draws</h4>
         <h4 className='text-primary'>Current Draw: <span className='fst-italic fw-bold text-danger'>{drawNumber}</span></h4>
         <button
           type="button"
           onClick={() => fetchData()}
           className="btn btn-success fw-bold mb-2 three-d-button">Generate Potential Draws
         </button>
+
       </div>
-      {predicts.length > 0 &&
+      {predicts && predicts.length > 0 &&
         <Table striped bordered hover responsive className="table-light mb-2" size="lg" >
           {getHeader_2()}
           <tbody className='fw-bold align-middle' >
@@ -283,7 +299,25 @@ const PredictDraws = (props) => {
             ))}
           </tbody>
           {getHeader_2()}
-        </Table>}+
+        </Table>}
+
+      <h4 className='text-success fst-italic mt-4'>Numbers were not hit above</h4>
+      {remain && remain.length > 0 &&
+        <Table striped bordered   className="bg-color3 mt-2" size="lg" >
+          {getHeader_3()}
+          <tbody className='fw-bold align-middle' >
+            <tr >
+              {remain.map((number) => (
+                <td className=' text-center text-success fs-4 fw-bold px-2'
+                key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
+                <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
+                <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
+                
+              </td>
+              ))}
+            </tr>
+          </tbody>
+        </Table>}
 
     </div>
   )

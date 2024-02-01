@@ -20,9 +20,11 @@ class PotentialDraws:
         self.prev_draw_numbers = data[1]["Numbers"]
         self.columns = columns
         self.rows = rows
+        self.remaining = []
 
     def next_potential_draws(self):
         results = [[]]
+        self.remaining = self.numbers
         for n in range(self.rows):
             flip_coin = random.randint(1, 2)
             if flip_coin == 2:
@@ -39,7 +41,13 @@ class PotentialDraws:
                     results.append(self.next_potential_draws_2())
 
         no_empty_array_results = [arr for arr in results if arr]
-        results = self.remove_duplicates(no_empty_array_results[0])
+        for arr in no_empty_array_results:
+            for a in arr:
+                if a in self.remaining:
+                    self.remaining.remove(a)
+                
+        no_empty_array_results.append(self.remaining)
+        #print(f"no_empty_array_results = {no_empty_array_results}")
         return no_empty_array_results
 
     ##### Libs #####
