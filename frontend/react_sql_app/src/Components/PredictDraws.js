@@ -261,7 +261,17 @@ const PredictDraws = (props) => {
     )
   }
 
-
+  const getTD = (number, n = 1) => {
+    return (
+      <td className='bg-color1 text-center text-success fs-4 fw-bold px-2'
+        key={number.Value}>
+        <span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span> { n === 2 ? <br /> : null }
+        <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
+        <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
+        {n !== 3 ? <span className='my-color-2 fst-italic fs-6'>[{number.NumberOfAppearing}]</span> : null}
+      </td>
+    )
+  }
 
   return (
 
@@ -286,7 +296,6 @@ const PredictDraws = (props) => {
           onClick={() => fetchData()}
           className="btn btn-success fw-bold mb-2 three-d-button">Generate Potential Draws
         </button>
-
       </div>
       {predicts && predicts.length > 0 &&
         <Table striped bordered hover responsive className="table-light mb-2" size="lg" >
@@ -295,13 +304,7 @@ const PredictDraws = (props) => {
             {predicts.map((row, index) => (
               <tr key={index}>
                 <td className='bg-color3 text-primary fs-5 fst-italic'>{index + 1}</td>
-                {row.map((number) =>
-                  <td className='bg-color1 text-center text-success fs-4 fw-bold px-2'
-                    key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span>
-                    <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
-                    <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
-                    <span className='my-color-2 fst-italic fs-6'>[{number.NumberOfAppearing}]</span>
-                  </td>)}
+                {row.map((number) => getTD(number))}
               </tr>
             ))}
           </tbody>
@@ -314,14 +317,7 @@ const PredictDraws = (props) => {
           {getHeader_3(hitting)}
           <tbody className='fw-bold align-middle' >
             <tr >
-              {hitting.map((number) => (
-                <td className='text-center text-success fs-4 fw-bold px-2'
-                  key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
-                  <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
-                  <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
-
-                </td>
-              ))}
+              {hitting.map((number) => getTD(number, 2))}
             </tr>
           </tbody>
         </Table>}
@@ -332,18 +328,17 @@ const PredictDraws = (props) => {
           {getHeader_3(missing)}
           <tbody className='fw-bold align-middle' >
             <tr >
-              {missing.map((number) => (
-                <td className='bg-color13 text-center text-success fs-4 fw-bold px-2'
-                  key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
-                  <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
-                  <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
-
-                </td>
-              ))}
+              {missing.map((number) => getTD(number, 3))}
             </tr>
           </tbody>
         </Table>}
-
+      <div className='d-flex justify-content-end'>
+        <button
+          type="button"
+          onClick={() => fetchData()}
+          className="btn btn-success fw-bold mb-2 three-d-button">Generate Potential Draws
+        </button>
+      </div>
     </div>
   )
 }

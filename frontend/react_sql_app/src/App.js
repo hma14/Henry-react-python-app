@@ -22,7 +22,7 @@ const Styles = styled.div`
     border: 1px solid black;
  */   
     align-items: center;
-    border:4px outset grey; pddding:2px;
+    border:2px outset grey; pddding:2px;
 
     tr {
       :last-child {
@@ -36,7 +36,7 @@ const Styles = styled.div`
     td {
      
       margin: 2;
-      padding: 5px;  //0.3rem;
+      padding: 3px;  //0.3rem;
       /*
        border-bottom: 1px solid black;
       border-right: 1px solid black;
@@ -180,17 +180,14 @@ const App = () => {
   return (
     <Styles>{
       <div className="container-fluid">
-        <nav className="navbar navbar-expand-xl bg-color8 sticky noqII">
+        <nav className="navbar navbar-expand-xl bg-info sticky noqII">
           <a className="nav=item" href="/images">
-            <img src={LottoTryLogo} className="img-fluid" alt="Lottotry Logo" width="60%" />
+            <img src={LottoTryLogo} className="App-logo img-fluid" alt="Lottotry Logo" width="%" />
           </a>
-          <ul className="navbar-nav my-color-1">
-            <li className="nav-item">
-
-            </li>
+          <ul className="navbar-nav">      
             <li className="nav-item">
               <div className="mt-1 margin-left margin-right fw-bold">
-                <select value={selectedOption} id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle margin-right fw-bold"
+                <select value={selectedOption} id="rpp" className="dropdown btn bg-info text-white dropdown-toggle margin-right fw-bolder"
                   onChange={(e) => selectLotto(e.target.value)}>
                   {['BC49', 'LottoMax', 'Lotto649', 'DailyGrand', 'DailyGrand_GrandNumber'].map(lotto => (
                     <option key={lotto} value={lotto}>{lotto}</option>
@@ -200,7 +197,7 @@ const App = () => {
             </li>
             <li className="nav-item">
               <div className="mt-1 margin-left margin-right fw-bold">
-                <select value={selectedTypeOption} id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle  fw-bold"
+                <select value={selectedTypeOption} id="rpp" className="dropdown btn bg-info text-white dropdown-toggle  fw-bolder"
                   onChange={(e) => setPlayType(e.target.value)}>
                   {['number', 'distance', 'totalHits', 'lottoDraws', 'numberDraws', 'predictDraws', 'openai_saying'].map(sortType => (
                     <option key={sortType} value={sortType}> By {sortType}</option>
@@ -210,24 +207,24 @@ const App = () => {
             </li>
             <li className="nav-item">
               <div className="mt-1 margin-left margin-right fw-bold">
-                <select id="rpp" className="dropdown btn bg-color8 my-color-1 dropdown-toggle ps-4 fw-bold"
+                <select id="rpp" className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
                   value={pageSize}
                   onChange={(e) => setPageSize(e.target.value)}>
                   {[5, 10, 20, 30, 40, 50, 100].map(pageSize => (
                     <option key={pageSize} value={pageSize}> {pageSize}</option>
                   ))}
                 </select>
-                <span className='bg-color8 my-color-1 ps-2'>draws per page</span>
+                <span className='bg-info text-white ps-2 fw-bolder'>draws per page</span>
               </div>
             </li>
             <li className="nav-item margin-left col-md-4">
               <div className="margin-left mt-1 row">
                 <div class="col-md-5 mt-1">
-                  <label for="textInput" className="my-color-1 ps-3 fw-bold">Target Draw :</label>
+                  <label for="textInput" className="bg-info text-white ps-3 fw-bold">Current Draw</label>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                   <input
-                    className='form-control ps-3 fw-bold my-color-3 fst-italic'
+                    className='form-control ps-3 fw-bolder text-danger fst-italic'
                     type="number"
                     id="numberInput"
                     name="numberInput"

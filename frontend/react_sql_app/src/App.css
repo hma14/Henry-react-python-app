@@ -5,7 +5,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 6vmin;
   pointer-events: none;
 }
 
@@ -24,6 +24,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  
 }
 
 .App-link {
@@ -292,3 +293,4 @@ thead {
 .fs-7 {
   font-size: 12px;
 }
+
