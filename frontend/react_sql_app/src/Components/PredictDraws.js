@@ -12,7 +12,8 @@ const PredictDraws = (props) => {
 
   const [numbers, setNumbers] = useState()
   const [predicts, setPredicts] = useState([])
-  const [remain, setRemain] = useState([])
+  const [hitting, setHitting] = useState([])
+  const [missing, setMissing] = useState([])
 
   useEffect(() => {
     // Fetch data from the specified endpoint
@@ -51,8 +52,14 @@ const PredictDraws = (props) => {
       var result = null;
       result = await processNextPotentialDraws();
       var data = result[0]
-      var rem = data.pop()
-      setRemain(rem)
+      console.log(data)
+      var hit = data.pop()
+      console.log(data)
+      var miss = data.pop()
+      console.log(data)
+
+      setHitting(hit)
+      setMissing(miss)
       setPredicts(data)
 
     } catch (error) {
@@ -227,12 +234,12 @@ const PredictDraws = (props) => {
       </thead>
     )
   }
-  const getHeader_3 = () => {
+  const getHeader_3 = (arr) => {
     return (
       <thead className="table-danger text-center">
         <tr>
-          {Array.from(Array(remain.length).keys()).map((no) =>
-            (<th key={no} className='text-warning bg-success'>{no+1}</th>))}
+          {Array.from(Array(arr.length).keys()).map((no) =>
+            (<th key={no} className='text-warning bg-success'>{no + 1}</th>))}
         </tr>
       </thead>
     )
@@ -301,19 +308,37 @@ const PredictDraws = (props) => {
           {getHeader_2()}
         </Table>}
 
-      <h4 className='text-success fst-italic mt-4'>Numbers were not hit above</h4>
-      {remain && remain.length > 0 &&
-        <Table striped bordered   className="bg-color3 mt-2" size="lg" >
-          {getHeader_3()}
+      <h4 className='text-success fst-italic mt-4'>Numbers were hit above</h4>
+      {hitting && hitting.length > 0 &&
+        <Table striped bordered className="bg-color3 mt-2" size="lg" >
+          {getHeader_3(hitting)}
           <tbody className='fw-bold align-middle' >
             <tr >
-              {remain.map((number) => (
+              {hitting.map((number) => (
                 <td className=' text-center text-success fs-4 fw-bold px-2'
-                key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
-                <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
-                <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
-                
-              </td>
+                  key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
+                  <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
+                  <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
+
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </Table>}
+
+      <h4 className='text-success fst-italic mt-4'>Numbers were NOT hit above</h4>
+      {missing && missing.length > 0 &&
+        <Table striped bordered className="bg-color3 mt-2" size="lg" >
+          {getHeader_3(missing)}
+          <tbody className='fw-bold align-middle' >
+            <tr >
+              {missing.map((number) => (
+                <td className=' text-center text-success fs-4 fw-bold px-2'
+                  key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span><br />
+                  <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
+                  <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
+
+                </td>
               ))}
             </tr>
           </tbody>

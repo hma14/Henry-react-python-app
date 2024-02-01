@@ -21,6 +21,7 @@ class PotentialDraws:
         self.columns = columns
         self.rows = rows
         self.remaining = []
+        self.hitting = []
 
     def next_potential_draws(self):
         results = [[]]
@@ -45,8 +46,14 @@ class PotentialDraws:
             for a in arr:
                 if a in self.remaining:
                     self.remaining.remove(a)
+                    self.hitting.append(a)
                 
+        
         no_empty_array_results.append(self.remaining)
+        
+        no_empty_array_results.append(sorted(self.hitting, key=lambda x : x["Value"], reverse=False))
+
+        
         #print(f"no_empty_array_results = {no_empty_array_results}")
         return no_empty_array_results
 
