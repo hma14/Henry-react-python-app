@@ -52,11 +52,8 @@ const PredictDraws = (props) => {
       var result = null;
       result = await processNextPotentialDraws();
       var data = result[0]
-      console.log(data)
       var hit = data.pop()
-      console.log(data)
       var miss = data.pop()
-      console.log(data)
 
       setHitting(hit)
       setMissing(miss)
@@ -268,7 +265,7 @@ const PredictDraws = (props) => {
         <span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span> { n === 2 ? <br /> : null }
         <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
         <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
-        {n !== 3 ? <span className='my-color-2 fst-italic fs-6'>[{number.NumberOfAppearing}]</span> : null}
+        {n !== 3 ? <span className='my-color-2 fst-italic fs-6'>[{number.NumberOfAppearing - 1}]</span> : null}
       </td>
     )
   }
