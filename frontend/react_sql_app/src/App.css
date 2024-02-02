@@ -294,3 +294,6 @@ thead {
   font-size: 12px;
 }
 
+.table-container {
+  overflow-x: auto!important; /* Horizontal scrollbar when needed */
+}
