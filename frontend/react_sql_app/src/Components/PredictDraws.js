@@ -310,7 +310,7 @@ return (
       </button>
     </div>
     {predicts && predicts.length > 0 &&
-      <Table striped bordered hover responsive className="table-light mb-2" size="lg" >
+      <Table bordered hover responsive  className="table-light mb-2" size="lg" >
         {getHeader_2()}
         <tbody className='fw-bold align-middle' >
           {predicts.map((row, index) => (
@@ -325,7 +325,7 @@ return (
 
     <h4 className='text-success fst-italic mt-4'>Numbers were hit above</h4>
     {hitting && hitting.length > 0 &&
-      <Table striped bordered className="mt-2" size="lg" >
+      <Table  bordered className="mt-2" size="lg" >
         {getHeader_3(hitting)}
         <tbody className='fw-bold align-middle' >
           <tr >
@@ -336,7 +336,7 @@ return (
 
     <h4 className='text-success fst-italic mt-4'>Numbers were NOT hit above</h4>
     {missing && missing.length > 0 &&
-      <Table striped bordered className="mt-2" size="lg" >
+      <Table  bordered className="mt-2" size="lg" >
         {getHeader_3(missing)}
         <tbody className='fw-bold align-middle' >
           <tr >
