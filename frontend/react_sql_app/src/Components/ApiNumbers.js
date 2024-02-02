@@ -68,13 +68,28 @@ const ApiNumbers = (props) => {
         }
     }
 
+    const getHeaderBgColor = (n) => {
+        if (n.Value < 10)
+            return 'bg-color20 text-center text-danger fs-6 fw-bold px-2'
+        else if (n.Value < 20)
+            return 'bg-color7 text-center text-danger fs-6 fw-bold px-2'
+        else if (n.Value < 30)
+            return 'bg-color6 text-center text-danger fs-6 fw-bold px-2'
+        else if (n.Value < 40)
+            return 'bg-color3 text-center text-danger fs-6 fw-bold px-2'
+        else if (n.Value < 50)
+            return 'bg-color10 text-center text-danger fs-6 fw-bold px-2'
+        else
+            return 'bg-color11 text-center text-danger fs-6 fw-bold px-2'
+    }
+
     const getHeader = () => {
         return (
             <thead className="table-danger text-center">
                 <tr>
                     <th className="text-light bg-info">Draws</th>
                     <th className="text-light bg-info">Date</th>
-                    {data.slice(0, 1).map(row => [...row.Numbers].sort((a, b) => a.value - b.value).map((no) => <th key={no.Value} className='text-warning bg-success'>{no.Value}</th>))}
+                    {data.slice(0, 1).map(row => [...row.Numbers].sort((a, b) => a.value - b.value).map((no) => <th key={no.Value} className={getHeaderBgColor(no)}>{no.Value}</th>))}
                 </tr>
             </thead>
         )
@@ -83,9 +98,9 @@ const ApiNumbers = (props) => {
     const getColors = (number) => {
         if (number.IsHit === true) {
             return (
-                <td className={classNames('bg-color', { 'my-color-1 bg-color12': number.IsBonusNumber }, { 'my-color-1 bg-color1': !number.IsBonusNumber}, { 'bg-color5': number.IsNextPotentialHit === true })}>
+                <td className={classNames('bg-color', { 'my-color-1 bg-color12': number.IsBonusNumber }, { 'my-color-1 bg-color1': !number.IsBonusNumber }, { 'bg-color5': number.IsNextPotentialHit === true })}>
                     {number.Value}<br />
-                    (<span className={classNames('txt-color', { 'my-color-3 fst-italic fs-7': (number.NumberOfDrawsWhenHit > 10) }, { 'text-danger fst-italic fs-7': (number.NumberOfDrawsWhenHit <= 10) }) }>{number.NumberOfDrawsWhenHit}</span>)<br />
+                    (<span className={classNames('txt-color', { 'my-color-3 fst-italic fs-7': (number.NumberOfDrawsWhenHit > 10) }, { 'text-danger fst-italic fs-7': (number.NumberOfDrawsWhenHit <= 10) })}>{number.NumberOfDrawsWhenHit}</span>)<br />
                     (<span className='text-secondary fst-italic fs-7'>{number.TotalHits}</span>)
                     {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
                 </td>
