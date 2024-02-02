@@ -29,8 +29,8 @@ function LottoDraws(props) {
           <th className="text-light bg-info">Draws</th>
           <th className="text-light bg-info">Date</th>
           {lottoData.slice(0, 1).map(row => row.Numbers.sort((a, b) => (a - b)).map((no) => (no.Value < columns ?
-            (<th key={no.Value} className='text-warning bg-success'>{no.Value}</th>) :
-            (no.Value === columns ? (<th key={no.Value} className='text-warning bg-success'>Bonus ({no.Value})</th>) : ''))))}
+            (<th key={no.Value} className='text-warning bg-success fst-italic'>{no.Value}</th>) :
+            (no.Value === columns ? (<th key={no.Value} className='text-warning bg-success fst-italic'>Bonus ({no.Value})</th>) : ''))))}
         </tr>
       </thead >
     )

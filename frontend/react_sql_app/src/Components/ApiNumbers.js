@@ -70,17 +70,17 @@ const ApiNumbers = (props) => {
 
     const getHeaderBgColor = (n) => {
         if (n.Value < 10)
-            return 'bg-color20 text-center text-danger fs-6 fw-bold px-2'
+            return 'bg-color20 text-center text-danger fs-6 fw-bold px-2 fst-italic'
         else if (n.Value < 20)
-            return 'bg-color7 text-center text-danger fs-6 fw-bold px-2'
+            return 'bg-color7 text-center text-danger fs-6 fw-bold px-2 fst-italic'
         else if (n.Value < 30)
-            return 'bg-color6 text-center text-danger fs-6 fw-bold px-2'
+            return 'bg-color6 text-center text-danger fs-6 fw-bold px-2 fst-italic'
         else if (n.Value < 40)
-            return 'bg-color3 text-center text-danger fs-6 fw-bold px-2'
+            return 'bg-color3 text-center text-danger fs-6 fw-bold px-2 fst-italic'
         else if (n.Value < 50)
-            return 'bg-color10 text-center text-danger fs-6 fw-bold px-2'
+            return 'bg-color10 text-center text-danger fs-6 fw-bold px-2 fst-italic'
         else
-            return 'bg-color11 text-center text-danger fs-6 fw-bold px-2'
+            return 'bg-color11 text-center text-danger fs-6 fw-bold px-2 fst-italic'
     }
 
     const getHeader = () => {

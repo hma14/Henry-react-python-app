@@ -214,7 +214,7 @@ const PredictDraws = (props) => {
       <thead className="table-danger text-center">
         <tr>
           {Array.from(Array(10).keys()).map((no) =>
-            (<th key={no} className='text-warning bg-success'>{no + 1}</th>))}
+            (<th key={no} className='text-warning bg-success fst-italic'>{no + 1}</th>))}
         </tr>
       </thead>
     )
@@ -226,7 +226,7 @@ const PredictDraws = (props) => {
         <tr>
           <th className='text-warning bg-primary'>#</th>
           {Array.from(Array(columns).keys()).map((no) =>
-            (<th key={no} className='text-warning bg-success'>{no + 1}</th>))}
+            (<th key={no} className='text-warning bg-success fst-italic'>{no + 1}</th>))}
         </tr>
       </thead>
     )
@@ -236,7 +236,7 @@ const PredictDraws = (props) => {
       <thead className="table-danger text-center">
         <tr>
           {Array.from(Array(arr.length).keys()).map((no) =>
-            (<th key={no} className='text-warning bg-success'>{no + 1}</th>))}
+            (<th key={no} className='text-warning bg-success fst-italic'>{no + 1}</th>))}
         </tr>
       </thead>
     )

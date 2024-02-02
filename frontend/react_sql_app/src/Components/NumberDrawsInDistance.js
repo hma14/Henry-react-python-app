@@ -48,7 +48,7 @@ function NumberDrawsInDistance(props) {
           <th className="text-light bg-info">Draws</th>
           <th className="text-light bg-info">Date</th>
           {columns && columns.map((no) => no < cols ?
-            (<th key={no} className='text-warning bg-success'>{no}</th>) :
+            (<th key={no} className='text-warning bg-success fst-italic'>{no}</th>) :
             (no === cols ?
               (<th className='text-light bg-info'>Sum of Hits</th>) :
               ''))}
