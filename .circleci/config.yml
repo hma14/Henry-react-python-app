@@ -1,25 +1,63 @@
 version: 2.1
 
 jobs:
-  build:
+  build_backend:
     docker:
       - image: circleci/python:3.8
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Install Python dependencies
           command: |
+            cd backend/app
             python -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
       - run:
-          name: Run tests
+          name: Run Python tests
           command: |
             . venv/bin/activate
             pytest
 
+  build_frontend:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: Install Node.js dependencies
+          command: npm install
+      - run:
+          name: Build React app
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
+  deploy:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - run:
+          name: Deploy Backend and Frontend
+          command: |
+            . venv/bin/activate
+            # Your backend deploy commands here, e.g.:
+            # scp -r /workspace/* user@server:/path/to/deploy/
+            # Deploy React build files (example):
+            scp -r /workspace/build/* user@server:/var/www/html/
+
 workflows:
   version: 2
-  build_and_test:
+  build_and_deploy:
     jobs:
-      - build
+      - build_backend
+      - build_frontend:
+          requires:
+            - build_backend
+      - deploy:
+          requires:
+            - build_frontend
