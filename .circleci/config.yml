@@ -7,6 +7,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Upgrade pip to the latest version
+          command: |
+            python -m pip install --upgrade pip
+            pip --version  # Verify the upgrade
+      - run:
           name: Install Python dependencies
           command: |
             cd backend/app
