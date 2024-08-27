@@ -7,6 +7,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Create and activate virtual environment
+          command: |
+            python -m venv venv
+            source venv/bin/activate  # Use this for Unix-based systems
+      - run:
           name: Upgrade pip
           command: |
             . venv/bin/activate  # Ensure the virtual environment is activated
