@@ -6,7 +6,11 @@ jobs:
       - image: cimg/python:3.8
     steps:
       - checkout
-      
+      - run:
+          name: Upgrade pip
+          command: |
+            . venv/bin/activate  # Ensure the virtual environment is activated
+            python -m pip install --upgrade pip
       - run:
           name: Install Python dependencies
           command: |
