@@ -22,7 +22,7 @@ jobs:
             cd backend/app
             python -m venv venv
             source venv/bin/activate
-            pip install -r ./backend/app/requirements.txt
+            pip install -r backend/app/requirements.txt
       - run:
           name: Run Python tests
           command: |
