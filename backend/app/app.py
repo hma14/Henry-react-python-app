@@ -36,7 +36,7 @@ def get_data_4():
     start_index = (page_number - 1) * page_size
 
     data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
-
+    #print(f"data = {data.data}")
     return data
 
 

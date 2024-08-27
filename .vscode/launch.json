@@ -5,12 +5,39 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
+            "name": "Python: Flask",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/backend/app/app.py",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "env": {
+                "FLASK_APP": "app.py",
+                "FLASK_ENV": "development"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload"
+            ],
+            "jinja": true
+        },
+        {
+            "name": "Launch Chrome against localhost",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/frontend/react_sql_app/src",
+            "sourceMaps": true,
+            "trace": true
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug Both Frontend and Backend",
+            "configurations": [
+                "Python: Flask",
+                "Launch Chrome against localhost"
+            ]
         }
     ]
 }
