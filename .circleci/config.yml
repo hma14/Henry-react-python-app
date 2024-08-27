@@ -3,14 +3,10 @@ version: 2.1
 jobs:
   build_backend:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - checkout
-      - run:
-          name: Upgrade pip to the latest version
-          command: |
-            python -m pip install --upgrade pip
-            pip --version  # Verify the upgrade
+      
       - run:
           name: Install Python dependencies
           command: |
@@ -42,7 +38,7 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - attach_workspace:
           at: /workspace
