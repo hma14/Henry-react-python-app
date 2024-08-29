@@ -46,10 +46,12 @@ jobs:
       - checkout
       - run:
           name: Install Node.js dependencies
-          command: npm install
+          command: npm install  
       - run:
           name: Build React app
-          command: npm run build
+          command: |           
+            cd frontend/react_sql_app
+            npm run build
       - persist_to_workspace:
           root: .
           paths:
