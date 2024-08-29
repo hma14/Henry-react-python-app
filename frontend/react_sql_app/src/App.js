@@ -75,7 +75,7 @@ const App = () => {
 
   // eslint-disable-next-line no-unused-vars
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
+  //const [totalPages, setTotalPages] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [drawNumber, setDrawNumber] = useState(1)
 
