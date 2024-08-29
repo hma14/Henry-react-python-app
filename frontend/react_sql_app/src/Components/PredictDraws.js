@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Table } from 'react-bootstrap'
@@ -15,39 +15,21 @@ const PredictDraws = (props) => {
   const [hitting, setHitting] = useState([])
   const [missing, setMissing] = useState([])
 
-  useEffect(() => {
-    // Fetch data from the specified endpoint
+  const fetchData = useCallback(async () => {
+    const processNextPotentialDraws = async () => {
 
-    async function getNumbers() {
       try {
-        const response = await axios(endpoint);
-        setNumbers(response.data.data[0]?.Numbers);
+        const promises = [await axios.post(endpoint2)]
+        const responses = await Promise.all(promises);
 
+        // Extract data from each response
+        const result = responses.map(response => response.data);
+        return result
       } catch (error) {
-        console.error('Error fetching draw number:', error);
+        console.error('Error processing next prediction:', error);
       }
     }
-    fetchData()
-    getNumbers()
 
-  }, [columns, endpoint, endpoint2, rows]);
-
-  const processNextPotentialDraws = async () => {
-
-    try {
-      const promises = [await axios.post(endpoint2)]
-      const responses = await Promise.all(promises);
-
-      // Extract data from each response
-      const result = responses.map(response => response.data);
-      return result
-    } catch (error) {
-      console.error('Error processing next prediction:', error);
-    }
-  }
-
-
-  const fetchData = async () => {
     try {
       var result = null;
       result = await processNextPotentialDraws();
@@ -62,7 +44,24 @@ const PredictDraws = (props) => {
     } catch (error) {
       console.error('Error updating predicts:', error);
     }
-  };
+    console.log('Fetching data...');
+  }, [endpoint2]);
+
+  const getNumbers = useCallback(async () => {
+    try {
+      const response = await axios(endpoint);
+      setNumbers(response.data.data[0]?.Numbers);
+    } catch (error) {
+      console.error('Error fetching draw number:', error);
+    }
+  }, [endpoint])
+
+  useEffect(() => {
+    fetchData();
+    getNumbers();
+  }, [fetchData, getNumbers, columns, endpoint, endpoint2, rows]);
+
+
 
 
 
