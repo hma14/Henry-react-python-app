@@ -29,6 +29,11 @@ jobs:
             source venv/bin/activate
             pip list
       - run:
+          name: Install pytest manually
+          command: |
+            source venv/bin/activate
+            pip install pytest      
+      - run:
           name: Run Python tests
           command: |
             source venv/bin/activate
