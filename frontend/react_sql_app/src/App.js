@@ -61,7 +61,7 @@ const App = () => {
 
   //const [selectedLotto, setSelectedLotto] = useState('AllNumbers')
   const [sortType, setSortType] = useState('number')
-  const [numberRange, setNumberRange] = useState(49)
+  const [, setNumberRange] = useState(49)
 
 
   // change default lotto options
@@ -73,8 +73,9 @@ const App = () => {
 
   // end 
 
-  const [page, setPage] = useState(1)
-  //const [totalPages, setTotalPages] = useState(1)
+  const [page] = useState(1)
+  //const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [drawNumber, setDrawNumber] = useState(1)
 
