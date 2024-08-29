@@ -55,7 +55,7 @@ jobs:
             cd frontend/react_sql_app
             npm run build
       - persist_to_workspace:
-          root: .
+          root: frontend/react_sql_app
           paths:
             - build
 
