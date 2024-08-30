@@ -70,11 +70,11 @@ jobs:
           command: ls -la /home/circleci/workspace
       - run:
           name: List Directory Contents
-          command: ls -la /backend/app/venv
+          command: ls -la ../../backend/app/venv
       - run:
           name: Deploy Backend and Frontend
           command: |
-            cd /backend/app
+            cd ../../backend/app
             source venv/bin/activate
             # Your backend deploy commands here, e.g.:
             # scp -r /workspace/* user@server:/path/to/deploy/
