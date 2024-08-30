@@ -64,7 +64,10 @@ jobs:
       - image: cimg/python:3.8
     steps:
       - attach_workspace:
-          at: /workspace
+          at: /home/circleci/workspace
+      - run:
+          name: List Workspace Contents
+          command: ls -la /home/circleci/workspace
       - run:
           name: Deploy Backend and Frontend
           command: |
