@@ -66,6 +66,9 @@ jobs:
       - attach_workspace:
           at: /home/circleci/workspace
       - run:
+          name: Create Virtual Environment
+          command: python3 -m venv backend/app/venv
+      - run:
           name: Print Working Directory
           command: ls -la
       - run:
