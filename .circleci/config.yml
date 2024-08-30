@@ -72,6 +72,11 @@ jobs:
           name: List Directory Contents
           command: ls -la backend/app/venv
       - run:
+          name: Activate Virtual Environment
+          command: |
+            cd backend/app
+            source venv/bin/activate
+      - run:
           name: Deploy Backend and Frontend
           command: |
             cd backend/app
