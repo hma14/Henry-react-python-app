@@ -70,7 +70,7 @@ jobs:
           command: ls -la /home/circleci/workspace
       - run:
           name: List Directory Contents
-          command: ls -la backend/app/venv
+          command: ls -la /backend/app/venv
       - run:
           name: Deploy Backend and Frontend
           command: |
