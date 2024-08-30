@@ -67,7 +67,7 @@ jobs:
           at: /home/circleci/workspace
       - run:
           name: Print Working Directory
-          command: pwd
+          command: ls -la
       - run:
           name: List Workspace Contents
           command: ls -la /home/circleci/workspace
@@ -77,8 +77,7 @@ jobs:
       - run:
           name: Deploy Backend and Frontend
           command: |
-            cd backend/app
-            source venv/bin/activate
+            source backend/app/venv/bin/activate
             # Your backend deploy commands here, e.g.:
             # scp -r /workspace/* user@server:/path/to/deploy/
             # Deploy React build files (example):
