@@ -77,14 +77,14 @@ jobs:
       - run:
           name: List Directory Contents
           command: ls -la backend/app/venv
-      - run:
-          name: Deploy Backend and Frontend
-          command: |
-            source backend/app/venv/bin/activate
+ #     - run:
+ #         name: Deploy Backend and Frontend
+ #         command: |
+ #           source backend/app/venv/bin/activate
             # Your backend deploy commands here, e.g.:
             # scp -r /workspace/* user@server:/path/to/deploy/
             # Deploy React build files (example):
-            scp -r /workspace/build/* user@server:/var/www/html/
+#            scp -r /workspace/build/* hma14@ai.lottotry.com:/var/www/html/
 
 workflows:
   version: 2
