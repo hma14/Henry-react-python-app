@@ -27,3 +27,8 @@ yarn-error.log*
 
 
 backend/app/config.py
+
+venv/
+evn/
+
+backend/app/venv/
