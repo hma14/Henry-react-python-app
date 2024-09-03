@@ -22,8 +22,8 @@
             "jinja": true
         },
         {
-            "name": "Launch Chrome against localhost",
-            "type": "chrome",
+            "name": "Launch MS Edge against localhost",
+            "type": "msedge",
             "request": "launch",
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}/frontend/react_sql_app/src",
@@ -36,7 +36,7 @@
             "name": "Debug Both Frontend and Backend",
             "configurations": [
                 "Python: Flask",
-                "Launch Chrome against localhost"
+                "Launch MS Edge against localhost"
             ]
         }
     ]

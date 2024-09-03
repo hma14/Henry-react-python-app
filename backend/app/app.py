@@ -1,3 +1,5 @@
+
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS  # Import the CORS module
 from config import Config
@@ -17,7 +19,15 @@ app.config.from_object(Config)
 
 # frontend url: http://ai.lottotry.com
 # CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})
+
+# Load configuration based on environment variable
+config_mode = os.getenv('FLASK_ENV', 'development')
+if config_mode == 'production':
+    app.config.from_object('config_prod.Config')
+else:
+    app.config.from_object('config_dev.Config')
 CORS(app)
+
 
 db.init_app(app)
 
@@ -235,5 +245,6 @@ def get_target_draw_number(lotto_name):
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host="ep.lottotry.com", port=5000)
+    app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
+    #app.run(debug=False, host="ep.lottotry.com", port=5000)
     #app.run(debug=True, host="0.0.0.0", port=5000)
