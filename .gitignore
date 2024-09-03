@@ -32,3 +32,5 @@ venv/
 evn/
 
 backend/app/venv/
+
+backend/app/__pycache__/
