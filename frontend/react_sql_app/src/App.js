@@ -79,14 +79,31 @@ const App = () => {
   const [pageSize, setPageSize] = useState(10)
   const [drawNumber, setDrawNumber] = useState(1)
 
-  const url10 = 'http://127.0.0.1:5000/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName;
-  //const url10 = 'http://ep.lottotry.com:5000/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName;
+  const url10 = 'http://ep.lottotry.com:5000/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName;
+  const url = 'http://ep.lottotry.com:5000/api/openai';
+  const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+  const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&drawNumber=' + drawNumber;
+  const url9 = 'http://ep.lottotry.com:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+  const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+  const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+
+  /*
+ const url10 = 'http://127.0.0.1:5000/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName;
+ const url = 'http://127.0.0.1:5000/api/openai';
+ const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+ const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&drawNumber=' + drawNumber;
+ const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+ const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&columns=' + lottoColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+ const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
+ */
+
+
 
   useEffect(() => {
     async function getCurrentDrawNumber() {
       try {
         const response = await axios(url10);
-        setDrawNumber(response.data.drawNumber); 
+        setDrawNumber(response.data.drawNumber);
       } catch (error) {
         console.error('Error fetching draw number:', error);
       }
@@ -98,25 +115,6 @@ const App = () => {
 
   }, [lottoName, url10, drawNumber]);
 
-  
-
-  /*
-    const url = 'http://ep.lottotry.com:5000/api/openai';
-    const url4 = 'http://ep.lottotry.com:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
-    const url5 = 'http://ep.lottotry.com:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&drawNumber=' + drawNumber;
-    const url9 = 'http://ep.lottotry.com:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
-    const url7 = 'http://ep.lottotry.com:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
-    const url8 = 'http://ep.lottotry.com:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
-  
-   */
-
-
-  const url = 'http://127.0.0.1:5000/api/openai';
-  const url4 = 'http://127.0.0.1:5000/api/lotto/allnumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
-  const url5 = 'http://127.0.0.1:5000/api/lotto/predict?lotto_name=' + lottoName + '&columns=' + lottoColumns + '&drawNumber=' + drawNumber;
-  const url9 = 'http://127.0.0.1:5000/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
-  const url7 = 'http://127.0.0.1:5000/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&columns=' + lottoColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
-  const url8 = 'http://127.0.0.1:5000/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber;
 
 
 
@@ -165,7 +163,7 @@ const App = () => {
   }
 
   const handleDrawNumberChange = (event) => {
-   
+
     // Ensure that only numeric values are entered
     //const numericValue = event.target.value.replace(/[^0-9]/g, '');
     const numericValue = parseInt(event.target.value)
@@ -174,7 +172,7 @@ const App = () => {
 
   };
 
-  
+
 
 
 
@@ -185,7 +183,7 @@ const App = () => {
           <a className="nav=item" href="/images">
             <img src={LottoTryLogo} className="App-logo img-fluid" alt="Lottotry Logo" width="%" />
           </a>
-          <ul className="navbar-nav">      
+          <ul className="navbar-nav">
             <li className="nav-item">
               <div className="mt-1 margin-left margin-right fw-bold">
                 <select value={selectedOption} id="rpp" className="dropdown btn bg-info text-white dropdown-toggle margin-right fw-bolder"
