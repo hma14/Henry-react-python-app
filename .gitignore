@@ -28,9 +28,9 @@ yarn-error.log*
 
 backend/app/config.py
 
-venv/
+background/app/venv/
 evn/
 
-backend/app/venv/
+.venv/
 
 backend/app/__pycache__/
