@@ -3,8 +3,6 @@
 # dependencies
 backend/app/node_modules/
 frontend/react_sql_app/node_modules/
-frontend/react_sql_app/node_modules/.cache/
-/node_modules
 /.pnp
 .pnp.js
 

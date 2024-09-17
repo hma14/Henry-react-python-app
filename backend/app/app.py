@@ -1,3 +1,4 @@
+# cSpell: disable
 
 import os
 from flask import Flask, jsonify, request
@@ -21,18 +22,18 @@ app.config.from_object(Config)
 # CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})
 
 # Load configuration based on environment variable
-config_mode = os.getenv('FLASK_ENV', 'development')
-if config_mode == 'production':
-    app.config.from_object('config_prod.Config')
+config_mode = os.getenv("FLASK_ENV", "development")
+if config_mode == "production":
+    app.config.from_object("config_prod.Config")
 else:
-    app.config.from_object('config_dev.Config')
+    app.config.from_object("config_dev.Config")
 CORS(app)
 
 
 db.init_app(app)
 
 
-@app.route("/api/lotto/allnumbers", methods=["GET"])
+@app.route("/api/lotto/allNumbers", methods=["GET"])
 def get_data_4():
     lotto_name = int(request.args.get("lotto_name", 1))
     number_range = get_lotto_number_range(lotto_name)
@@ -45,9 +46,7 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
-    #print(f"data = {data.data}")
-    return data
+    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
 
 @app.route("/api/lotto/predict", methods=["GET"])
@@ -66,9 +65,8 @@ def get_from_openai():
     # response_string = get_openai_response()
 
     # return simply strings
-    response_string = get_string_response()
 
-    return response_string
+    return  get_string_response()
 
 
 @app.route("/api/lotto/potential_draws", methods=["POST"])
@@ -103,10 +101,9 @@ def potential_draws():
     data = potential_draws.next_potential_draws()
     for da in data:
         for d in da:
-            d["NumberOfAppearing"] += 1
+            d["NumberOfAppearing"] = 1
 
-    data_exclusive_empty_array = [arr for arr in data if arr]
-    return data_exclusive_empty_array
+    return [arr for arr in data if arr]
 
 
 @app.route("/api/lotto/lottoDraws", methods=["GET"])
@@ -142,7 +139,7 @@ def get_data_8():
 
 
 def get_lotto_number_range(lotto_name):
-    if lotto_name == 1 or lotto_name == 2 or lotto_name == 4:
+    if lotto_name in [1, 2, 4]:
         return 49
     elif lotto_name == 3:
         return 50
@@ -160,73 +157,75 @@ def get_current_draw_number():
 
 
 def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
-    data = (
-        Numbers.query.join(LottoType, LottoType.Id == Numbers.LottoTypeId)
-        .filter(LottoType.LottoName == lotto_name, LottoType.DrawNumber <= drawNumber)
-        .options(joinedload(Numbers.lottotype))
-        .order_by(desc(LottoType.DrawNumber))
-        .limit(page_size * number_range)
-        .offset(start_index)
-        .all()
-    )
+    if not (
+        data := (
+            Numbers.query.join(LottoType, LottoType.Id == Numbers.LottoTypeId)
+            .filter(
+                LottoType.LottoName == lotto_name, 
+                LottoType.DrawNumber <= drawNumber
+            )
+            .options(joinedload(Numbers.lottotype))
+            .order_by(desc(LottoType.DrawNumber))
+            .limit(page_size * number_range)
+            .offset(start_index)
+            .all()
+        )
+    ):
+        return jsonify({"message": "No data found"})
+
     numbers_dict = {}
     drawNumber_dict = {}
     drawDate_dict = {}
+
+    for number in data:
+        if number.lottotype.DrawNumber not in numbers_dict:
+            numbers_dict[number.lottotype.DrawNumber] = []
+        numbers_dict[number.lottotype.DrawNumber].append(
+            {
+                "Value": number.Value,
+                "Distance": number.Distance,
+                "IsHit": number.IsHit,
+                "NumberOfDrawsWhenHit": number.NumberOfDrawsWhenHit,  # The line ` "IsBonusNumber":
+                "IsBonusNumber": number.IsBonusNumber,
+                "TotalHits": number.TotalHits,
+                "NumberOfAppearing": 0,
+            }
+        )
+        if len(numbers_dict[number.lottotype.DrawNumber]) == number_range:
+            if number.lottotype.DrawNumber not in drawNumber_dict:
+                drawNumber_dict[number.lottotype.DrawNumber] = []
+            drawNumber_dict[number.lottotype.DrawNumber] = number.lottotype.DrawNumber
+
+            if number.lottotype.DrawNumber not in drawDate_dict:
+                drawDate_dict[number.lottotype.DrawNumber] = []
+            drawDate_dict[number.lottotype.DrawNumber] = number.lottotype.DrawDate
+
     result_list = []
 
-    if data:
-        for number in data:
-            if number.lottotype.DrawNumber not in numbers_dict:
-                numbers_dict[number.lottotype.DrawNumber] = []
-            numbers_dict[number.lottotype.DrawNumber].append(
-                {
-                    "Value": number.Value,
-                    "Distance": number.Distance,
-                    "IsHit": number.IsHit,
-                    "NumberOfDrawsWhenHit": number.NumberOfDrawsWhenHit,  # The line ` "IsBonusNumber":
-                    "IsBonusNumber": number.IsBonusNumber,
-                    "TotalHits": number.TotalHits,
-                    "NumberOfAppearing": 0,
-                }
-            )
-            if len(numbers_dict[number.lottotype.DrawNumber]) == number_range:
-                if number.lottotype.DrawNumber not in drawNumber_dict:
-                    drawNumber_dict[number.lottotype.DrawNumber] = []
-                drawNumber_dict[
-                    number.lottotype.DrawNumber
-                ] = number.lottotype.DrawNumber
-
-                if number.lottotype.DrawNumber not in drawDate_dict:
-                    drawDate_dict[number.lottotype.DrawNumber] = []
-                drawDate_dict[number.lottotype.DrawNumber] = number.lottotype.DrawDate
-
-        for key in drawNumber_dict:
-            value = drawNumber_dict.get(key)
-            if value is None:
-                break
-            result_list.append(
-                {
-                    "DrawNumber": drawNumber_dict[key],
-                    "DrawDate": drawDate_dict[key].strftime("%Y-%m-%d"),
-                    "Numbers": numbers_dict[key],
-                }
-            )
-
-        sorted_list = sorted(result_list, key=lambda x: x["DrawNumber"], reverse=True)
-        sorted_result_list = [
+    for key, value_ in drawNumber_dict.items():
+        value = drawNumber_dict.get(key)
+        if value is None:
+            break
+        result_list.append(
             {
-                "DrawNumber": entry["DrawNumber"],
-                "DrawDate": entry["DrawDate"],
-                "Numbers": sorted(
-                    entry["Numbers"], key=lambda x: x["Value"], reverse=False
-                ),
+                "DrawNumber": value_,
+                "DrawDate": drawDate_dict[key].strftime("%Y-%m-%d"),
+                "Numbers": numbers_dict[key],
             }
-            for entry in sorted_list
-        ]
+        )
 
-        return jsonify({"data": sorted_result_list})
-    else:
-        return jsonify({"message": "No data found"})
+    sorted_list = sorted(result_list, key=lambda x: x["DrawNumber"], reverse=True)
+    sorted_result_list = [
+        {
+            "DrawNumber": entry["DrawNumber"],
+            "DrawDate": entry["DrawDate"],
+            "Numbers": sorted(
+                entry["Numbers"], key=lambda x: x["Value"], reverse=False
+            ),
+        }
+        for entry in sorted_list
+    ]
+    return jsonify({"data": sorted_result_list})
 
 
 def get_target_draw_number(lotto_name):
@@ -245,6 +244,6 @@ def get_target_draw_number(lotto_name):
 
 
 if __name__ == "__main__":
-    #app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
-    #app.run(debug=False, host="ep.lottotry.com", port=5000)
+    # app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
+    # app.run(debug=False, host="ep.lottotry.com", port=5000)
     app.run(debug=True, host="0.0.0.0", port=5000)
