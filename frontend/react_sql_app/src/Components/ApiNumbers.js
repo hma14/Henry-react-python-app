@@ -63,25 +63,27 @@ const ApiNumbers = (props) => {
             }
         }
         else {
-            if (number.IsNextPotentialHit === true)
+            if (number.IsNextPotentialHit === true) {
                 return 'text-success bg-color-ph fw-bold'
+            }
             return 'text-success bg-light fw-bold'
         }
     }
 
     const getHeaderBgColor = (n) => {
-        if (n.Value < 10)
+        if (n.Value < 10) {
             return 'bg-color20 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 20)
+        } else if (n.Value < 20) {
             return 'bg-color7 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 30)
+        } else if (n.Value < 30) {
             return 'bg-color6 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 40)
+        } else if (n.Value < 40) {
             return 'bg-color3 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 50)
+        } else if (n.Value < 50) {
             return 'bg-color10 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else
+        } else {
             return 'bg-color11 text-center text-danger fs-6 fw-bold px-2 fst-italic'
+        }
     }
 
     const getHeader = () => {
