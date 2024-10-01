@@ -121,11 +121,12 @@ class Numbers(db.Model):
     NumberOfDrawsWhenHit = db.Column(db.Integer, nullable=False)
     IsBonusNumber = db.Column(db.Boolean)
     TotalHits = db.Column(db.Integer, nullable=False)
+    Probability = db.Column(db.Integer, nullable=False)
     
     LottoTypeId = db.Column(db.String, db.ForeignKey('LottoTypes.Id'), nullable=False)
-    lottotype = db.relationship('LottoType')
+    LottoType = db.relationship('LottoType')
 
-    # Extra fields not related to the database table
+    # Extra fields nLt related to the database table
     NumberOfAppearing = 0
     
     def __init__(
@@ -138,6 +139,7 @@ class Numbers(db.Model):
         NumberOfDrawsWhenHit,
         IsBonusNumber,
         TotalHits,
+        Probability,
         NumberOfAppearing
     ):
         self.Id = Id
@@ -148,6 +150,7 @@ class Numbers(db.Model):
         self.NumberOfDrawsWhenHit = NumberOfDrawsWhenHit
         self.IsBonusNumber = IsBonusNumber
         self.TotalHits = TotalHits
+        self.Probability = Probability
         self.NumberOfAppearing = NumberOfAppearing
         
 class LottoType(db.Model):

@@ -66,7 +66,7 @@ def get_from_openai():
 
     # return simply strings
 
-    return  get_string_response()
+    return get_string_response()
 
 
 @app.route("/api/lotto/potential_draws", methods=["POST"])
@@ -161,10 +161,9 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
         data := (
             Numbers.query.join(LottoType, LottoType.Id == Numbers.LottoTypeId)
             .filter(
-                LottoType.LottoName == lotto_name, 
-                LottoType.DrawNumber <= drawNumber
+                LottoType.LottoName == lotto_name, LottoType.DrawNumber <= drawNumber
             )
-            .options(joinedload(Numbers.lottotype))
+            .options(joinedload(Numbers.LottoType))
             .order_by(desc(LottoType.DrawNumber))
             .limit(page_size * number_range)
             .offset(start_index)
@@ -178,9 +177,9 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
     drawDate_dict = {}
 
     for number in data:
-        if number.lottotype.DrawNumber not in numbers_dict:
-            numbers_dict[number.lottotype.DrawNumber] = []
-        numbers_dict[number.lottotype.DrawNumber].append(
+        if number.LottoType.DrawNumber not in numbers_dict:
+            numbers_dict[number.LottoType.DrawNumber] = []
+        numbers_dict[number.LottoType.DrawNumber].append(
             {
                 "Value": number.Value,
                 "Distance": number.Distance,
@@ -188,17 +187,18 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
                 "NumberOfDrawsWhenHit": number.NumberOfDrawsWhenHit,  # The line ` "IsBonusNumber":
                 "IsBonusNumber": number.IsBonusNumber,
                 "TotalHits": number.TotalHits,
+                "Probability": number.Probability,
                 "NumberOfAppearing": 0,
             }
         )
-        if len(numbers_dict[number.lottotype.DrawNumber]) == number_range:
-            if number.lottotype.DrawNumber not in drawNumber_dict:
-                drawNumber_dict[number.lottotype.DrawNumber] = []
-            drawNumber_dict[number.lottotype.DrawNumber] = number.lottotype.DrawNumber
+        if len(numbers_dict[number.LottoType.DrawNumber]) == number_range:
+            if number.LottoType.DrawNumber not in drawNumber_dict:
+                drawNumber_dict[number.LottoType.DrawNumber] = []
+            drawNumber_dict[number.LottoType.DrawNumber] = number.LottoType.DrawNumber
 
-            if number.lottotype.DrawNumber not in drawDate_dict:
-                drawDate_dict[number.lottotype.DrawNumber] = []
-            drawDate_dict[number.lottotype.DrawNumber] = number.lottotype.DrawDate
+            if number.LottoType.DrawNumber not in drawDate_dict:
+                drawDate_dict[number.LottoType.DrawNumber] = []
+            drawDate_dict[number.LottoType.DrawNumber] = number.LottoType.DrawDate
 
     result_list = []
 
