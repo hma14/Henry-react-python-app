@@ -63,26 +63,29 @@ const ApiNumbers = (props) => {
             }
         }
         else {
-            if (number.IsNextPotentialHit === true)
+            if (number.IsNextPotentialHit === true) {
                 return 'text-success bg-color-ph fw-bold'
+            }
             return 'text-success bg-light fw-bold'
         }
     }
 
+    const headerBgColorMap = [
+        { minValue: 0, className: 'bg-color20 text-center text-danger fs-6 fw-bold px-2 fst-italic' },
+        { minValue: 10, className: 'bg-color7 text-center text-danger fs-6 fw-bold px-2 fst-italic' },
+        { minValue: 20, className: 'bg-color6 text-center text-danger fs-6 fw-bold px-2 fst-italic' },
+        { minValue: 30, className: 'bg-color3 text-center text-danger fs-6 fw-bold px-2 fst-italic' },
+        { minValue: 40, className: 'bg-color10 text-center text-danger fs-6 fw-bold px-2 fst-italic' },
+        { minValue: 50, className: 'bg-color11 text-center text-danger fs-6 fw-bold px-2 fst-italic' },
+    ];
+
     const getHeaderBgColor = (n) => {
-        if (n.Value < 10)
-            return 'bg-color20 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 20)
-            return 'bg-color7 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 30)
-            return 'bg-color6 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 40)
-            return 'bg-color3 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else if (n.Value < 50)
-            return 'bg-color10 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-        else
-            return 'bg-color11 text-center text-danger fs-6 fw-bold px-2 fst-italic'
-    }
+        return headerBgColorMap
+            .slice()
+            .reverse()
+            .find(item => n.Value >= item.minValue).className;
+    };
+
 
     const getHeader = () => {
         return (
@@ -103,6 +106,7 @@ const ApiNumbers = (props) => {
                     {number.Value}<br />
                     (<span className={classNames('txt-color', { 'my-color-3 fst-italic fs-7': (number.NumberOfDrawsWhenHit > 10) }, { 'text-danger fst-italic fs-7': (number.NumberOfDrawsWhenHit <= 10) })}>{number.NumberOfDrawsWhenHit}</span>)<br />
                     (<span className='text-secondary fst-italic fs-7'>{number.TotalHits}</span>)
+                    (<span className='text-danger fst-italic fs-7'>{number.Probability}</span>)
                     {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
                 </td>
             )
@@ -113,6 +117,7 @@ const ApiNumbers = (props) => {
                     {number.Value}<br />
                     (<span className={classNames('txt-color', { 'fst-italic my-color-1 fs-7': (number.Distance > 10) }, { 'fst-italic text-success fs-7': (number.Distance <= 10) })}>{number.Distance}</span>)<br />
                     (<span className='text-primary fst-italic fs-7'>{number.TotalHits}</span>)
+                    (<span className='text-success fst-italic fs-7'>{number.Probability}</span>)
                     {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
                 </td>
             )
