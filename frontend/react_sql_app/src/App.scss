@@ -2,6 +2,14 @@
 // Import Bootstrap SCSS file to get access to its variables
 @import "~bootstrap/scss/bootstrap";
 
-.custom-indigo {
-    color: $indigo-400;
+.red-indigo {
+    color: $red-500;
+}
+
+.teal-indigo {
+    color:$teal-500;
+}
+
+.orange-indigo {
+    color:$orange-500;
 }
