@@ -3,6 +3,7 @@
 # dependencies
 backend/app/node_modules/
 frontend/react_sql_app/node_modules/
+frontend/react_sql_app/build/
 node_modules/
 /.pnp
 .pnp.js
@@ -34,3 +35,5 @@ evn/
 
 backend/app/__pycache__/
 backend/app/config.py/
+
+
