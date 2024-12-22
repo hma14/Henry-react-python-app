@@ -46,7 +46,11 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    lotto_data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    if lotto_data is not None:
+        return jsonify(lotto_data)
+    else:
+        return "Error on calling get_data_4 (allNumbers)"
 
 
 @app.route("/api/lotto/predict", methods=["GET"])

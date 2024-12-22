@@ -215,7 +215,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                     <option key={pageSize} value={pageSize}> {pageSize}</option>
                   ))}
                 </select>
-                <span className='bg-info text-white ps-2 fw-bolder'>draws per page</span>
+                <span className='bg-info text-white ps-2 fw-bolder'>draws/pp</span>
               </div>
             </li>
             <li className="nav-item margin-left col-md-4">
