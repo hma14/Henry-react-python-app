@@ -4,6 +4,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Table } from 'react-bootstrap'
 import '../App.css'
+import '../App.scss'
 import classNames from 'classnames'
 
 const ApiNumbers = (props) => {
@@ -106,7 +107,7 @@ const ApiNumbers = (props) => {
                     {number.Value}<br />
                     (<span className={classNames('txt-color', { 'my-color-3 fst-italic fs-7': (number.NumberOfDrawsWhenHit > 10) }, { 'text-danger fst-italic fs-7': (number.NumberOfDrawsWhenHit <= 10) })}>{number.NumberOfDrawsWhenHit}</span>)<br />
                     (<span className='text-secondary fst-italic fs-7'>{number.TotalHits}</span>)
-                    (<span className='text-danger fst-italic fs-7'>{number.Probability}</span>)
+                    (<span className={classNames('txt-color', {'red-indigo fst-italic fs-7': (number.Probability > 0) }, {'teal-indigo fst-italic fs-7': (number.Probability === 0) })}>{number.Probability}</span>)
                     {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
                 </td>
             )
@@ -117,7 +118,7 @@ const ApiNumbers = (props) => {
                     {number.Value}<br />
                     (<span className={classNames('txt-color', { 'fst-italic my-color-1 fs-7': (number.Distance > 10) }, { 'fst-italic text-success fs-7': (number.Distance <= 10) })}>{number.Distance}</span>)<br />
                     (<span className='text-primary fst-italic fs-7'>{number.TotalHits}</span>)
-                    (<span className='text-success fst-italic fs-7'>{number.Probability}</span>)
+                    (<span className={classNames('txt-color', {'red-indigo fst-italic fs-7': (number.Probability > 0) }, {'cyan-indigo fst-italic fs-7': (number.Probability === 0) })}>{number.Probability}</span>)
                     {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
                 </td>
             )

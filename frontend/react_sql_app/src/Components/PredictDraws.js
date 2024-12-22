@@ -251,6 +251,7 @@ const PredictDraws = (props) => {
               key={number.Value}><span className={classNames('txt-color', { 'my-color-4 fs-5': (number.Distance === 0) }, { 'text-danger fs-5': (number.Distance > 10) })}>{number.Value}</span>
               <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span>
               <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span>
+              <span className={classNames('txt-color', {'red-indigo fst-italic fs-6': (number.Probability > 0) }, {'teal-indigo fst-italic fs-6': (number.Probability === 0) })}>({number.Probability})</span>
             </td>)
             : '')}
       </tr>
@@ -261,9 +262,10 @@ const PredictDraws = (props) => {
     return (
       <td className={getBgColors(number)}
         key={number.Value}>
-        <span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span> {n === 2 ? <br /> : null}
-        <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span> {n === 2 ? <br /> : null}
-        <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span> {n === 2 ? <br /> : null}
+        <span className={classNames('txt-color', { 'my-color-4 fs-4': (number.Distance === 0) }, { 'text-danger fs-4': (number.Distance > 10) })}>{number.Value}</span> {n >= 2 ? <br /> : null}
+        <span className={classNames('txt-color', { 'fst-italic my-color-1 fs-6': (number.Distance > 10) }, { 'fst-italic text-success fs-6': (number.Distance <= 10) })}>({number.Distance})</span> {n >= 2 ? <br /> : null}
+        <span className='text-primary fst-italic fs-6'>({number.TotalHits})</span> {n >= 2 ? <br /> : null}
+        <span className={classNames('txt-color', {'red-indigo fst-italic fs-6': (number.Probability > 0) }, {'teal-indigo fst-italic fs-6': (number.Probability === 0) })}>({number.Probability})</span>
         {n !== 3 ? <span className='my-color-2 fst-italic fs-6'>[{number.NumberOfAppearing - 1}]</span> : null}
       </td>
     )
