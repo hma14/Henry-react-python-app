@@ -48,7 +48,7 @@ def get_data_4():
 
     lotto_data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
     if lotto_data is not None:
-        return jsonify(lotto_data)
+        return lotto_data
     else:
         return "Error on calling get_data_4 (allNumbers)"
 
@@ -248,6 +248,6 @@ def get_target_draw_number(lotto_name):
 
 
 if __name__ == "__main__":
-    # app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
-    app.run(debug=False, host="ep.lottotry.com", port=5000)
-    #app.run(debug=True, host="0.0.0.0", port=5000)
+    #app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
+    #app.run(debug=False, host="ep.lottotry.com", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5001)

@@ -33,6 +33,7 @@ evn/
 
 .venv/
 frontend/react_sql_app/build/
+backend/app/venv/
 
 backend/app/__pycache__/
 backend/app/config.py/

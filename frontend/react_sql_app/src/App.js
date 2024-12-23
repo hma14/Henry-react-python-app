@@ -78,7 +78,7 @@ const App = () => {
   const [pageSize, setPageSize] = useState(10)
   const [drawNumber, setDrawNumber] = useState(1)
 
- 
+  /*
 const url10 = 'http://ep.lottotry.com:5001/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName
 const url = 'http://ep.lottotry.com:5001/api/openai'
 const url4 = 'http://ep.lottotry.com:5001/api/lotto/allNumbers?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber
@@ -86,8 +86,8 @@ const url5 = 'http://ep.lottotry.com:5001/api/lotto/predict?lotto_name=' + lotto
 const url9 = 'http://ep.lottotry.com:5001/api/lotto/potential_draws?lotto_name=' + lottoName + '&columns=' + potentialColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber
 const url7 = 'http://ep.lottotry.com:5001/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber
 const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber
+*/
 
- /*
 
   const url10 = 'http://127.0.0.1:5001/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName
   const url = 'http://127.0.0.1:5001/api/openai'
@@ -97,7 +97,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
   const url7 = 'http://127.0.0.1:5001/api/lotto/lottoDraws?lotto_name=' + lottoName + '&page_number=' + page + '&columns=' + lottoColumns + '&page_size=' + pageSize + '&drawNumber=' + drawNumber
   const url8 = 'http://127.0.0.1:5001/api/lotto/numberDraws?lotto_name=' + lottoName + '&page_number=' + page + '&page_size=' + pageSize + '&drawNumber=' + drawNumber
 
-*/
+
 
 
   useEffect(() => {
@@ -215,11 +215,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                     <option key={pageSize} value={pageSize}> {pageSize}</option>
                   ))}
                 </select>
-<<<<<<< HEAD
                 <span className='bg-info text-white ps-2 fw-bolder'>draws/pp</span>
-=======
-                <span className='bg-info text-white ps-2 fw-bolder'>draws pp</span>
->>>>>>> origin/master
               </div>
             </li>
             <li className="nav-item margin-left col-md-4">
