@@ -46,7 +46,9 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    lotto_data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    lotto_data = retrieve_data(
+        lotto_name, page_size, number_range, start_index, drawNumber
+    )
     if lotto_data is not None:
         return lotto_data
     else:
@@ -248,6 +250,6 @@ def get_target_draw_number(lotto_name):
 
 
 if __name__ == "__main__":
-    #app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
-    #app.run(debug=False, host="ep.lottotry.com", port=5000)
+    # app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
+    # app.run(debug=False, host="ep.lottotry.com", port=5000)
     app.run(debug=True, host="0.0.0.0", port=5001)

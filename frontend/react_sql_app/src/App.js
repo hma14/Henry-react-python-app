@@ -77,6 +77,7 @@ const App = () => {
   //const [totalPages, setTotalPages] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [drawNumber, setDrawNumber] = useState(1)
+  const [error, setError] = useState(null)
 
   /*
 const url10 = 'http://ep.lottotry.com:5001/api/lotto/getCurrentDrawNumber?lotto_name=' + lottoName
@@ -103,19 +104,20 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
       try {
+        setError(null)
         const response = await axios(url10)
         setDrawNumber(response.data.drawNumber)
-      } catch (error) {
-        console.error('Error fetching draw number:', error)
+      } catch (err) {
+        setError("Failed to fetch the draw number. Please try again later, error: " + err)
       }
     }
-  
+
 
     getCurrentDrawNumber()
 
     //console.log(drawNumber)
 
-  }, [lottoName, url10])
+  }, [lottoName])
 
 
 
@@ -185,57 +187,63 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
           <a className="nav=item" href="/images">
             <img src={LottoTryLogo} className="App-logo img-fluid" alt="Lottotry Logo" width="%" />
           </a>
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <div className="mt-1 margin-left margin-right fw-bold">
-                <select value={selectedOption} id="rpp" className="dropdown btn bg-info text-white dropdown-toggle margin-right fw-bolder"
-                  onChange={(e) => selectLotto(e.target.value)}>
-                  {['BC49', 'LottoMax', 'Lotto649', 'DailyGrand', 'DailyGrand_GrandNumber'].map(lotto => (
-                    <option key={lotto} value={lotto}>{lotto}</option>
-                  ))}
-                </select>
-              </div>
-            </li>
-            <li className="nav-item">
-              <div className="mt-1 margin-left margin-right fw-bold">
-                <select value={selectedTypeOption} id="rpp" className="dropdown btn bg-info text-white dropdown-toggle  fw-bolder"
-                  onChange={(e) => setPlayType(e.target.value)}>
-                  {['number', 'distance', 'totalHits', 'lottoDraws', 'numberDraws', 'predictDraws', 'openai_saying'].map(sortType => (
-                    <option key={sortType} value={sortType}> By {sortType}</option>
-                  ))}
-                </select>
-              </div>
-            </li>
-            <li className="nav-item">
-              <div className="mt-1 margin-left margin-right fw-bold">
-                <select id="rpp" className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
-                  value={pageSize}
-                  onChange={(e) => setPageSize(e.target.value)}>
-                  {[5, 10, 20, 30, 40, 50, 100].map(pageSize => (
-                    <option key={pageSize} value={pageSize}> {pageSize}</option>
-                  ))}
-                </select>
-                <span className='bg-info text-white ps-2 fw-bolder'>draws/pp</span>
-              </div>
-            </li>
-            <li className="nav-item margin-left col-md-4">
-              <div className="margin-left mt-1 row">
-                <div class="col-md-5 mt-1">
-                  <label for="textInput" className="bg-info text-white ps-3 fw-bold">Current Draw</label>
+          {error ? (
+            <p style={{ color: 'red' }}>{error}</p>
+          ) : (drawNumber === null ? (
+            <p>Loading...</p>
+          ) : (
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <div className="mt-1 margin-left margin-right fw-bold">
+                  <select value={selectedOption} id="rpp" className="dropdown btn bg-info text-white dropdown-toggle margin-right fw-bolder"
+                    onChange={(e) => selectLotto(e.target.value)}>
+                    {['BC49', 'LottoMax', 'Lotto649', 'DailyGrand', 'DailyGrand_GrandNumber'].map(lotto => (
+                      <option key={lotto} value={lotto}>{lotto}</option>
+                    ))}
+                  </select>
                 </div>
-                <div class="col-md-4">
-                  <input
-                    className='form-control ps-3 fw-bolder text-danger fst-italic'
-                    type="number"
-                    id="numberInput"
-                    name="numberInput"
-                    value={drawNumber}
-                    onChange={handleDrawNumberChange}
-                  />
+              </li>
+              <li className="nav-item">
+                <div className="mt-1 margin-left margin-right fw-bold">
+                  <select value={selectedTypeOption} id="rpp" className="dropdown btn bg-info text-white dropdown-toggle  fw-bolder"
+                    onChange={(e) => setPlayType(e.target.value)}>
+                    {['number', 'distance', 'totalHits', 'lottoDraws', 'numberDraws', 'predictDraws', 'openai_saying'].map(sortType => (
+                      <option key={sortType} value={sortType}> By {sortType}</option>
+                    ))}
+                  </select>
                 </div>
-              </div>
-            </li>
-          </ul>
+              </li>
+              <li className="nav-item">
+                <div className="mt-1 margin-left margin-right fw-bold">
+                  <select id="rpp" className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
+                    value={pageSize}
+                    onChange={(e) => setPageSize(e.target.value)}>
+                    {[5, 10, 20, 30, 40, 50, 100].map(pageSize => (
+                      <option key={pageSize} value={pageSize}> {pageSize}</option>
+                    ))}
+                  </select>
+                  <span className='bg-info text-white ps-2 fw-bolder'>draws/pp</span>
+                </div>
+              </li>
+              <li className="nav-item margin-left col-md-4">
+                <div className="margin-left mt-1 row">
+                  <div class="col-md-5 mt-1">
+                    <label for="textInput" className="bg-info text-white ps-3 fw-bold">Current Draw</label>
+                  </div>
+                  <div class="col-md-4">
+                    <input
+                      className='form-control ps-3 fw-bolder text-danger fst-italic'
+                      type="number"
+                      id="numberInput"
+                      name="numberInput"
+                      value={drawNumber}
+                      onChange={handleDrawNumberChange}
+                    />
+                  </div>
+                </div>
+              </li>
+            </ul>
+          ))}
         </nav>
         <>
           {
