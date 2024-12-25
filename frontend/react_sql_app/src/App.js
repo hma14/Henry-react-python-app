@@ -117,7 +117,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
 
     //console.log(drawNumber)
 
-  }, [lottoName])
+  }, [url10])
 
 
 
