@@ -126,7 +126,7 @@ class Numbers(db.Model):
     LottoTypeId = db.Column(db.String, db.ForeignKey('LottoTypes.Id'), nullable=False)
     LottoType = db.relationship('LottoType')
 
-    # Extra fields nLt related to the database table
+    # Extra fields not related to the database table
     NumberOfAppearing = 0
     
     def __init__(

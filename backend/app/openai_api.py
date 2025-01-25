@@ -1,12 +1,14 @@
 import os
 from openai import OpenAI
 from config import Config
+from dotenv import load_dotenv
 
-
+load_dotenv()
+ChatGPT_API_KEY = os.getenv("ChatGPT_API_KEY")
 
 
 def get_string_response():
-    ret = f"To generate a set of 7 random numbers based on the provided historical data, I would usually look at the frequency of each number to determine which numbers are drawn more often. \
+    return "To generate a set of 7 random numbers based on the provided historical data, I would usually look at the frequency of each number to determine which numbers are drawn more often. \
         However, with the limited data you've provided, any patterns or trends may not be statistically significant, and using them to predict future numbers may not be any more effective \
             than generating completely random numbers. Nonetheless, I can provide you with a simple algorithmic approach to generate a pseudo-random set of numbers based on the provided history, \
                 taking into account the frequency of each number: 1. Calculate the frequency of each number within the provided draws. 2. Normalize these frequencies to create weighted probabilities. \
@@ -20,11 +22,11 @@ def get_string_response():
                                                 actually use a randomizing function due to the natural constraints of this environment. For a true random set based on frequency or any other criteria, \
                                                     you'd want to use statistical software or a programming language like Python or R, \
                                                         which can handle weighted probabilities and random number generation more effectively."
-    return ret
+
 
 def get_openai_response():    
     
-    client = OpenAI(api_key=Config.OPEN_AI_KEY)
+    client = OpenAI(api_key=ChatGPT_API_KEY)
     
     conversation = [
         {"role": "system", "content": "You are a helpful assistant."},

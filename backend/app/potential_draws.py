@@ -26,20 +26,15 @@ class PotentialDraws:
     def next_potential_draws(self):
         results = [[]]
         self.remaining = self.numbers
-        for n in range(self.rows):
+        for _ in range(self.rows):
             flip_coin = random.randint(1, 2)
-            if flip_coin == 2:
-                flip_coin2 = random.randint(1, 2)
-                if flip_coin2 == 1:
-                    results.append(self.get_numbers_based_on_total_hits())
-                else:
-                    results.append(self.next_potential_draws_1())
+            flip_coin2 = random.randint(1, 2)                
+            if flip_coin2 == 1:
+                results.append(self.get_numbers_based_on_total_hits())
+            elif flip_coin == 2:
+                results.append(self.next_potential_draws_1())
             else:
-                flip_coin2 = random.randint(1, 2)
-                if flip_coin2 == 1:
-                    results.append(self.get_numbers_based_on_total_hits())
-                else:
-                    results.append(self.next_potential_draws_2())
+                results.append(self.next_potential_draws_2())
 
         no_empty_array_results = [arr for arr in results if arr]
         for arr in no_empty_array_results:
@@ -48,12 +43,12 @@ class PotentialDraws:
                     self.remaining.remove(a)
                     self.hitting.append(a)
                 
-        
-        no_empty_array_results.append(self.remaining)
-        
-        no_empty_array_results.append(sorted(self.hitting, key=lambda x : x["Value"], reverse=False))
 
-        
+        no_empty_array_results.extend((
+            self.remaining,
+            sorted(self.hitting, key=lambda x : x["Value"], reverse=False)
+        ))
+
         #print(f"no_empty_array_results = {no_empty_array_results}")
         return no_empty_array_results
 
@@ -66,7 +61,7 @@ class PotentialDraws:
         lastHits = self.getLastHitNumbers()
         # print(f"lastHits = {lastHits}")
         index = random.randint(0, len(lastHits) - 1)
-        pred.append(lastHits[index])
+        pred = [lastHits[index]]
 
         flip_coin = random.randint(1, 2)
 
@@ -132,7 +127,7 @@ class PotentialDraws:
         # take 1 from last hits
         cold_numbers = self.getLastHitNumbers()
         index = random.randint(0, len(cold_numbers) - 1)
-        pred.append(cold_numbers[index])
+        pred = [cold_numbers[index]]
 
         # frequent numbers
         frequent = self.get_frequent_numbers()
@@ -147,8 +142,7 @@ class PotentialDraws:
 
             index = random.randint(0, len(frequent) - 1)
             pred.append(frequent[index])
-
-        # take 1 from two_hots_1_cold
+        
         hots_cold = self.get_hots_cold_numbers()
         if len(hots_cold) > 0:
             index = random.randint(0, len(hots_cold) - 1)
@@ -199,7 +193,7 @@ class PotentialDraws:
         tens = [x for x in arr if 10 <= x["Value"] < 20]
         twenties = [x for x in arr if 20 <= x["Value"] < 30]
         thirties = [x for x in arr if 30 <= x["Value"] < 40]
-        forties = [x for x in arr if 40 <= x["Value"]]
+        forties = [x for x in arr if x["Value"] >= 40]
 
         arrays = [ones, tens, twenties, thirties, forties]
 
@@ -207,12 +201,12 @@ class PotentialDraws:
 
         # index = random.randint(0, len(arrays) - 1)
         longest_array = []
-        max = 0
+        max1 = 0
         for ar in removed_empty_arrays:
-            if len(ar) > max:
-                max = len(ar)
+            if len(ar) > max1:
+                max1 = len(ar)
                 longest_array = ar
-            elif len(ar) == max:
+            elif len(ar) == max1:
                 longest_array += ar
 
         return longest_array
@@ -232,9 +226,7 @@ class PotentialDraws:
                 middle.append(arr[i])
             else:
                 high.append(arr[i])
-        array = []
-        array = [low, middle, high]
-        return array
+        return [low, middle, high]
 
     def getDistanceNumbers(self):
         arr = sorted(self.numbers, key=lambda x: x["Distance"], reverse=False)
@@ -253,28 +245,22 @@ class PotentialDraws:
                 middle.append(arr[i])
             else:
                 high.append(arr[i])
-        array = []
-        array = [low, middle, high]
 
-        return array
+        return [low, middle, high]
 
     # new algorithm
 
     def get_frequent_numbers(self):
         frequent = []
-        for n in self.numbers:
-            if self.get_frequent(n): 
-                frequent.append(n)
+        frequent.extend(n for n in self.numbers if self.get_frequent(n))
         return frequent
     
     def get_frequent(self, number):
         data = self.data
-        draw_count = 0
         distance_from_previous_hit = 0
         current_draw = data[0]
         number_of_hits = 0
-        for da in data:
-            draw_count += 1
+        for draw_count, da in enumerate(data, start=1):
             numbers = da["Numbers"]
             num = [x for x in numbers if x["Value"] == number["Value"]][0]
             if (
@@ -297,26 +283,15 @@ class PotentialDraws:
 
     def get_hots_cold_numbers(self):
         hots_cold = []
-        numbers = self.numbers
-        for n in numbers:
-            # testing only
-            # if n['Value'] != 11:
-            #    continue
-            # end testing
-
-            if self.get_hots_cold(n):
-                hots_cold.append(n)
-
+        hots_cold.extend(n for n in self.numbers if self.get_hots_cold(n))
         return hots_cold
 
     def get_hots_cold(self, number):
         data = self.data
-        draw_count = 0
         distance_from_previous_hit = 0
-        current_draw = data[0]
         number_of_hits = 0
-        for da in data:
-            draw_count += 1
+        current_draw = data[0]
+        for draw_count, da in enumerate(data, start=1):
             numbers = da["Numbers"]
             num = [x for x in numbers if x["Value"] == number["Value"]][0]
             if num["IsHit"] == True and da["DrawNumber"] == current_draw["DrawNumber"]:
@@ -339,32 +314,23 @@ class PotentialDraws:
 
     def get_cold_numbers(self):
         colds = []
-        for n in self.numbers:
-            if n["Distance"] >= self.COLD_DISTANCE:
-                colds.append(n)
-
+        colds.extend(
+            n for n in self.numbers if n["Distance"] >= self.COLD_DISTANCE
+        )
         return colds
 
     def get_semi_cold_numbers(self):
         semi_cold = []
-        for n in self.numbers:
-            # testing only
-            # if n['Value'] != 38:
-            # continue
-            # end testing
-
-            if self.get_semi_cold(n):
-                semi_cold.append(n)
-
+        semi_cold.extend(
+            n for n in self.numbers if self.get_semi_cold(n)
+        )
         return semi_cold
 
     def get_semi_cold(self, number):
         data = self.data
-        draw_count = 0
         current_draw = data[0]
         number_of_hits = 0
         for da in data:
-            draw_count += 1
             numbers = da["Numbers"]
             num = [x for x in numbers if x["Value"] == number["Value"]][0]
             if num["IsHit"] == True and da["DrawNumber"] == current_draw["DrawNumber"]:
@@ -409,7 +375,7 @@ class PotentialDraws:
             else:
                 highest_hits_array.append(arr[i])
 
-        array = [
+        return [
             lowest_hits_array,
             two_fifth_array,
             three_fifth_array,
@@ -417,21 +383,23 @@ class PotentialDraws:
             highest_hits_array,
         ]
 
-        return array
-
     def get_hits_in_number_range(self, numbers, isForHotHitsRange):
-        arr = self.get_hits_range_arrays(numbers)
-        highest_hits_array = arr[4]
-        lowest_hits_array = arr[0]
+        arr = self.get_hits_range_arrays(numbers)     
         array = []
         if isForHotHitsRange == True:
-            for i in range(len(highest_hits_array)):
-                if highest_hits_array[i]["Distance"] > self.HITS_MIN_DISTANCE:
-                    array.append(highest_hits_array[i])
+            highest_hits_array = arr[4]
+            array.extend(
+                highest_hits_array[i]
+                for i in range(len(highest_hits_array))
+                if highest_hits_array[i]["Distance"] > self.HITS_MIN_DISTANCE
+            )
         else:
-            for i in range(len(lowest_hits_array)):
-                if lowest_hits_array[i]["Distance"] > self.HITS_MIN_DISTANCE:
-                    array.append(lowest_hits_array[i])
+            lowest_hits_array = arr[0]
+            array.extend(
+                lowest_hits_array[i]
+                for i in range(len(lowest_hits_array))
+                if lowest_hits_array[i]["Distance"] > self.HITS_MIN_DISTANCE
+            )
 
         return array
 
@@ -440,18 +408,14 @@ class PotentialDraws:
             self.prev_draw_numbers if isForPrevious else self.numbers, True
         )
         filtered_arr = [a for a in arr if a["Distance"] == 0]
-        if len(filtered_arr) <= 1:
-            return False
-        return True
+        return len(filtered_arr) > 1
 
     def is_hot_in_lowest_hits_range(self, isForPrevious):
         arr = self.get_hits_in_number_range(
             self.prev_draw_numbers if isForPrevious else self.numbers, False
         )
         filtered_arr = [a for a in arr if a["Distance"] == 0]
-        if len(filtered_arr) <= 1:
-            return False
-        return True
+        return len(filtered_arr) > 1
 
     #
     def get_numbers_based_on_total_hits(self):
@@ -473,7 +437,7 @@ class PotentialDraws:
                 array.append(three_fifth_array[index])
                 index = random.randint(0, len(four_fifth_array) - 1)
                 array.append(four_fifth_array[index])
-            elif self.is_hot_in_lowest_hits_range(True) == False:
+            else:
                 # now focus on 2 lowest and 1 middle ranges 1 highest
                 # lowest
                 index = random.randint(0, len(lowest_hits_array) - 1)
@@ -481,12 +445,10 @@ class PotentialDraws:
                 index = random.randint(0, len(lowest_hits_array) - 1)
                 array.append(lowest_hits_array[index])
 
-                # middle
-                index = random.randint(0, len(four_fifth_array) - 1)
-                array.append(four_fifth_array[index])
-        else:
-            # focus on highest of next draw
-            if self.is_hot_in_lowest_hits_range(True) == True:
+            # middle
+            index = random.randint(0, len(four_fifth_array) - 1)
+            array.append(four_fifth_array[index])
+        elif self.is_hot_in_lowest_hits_range(True) == True:
                 # now focus on highest and middle ranges
                 # 2 highest
                 index = random.randint(0, len(highest_hits_array) - 1)
@@ -497,17 +459,17 @@ class PotentialDraws:
                 # 1 middle
                 index = random.randint(0, len(two_fifth_array) - 1)
                 array.append(two_fifth_array[index])
-            elif self.is_hot_in_lowest_hits_range(True) == False:
-                # now focus on lowest and highest
-                # 1 highest
-                index = random.randint(0, len(highest_hits_array) - 1)
-                array.append(highest_hits_array[index])
+        else:
+            # now focus on lowest and highest
+            # 1 highest
+            index = random.randint(0, len(highest_hits_array) - 1)
+            array.append(highest_hits_array[index])
 
-                # 2 lowest
-                index = random.randint(0, len(lowest_hits_array) - 1)
-                array.append(lowest_hits_array[index])
-                index = random.randint(0, len(lowest_hits_array) - 1)
-                array.append(lowest_hits_array[index])
+            # 2 lowest
+            index = random.randint(0, len(lowest_hits_array) - 1)
+            array.append(lowest_hits_array[index])
+            index = random.randint(0, len(lowest_hits_array) - 1)
+            array.append(lowest_hits_array[index])
 
         # 1 cold
         colds = self.get_cold_numbers()

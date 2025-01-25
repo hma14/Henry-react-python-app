@@ -231,6 +231,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
         }
         for entry in sorted_list
     ]
+
     return jsonify({"data": sorted_result_list})
 
 

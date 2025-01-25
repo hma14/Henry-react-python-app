@@ -38,4 +38,4 @@ backend/app/venv/
 backend/app/__pycache__/
 backend/app/config.py/
 
-
+.env
