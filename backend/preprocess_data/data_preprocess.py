@@ -4,7 +4,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import os
 from pathlib import Path
-from dotenv import load_dotenv # type: ignore
+from dotenv import load_dotenv 
 
 root_dir = Path(__file__).resolve().parent.parent  # Adjust based on your project structure
 
