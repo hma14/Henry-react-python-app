@@ -1,5 +1,6 @@
 # cSpell: disable
 
+import sys
 import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS   # Import the CORS module
@@ -12,6 +13,14 @@ from flask_sqlalchemy import SQLAlchemy
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
 from potential_draws import PotentialDraws
 import json
+from pathlib import Path
+import pandas as pd
+from preprocess_data.data_preprocess import preprocess_data
+from ai_model_training.scikit_learn_training import train_scikit_learn_model
+
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+#print(sys.path)
 
 
 app = Flask(__name__)
@@ -31,6 +40,47 @@ CORS(app)
 
 
 db.init_app(app)
+
+    
+    
+@app.route("/api/preprocess_dataset", methods=["GET"])
+def print_dataset():
+    lotto_name = int(request.args.get("lotto_name", 1))
+    
+    return preprocess_data('', lotto_name, '2025-01-01', True)
+
+
+@app.route("/api/train_scikit_learn_model", methods=["GET"])
+def scikit_learn_training_model():
+    # Load the preprocessed data
+
+    saved_dir = Path(__file__).resolve().parent /  'preprocess_data' / 'saved_training_data'
+    X_train_path = saved_dir / 'X_train.csv'
+    if X_train_path.exists():
+        X_train = pd.read_csv(X_train_path)
+
+    X_test_path = saved_dir / 'X_test.csv'
+    if X_test_path.exists():
+        X_test = pd.read_csv(X_test_path)
+
+
+    y_train_path = saved_dir / 'y_train.csv'
+    if y_train_path.exists():
+        y_train = pd.read_csv(y_train_path)
+
+    y_test_path = saved_dir / 'y_test.csv'
+    if y_test_path.exists():
+        y_test = pd.read_csv(y_test_path)
+
+    df = train_scikit_learn_model(X_train, X_test, y_train, y_test, 'lotto_prediction_model.pkl') # call train_scikit_learn_model
+    
+    # Convert DataFrame to JSON
+    response = {
+        "numbers": df["Number"].tolist(),
+        "probabilities": df["Probability"].tolist()
+    }
+    
+    return jsonify(response)
 
 
 @app.route("/api/lotto/allNumbers", methods=["GET"])
