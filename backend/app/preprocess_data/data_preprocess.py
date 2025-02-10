@@ -1,6 +1,6 @@
 import pandas as pd
 import pyodbc
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
 import os
 from pathlib import Path
@@ -8,30 +8,31 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from datetime import datetime
 
-def preprocess_data(query, lotto_name, drawDate, save_to_csv=True):
-    
-    date_obj = datetime.strptime(drawDate, "%Y-%m-%d").date()
-   
-    
-    if query == "":
-        query = """
-        select lt.DrawNumber, 
-        FORMAT(lt.DrawDate, 'yyy-MM-dd') as drawDate, 
-        nu.Value as Number, 
-        nu.Distance, nu.IsHit, 
-        nu.NumberofDrawsWhenHit, 
-        nu.IsBonusNumber, 
-        nu.TotalHits
 
-        from [dbo].[LottoTypes] as lt 
-        inner join [dbo].[Numbers] as nu on lt.Id = nu.LottoTypeId
-        where lt.LottoName = ? and lt.DrawDate > ?
-        order by lt.DrawNumber DESC, nu.Value ASC
-        """
+def get_temperature(Distance):
+    if Distance == 0:
+        return 0
+    elif Distance <= 5 and Distance > 0:
+        return 1
+    elif Distance <= 10 and Distance > 5:
+        return 2
+    elif Distance <= 15 and Distance > 10:
+        return 3
+    elif Distance <= 25 and Distance > 15:
+        return 4
+    else:  # distance > 25
+        return 5
 
+
+def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
+    
+    # date_obj = datetime.strptime(drawNumber, "%Y-%m-%d").date()
+    
     # Load environment variables
     
-    root_dir = Path(__file__).resolve()
+    cwd_dir = Path(__file__).resolve()
+    
+    root_dir = cwd_dir
     
     # Keep going up until you find a specific marker (e.g., `.env`, `pyproject.toml`, or `.git`)
     while root_dir.name not in ("ai.lottotry.com", "") and root_dir.parent != root_dir:
@@ -46,11 +47,13 @@ def preprocess_data(query, lotto_name, drawDate, save_to_csv=True):
     
     # Step 1: Load the data
     conn = pyodbc.connect(f'DRIVER={DB_TYPE};SERVER={DB_SERVER};DATABASE={DB_NAME};UID={DB_UID};PWD={DB_PWD}')
-    """     
-    cursor = conn.cursor
-    cursor.execute(query, (lotto_name, drawDate))
-    """    
-    df = pd.read_sql(query, conn, params=[lotto_name, drawDate])
+    
+    query_path = cwd_dir.parent / 'saved_training_data' / query_file
+    
+    with open(query_path, "r") as file:
+        query = file.read()
+    
+    df = pd.read_sql(query, conn, params=[lotto_name, drawNumber])
     
     #cursor.close()
     conn.close()
@@ -59,22 +62,27 @@ def preprocess_data(query, lotto_name, drawDate, save_to_csv=True):
     df = df.fillna(0)
     
     # Step 3: Feature engineering
-    #df['IsHot'] = df['TotalHits'] > df['TotalHits'].median()
-    df['IsHot'] = (df['Distance'] <= 10) & (df['IsHit'] == 0)
-    """     
-    df['IsBonusNumber'] = df['IsBonusNumber'].astype(int)
+    
+    # df['IsBonusNumber'] = df['IsBonusNumber'].astype(int)
     df['IsHit'] = df['IsHit'].astype(int)
-    """    
+    
+    
+    # For categorical features
+    #df["Temperature"] = df["Temperature"].map(get_temperature).astype(int)
+    df["Temperature"] = df["Distance"].apply(get_temperature)
+      
     # Step 4: Normalize numerical features
-    scaler = StandardScaler()
-    df[['Distance', 'TotalHits', 'NumberofDrawsWhenHit']] = scaler.fit_transform(df[['Distance', 'TotalHits', 'NumberofDrawsWhenHit']])
+    count_features = ['Distance', 'NumberofDrawsWhenHit', 'HitsLast10Draws', 'TotalHits', 'PrevDrawEvenCount', 'Temperature']
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df[count_features] = scaler.fit_transform(df[count_features])
+    
     
     # Step 5: Encode categorical features
-    df = pd.get_dummies(df, columns=['IsHot'], drop_first=True)
+    #df = pd.get_dummies(df, columns=['Temperature'], prefix='Temp')
     
     # Step 6: Split the data
-    X = df.drop(columns=['IsHit'])
-    y = df['IsHit']
+    X = df.drop(columns=['NextDrawHit'])
+    y = df['NextDrawHit']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffle=False)
     
     # Step 7: Save the preprocessed data
