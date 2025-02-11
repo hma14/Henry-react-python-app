@@ -11,17 +11,33 @@ from datetime import datetime
 
 def get_temperature(Distance):
     if Distance == 0:
-        return 0
-    elif Distance <= 5 and Distance > 0:
-        return 1
-    elif Distance <= 10 and Distance > 5:
-        return 2
-    elif Distance <= 15 and Distance > 10:
-        return 3
-    elif Distance <= 25 and Distance > 15:
-        return 4
-    else:  # distance > 25
-        return 5
+        return 0 # Boiling
+    elif Distance <= 3:
+        return 1 # Very Hot
+    elif Distance <= 7:
+        return 2 # Hot
+    elif Distance <= 12:
+        return 3 # Neutral
+    elif Distance <= 20:
+        return 4 # Cold
+    else:  # distance > 20
+        return 5 # Very Cold
+
+
+def save_training_data(X_train, X_test, y_train, y_test):
+    """Saves training and testing datasets as CSV files."""
+    save_dir = Path(__file__).resolve().parent / 'saved_training_data'
+    os.makedirs(save_dir, exist_ok=True)
+
+    datasets = {
+        "X_train": X_train,
+        "X_test": X_test,
+        "y_train": y_train,
+        "y_test": y_test
+    }
+
+    for name, df in datasets.items():
+        df.to_csv(save_dir / f"{name}.csv", index=False)
 
 
 def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
@@ -70,16 +86,20 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     # For categorical features
     #df["Temperature"] = df["Temperature"].map(get_temperature).astype(int)
     df["Temperature"] = df["Distance"].apply(get_temperature)
-      
-    # Step 4: Normalize numerical features
-    count_features = ['Distance', 'NumberofDrawsWhenHit', 'HitsLast10Draws', 'TotalHits', 'PrevDrawEvenCount', 'Temperature']
+    
+    # Example engineered feature: "Recency-weighted hits"
+    # 1e-5 prevents division by zero when Distance=0 (current hit).
+    df['WeightedHits'] = df['HitsLast10Draws'] / (df['Distance'] + 1e-5)
+           
+    # Step 4: Normalize manually
+    df['PrevDrawEvenCount'] = df['PrevDrawEvenCount'] / 7
+    
+    # Step 5: Normalize numerical features
+    count_features = ['Distance', 'NumberofDrawsWhenHit', 'HitsLast10Draws', 'TotalHits',  'Temperature', 'WeightedHits']
     scaler = MinMaxScaler(feature_range=(0, 1))
     df[count_features] = scaler.fit_transform(df[count_features])
     
-    
-    # Step 5: Encode categorical features
-    #df = pd.get_dummies(df, columns=['Temperature'], prefix='Temp')
-    
+        
     # Step 6: Split the data
     X = df.drop(columns=['NextDrawHit'])
     y = df['NextDrawHit']
@@ -88,6 +108,8 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     # Step 7: Save the preprocessed data
     if save_to_csv:
         try:
+            save_training_data(X_train, X_test, y_train, y_test)
+            """           
             save_dir = Path(__file__).resolve().parent / 'saved_training_data'
             os.makedirs(save_dir, exist_ok=True)  
             
@@ -103,9 +125,11 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
             y_test_path = os.path.join(save_dir, "y_test.csv")
             y_test.to_csv(y_test_path, index=False)
             
+            """            
             print("File saved successfully!")
         except Exception as e:
             print("Error while saving: ", e)
+            
     """     
     return jsonify({
         "X_train": X_train.to_json(orient="records"),
@@ -115,10 +139,9 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     })
     """    
     
-    html = f"""
+    return f"""
     <h2>X_train</h2> {X_train.to_html()}
     <h2>X_test</h2> {X_test.to_html()}
     <h2>y_train</h2> {y_train.to_frame().to_html()}
     <h2>y_test</h2> {y_test.to_frame().to_html()}
     """
-    return html

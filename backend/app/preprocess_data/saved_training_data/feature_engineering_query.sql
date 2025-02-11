@@ -30,7 +30,7 @@ Table2 AS (
 		nu.Value as Number, 
 		nu.Distance, 
 		nu.IsHit, 
-		nu.NumberofDrawsWhenHit, 
+		nu.NumberofDrawsWhenHit,
 		nu.IsBonusNumber, 
 		nu.TotalHits
 
@@ -39,7 +39,7 @@ Table2 AS (
 			on lt.Id = nu.LottoTypeId
 		where lt.LottoName = ?
 	) temp
-	where temp.DrawNumber > ?
+	where temp.DrawNumber > ? --3439
 ),
 Table3 AS (
 	SELECT DrawNumber,
@@ -54,7 +54,7 @@ Table3 AS (
 )  
 
 SELECT 
-    t1.DrawNumber,
+    --t1.DrawNumber,
     t1.Number,
 	t1.IsHit,
     t1.Distance,

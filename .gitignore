@@ -40,3 +40,5 @@ backend/app/config.py/
 
 .env
 docs/
+backend/app/preprocess_data/saved_training_data/*.csv
+backend/app/preprocess_data/__pycache__
