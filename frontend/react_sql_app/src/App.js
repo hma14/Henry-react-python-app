@@ -11,7 +11,7 @@ import NumberDrawsInDistance from "./Components/NumberDrawsInDistance";
 import ApiOpenAI from "./Components/ApiOpenAI";
 import DisplayDataset from "./Components/DisplayDataset";
 import ModelTrainingResult from "./Components/ModelTrainingResult";
-
+import LottoModelTrainingResult from "./Components/LottoModelTrainingResult";
 const Styles = styled.div`
   padding: 1rem;
 
@@ -137,6 +137,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
     "http://127.0.0.1:5001/api/preprocess_dataset?lotto_name=" + lottoName;
 
   const url21 = "http://127.0.0.1:5001/api/train_scikit_learn_model";
+  const url22 = "http://127.0.0.1:5001/api/train_lottery_model";
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -270,6 +271,8 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                         "openai_saying",
                         "preprocess_dataset",
                         "training_model",
+                        "lotto_training_model",
+                        "train_lotto_model",
                       ].map((sortType) => (
                         <option key={sortType} value={sortType}>
                           {" "}
@@ -333,6 +336,8 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                   return <DisplayDataset endpoint={url20} />;
                 case "training_model":
                   return <ModelTrainingResult endpoint={url21} />;
+                case "train_lotto_model":
+                  return <LottoModelTrainingResult endpoint={url22} />;
                 case "lottoDraws":
                   return <LottoDraws endpoint={url7} columns={lottoColumns} />;
                 case "numberDraws":

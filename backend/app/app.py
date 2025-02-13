@@ -17,6 +17,7 @@ from pathlib import Path
 import pandas as pd
 from preprocess_data.data_preprocess import preprocess_data
 from ai_model_training.scikit_learn_training import train_scikit_learn_model
+from ai_model_training.train_ai_model import training_lottery_model 
 
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -81,6 +82,43 @@ def scikit_learn_training_model():
     }
     
     return jsonify(response)
+
+@app.route("/api/train_lottery_model", methods=["GET"])
+def train_lottery_model():
+    # Load the preprocessed data
+    saved_dir = Path(__file__).resolve().parent /  'preprocess_data' / 'saved_training_data'
+    X_train_path = saved_dir / 'X_train.csv'
+    if X_train_path.exists():
+        X_train = pd.read_csv(X_train_path)
+
+    X_test_path = saved_dir / 'X_test.csv'
+    if X_test_path.exists():
+        X_test = pd.read_csv(X_test_path)
+
+
+    y_train_path = saved_dir / 'y_train.csv'
+    if y_train_path.exists():
+        y_train = pd.read_csv(y_train_path)
+
+    y_test_path = saved_dir / 'y_test.csv'
+    if y_test_path.exists():
+        y_test = pd.read_csv(y_test_path)
+
+    model_config = {
+        'class_weight': 'balanced_subsample',
+        'n_estimators': 200,
+        'max_depth': 10,
+        'sampling_ratio': 0.5
+    }
+    
+    # Train the model
+    metrics, feature_importance = training_lottery_model(
+        X_train, 
+        y_train, 
+        model_config
+    )
+
+    return jsonify({"metrics": metrics, "feature_importance": feature_importance})    
 
 
 @app.route("/api/lotto/allNumbers", methods=["GET"])

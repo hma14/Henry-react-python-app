@@ -15,9 +15,7 @@ def train_scikit_learn_model(X_train, X_test, y_train, y_test, model_to_be_saved
         class_weight='balanced'  # Handle class imbalance (if any)
     )
 
-    # drop drawDate column
-    X_train = X_train.drop(columns=['drawDate'])
-    X_test = X_test.drop(columns=['drawDate'])
+
     
     # Train the model
     model.fit(X_train, y_train.values.ravel())  # .ravel() to flatten y_train if needed
@@ -34,7 +32,7 @@ def train_scikit_learn_model(X_train, X_test, y_train, y_test, model_to_be_saved
 
     # Example: Predict probabilities for the next draw
     # Load the latest data (replace with your actual data)
-    latest_data = X_train.iloc[-10:]  # Example: Use the last row of training data
+    latest_data = X_train.iloc[-1:]  # Example: Use the last row of training data
     probabilities = model.predict_proba(latest_data)[:, 1]  # Probability of "IsHit = True"
 
     #print(len(X_train['Number'].values))  # Number of feature columns

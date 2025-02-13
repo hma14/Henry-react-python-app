@@ -109,23 +109,6 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     if save_to_csv:
         try:
             save_training_data(X_train, X_test, y_train, y_test)
-            """           
-            save_dir = Path(__file__).resolve().parent / 'saved_training_data'
-            os.makedirs(save_dir, exist_ok=True)  
-            
-            X_train_path = os.path.join(save_dir, "X_train.csv")
-            X_train.to_csv(X_train_path, index=False)
-            
-            X_test_path = os.path.join(save_dir, "X_test.csv")
-            X_test.to_csv(X_test_path, index=False)
-            
-            y_train_path = os.path.join(save_dir, "y_train.csv")
-            y_train.to_csv(y_train_path, index=False)
-            
-            y_test_path = os.path.join(save_dir, "y_test.csv")
-            y_test.to_csv(y_test_path, index=False)
-            
-            """            
             print("File saved successfully!")
         except Exception as e:
             print("Error while saving: ", e)
