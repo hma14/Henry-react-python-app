@@ -7,6 +7,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from datetime import datetime
+from lightgbm import LGBMClassifier
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM
 
 
 def get_temperature(Distance):
@@ -77,11 +82,16 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     # Step 2: Handle missing values
     df = df.fillna(0)
     
-    # Step 3: Feature engineering
+    # Sort draws chronologically and reset index
+    # Sort draws chronologically and reset index
+    df = df.sort_values(['DrawNumber', 'Number']).reset_index(drop=True)
     
     # df['IsBonusNumber'] = df['IsBonusNumber'].astype(int)
     df['IsHit'] = df['IsHit'].astype(int)
     
+    df['TotalHits'] = df.groupby('Number')['IsHit'].cumsum()
+    df['TotalDraws'] = df.groupby('Number').cumcount() + 1
+
     
     # For categorical features
     #df["Temperature"] = df["Temperature"].map(get_temperature).astype(int)
@@ -99,12 +109,69 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     scaler = MinMaxScaler(feature_range=(0, 1))
     df[count_features] = scaler.fit_transform(df[count_features])
     
-        
+
     # Step 6: Split the data
     X = df.drop(columns=['NextDrawHit'])
     y = df['NextDrawHit']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffle=False)
     
+    # Remove Number Feature
+    X_train = X_train.drop(columns=['Number'])
+    
+    # Instead of TotalHits (cumulative), use rolling window hits:
+    df['HitsLastMonth'] = df.groupby('Number')['IsHit'].transform(
+        lambda x: x.rolling(30, min_periods=1).sum()
+    )
+
+    # Add "Consecutive Misses" streak:
+    df['MissStreak'] = df.groupby('Number')['IsHit'].transform(
+        lambda x: x.eq(0).cumsum().sub(x.eq(0).cumsum().where(x.eq(0), 0))
+    )
+    
+    # Use Focal Loss (handles extreme imbalance better):
+    model = LGBMClassifier(
+        objective='binary',
+        class_weight={0:1, 1:10},  # Adjust weights
+        metric='auc'
+    )
+    
+    lookback_window = 10  # Use the last 10 draws to predict the next one
+    n_features = X_train.shape[1]  # Number of columns in your training data
+    
+    model = Sequential([
+        LSTM(64, input_shape=(lookback_window, n_features)),
+        Dense(1, activation='sigmoid')
+    ])
+    
+   
+    
+    # Create a co-occurrence matrix
+    from sklearn.feature_extraction.text import CountVectorizer
+    from sklearn.decomposition import PCA
+    
+    draws_as_strings = df.groupby('DrawNumber')['Number'].agg(lambda x: ' '.join(map(str, x)))
+    
+    
+    vectorizer = CountVectorizer(analyzer='word', ngram_range=(2,2))
+    co_occurrence = vectorizer.fit_transform(draws_as_strings)
+    
+    pca = PCA(n_components=8)  # Keep top 5 principal components
+    co_occurrence_pca = pca.fit_transform(co_occurrence.toarray())
+    # Convert back to DataFrame
+    co_occurrence_df = pd.DataFrame(co_occurrence_pca, columns=[f'co_occ_{i}' for i in range(8)])
+    #co_occurrence_df = pd.DataFrame(co_occurrence.toarray(), columns=vectorizer.get_feature_names_out())
+
+
+    # Merge with X_train
+    X_train = pd.concat([X_train, co_occurrence_df], axis=1).fillna(0)
+
+    
+    # Track Beta distributions for each number
+    df['Alpha'] = df['TotalHits'] + 1
+    df['Beta'] = df['TotalDraws'] - df['TotalHits'] + 1
+    df['ThompsonProb'] = np.random.beta(df['Alpha'], df['Beta'])
+    
+        
     # Step 7: Save the preprocessed data
     if save_to_csv:
         try:

@@ -37,9 +37,9 @@ Table2 AS (
 		from [dbo].[LottoTypes] as lt 
 		inner join [dbo].[Numbers] as nu 
 			on lt.Id = nu.LottoTypeId
-		where lt.LottoName = ?
+		where lt.LottoName = 1
 	) temp
-	where temp.DrawNumber > ? --3439
+	where temp.DrawNumber > 1 --3439
 ),
 Table3 AS (
 	SELECT DrawNumber,
@@ -54,7 +54,7 @@ Table3 AS (
 )  
 
 SELECT 
-    --t1.DrawNumber,
+    t1.DrawNumber,
     t1.Number,
 	t1.IsHit,
     t1.Distance,
@@ -64,7 +64,7 @@ SELECT
     CASE WHEN t2.Number IS NOT NULL THEN 1 ELSE 0 END AS NextDrawHit,
 	CASE WHEN t1.Distance = 0 THEN 0					--'Boiling'
 	WHEN t1.Distance < 5 AND t1.Distance > 0  THEN 1	--'Hot'
-	WHEN t1.Distance BETWEEN 5 AND 10 THEN 2			--'Hot'
+	WHEN t1.Distance BETWEEN 5 AND 10 THEN 2			--'Normal'
 	WHEN t1.Distance BETWEEN 10 AND 15 THEN 3			--'Cold' 
 	WHEN t1.Distance >= 15 AND t1.Distance < 25 THEN 4  --'VeryCold' 
 	WHEN t1.Distance >= 25 THEN 5						--'Freezing' 

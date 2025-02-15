@@ -48,7 +48,7 @@ db.init_app(app)
 def print_dataset():
     lotto_name = int(request.args.get("lotto_name", 1))
     
-    return preprocess_data('feature_engineering_query.sql', lotto_name, 3439)
+    return preprocess_data('feature_engineering_query.sql', lotto_name)
 
 
 @app.route("/api/train_scikit_learn_model", methods=["GET"])
