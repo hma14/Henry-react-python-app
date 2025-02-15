@@ -41,8 +41,8 @@ jobs:
 
   build_frontend:
     docker:
-      - image: circleci/node:14
-    working_directory: ~/project/frontend/react_sql_app
+      - image: circleci/node:17
+    working_directory: ~/project/frontend
     steps:
       - checkout
       - run:
@@ -53,6 +53,7 @@ jobs:
       - run:
           name: Run ESLint
           command: |
+            cd frontend/react_sql_app
             npm run lint  # Run linting inside the correct directory
       - run:
           name: Build React app
