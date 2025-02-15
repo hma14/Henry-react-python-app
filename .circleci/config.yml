@@ -59,7 +59,7 @@ jobs:
           name: Build React app
           command: |
             cd frontend/react_sql_app
-            npm run build
+            CI=false npm run build
       - persist_to_workspace:
           root: frontend/react_sql_app
           paths:
