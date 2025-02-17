@@ -28,8 +28,16 @@ const LottoModelTrainingResult = (props) => {
     axios
       .get(endpoint)
       .then((response) => {
-        setMetrics(response.data.metrics);
-        setFeatureImportance(response.data.feature_importance || []);
+        try {
+          const parsedData =
+            typeof response.data === "string"
+              ? JSON.parse(response.data)
+              : response.data;
+          setFeatureImportance(parsedData.feature_importance);
+          setMetrics(parsedData.metrics);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, [endpoint]);
@@ -50,7 +58,7 @@ const LottoModelTrainingResult = (props) => {
           <Box sx={{ textAlign: "center", height: "10vh" }}>
             <h1>Model Training Results</h1>
           </Box>
-          <Box sx={{ fontSize: "24px", color: "ActiveCaption" }}>
+          <Box sx={{ fontSize: "24px" }}>
             <Grid container spacing={2}>
               {metrics && (
                 <Grid size={5}>

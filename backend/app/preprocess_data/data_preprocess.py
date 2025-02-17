@@ -122,11 +122,18 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     df['HitsLastMonth'] = df.groupby('Number')['IsHit'].transform(
         lambda x: x.rolling(30, min_periods=1).sum()
     )
+    
+# The line `X_train = pd.concat([X_train, df['HitsLastMonth']], axis=1).fillna(0)` is concatenating
+# the DataFrame `X_train` with the 'HitsLastMonth' column from the DataFrame `df` along the columns
+# (axis=1).
 
+    X_train = pd.concat([X_train, df['HitsLastMonth']], axis=1).fillna(0)
+    
     # Add "Consecutive Misses" streak:
     df['MissStreak'] = df.groupby('Number')['IsHit'].transform(
         lambda x: x.eq(0).cumsum().sub(x.eq(0).cumsum().where(x.eq(0), 0))
     )
+    X_train = pd.concat([X_train, df['MissStreak']], axis=1).fillna(0)
     
     # Use Focal Loss (handles extreme imbalance better):
     model = LGBMClassifier(
@@ -143,8 +150,21 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
         Dense(1, activation='sigmoid')
     ])
     
-   
     
+    # remove unnecessary features
+    features_to_remove = ['IsHit', 'DrawNumber']  # [ 'TotalHits', 'HitsLastMonth', 'HitsLast10Draws', 'NumberofDrawsWhenHit', 'MissStreak']
+    
+    # add a new feature. Example: Create a new feature "HitRate" based on TotalHits and TotalDraws
+    X_train['HitRate'] = X_train['TotalHits'] / (X_train['TotalDraws'] + 1)  # Avoid division by zero
+    X_test['HitRate'] = X_test['TotalHits'] / (X_test['TotalDraws'] + 1)
+
+
+    # Remove from training and test sets
+    X_train = X_train.drop(columns=features_to_remove)
+    X_test = X_test.drop(columns=features_to_remove)
+
+    
+    """
     # Create a co-occurrence matrix
     from sklearn.feature_extraction.text import CountVectorizer
     from sklearn.decomposition import PCA
@@ -164,13 +184,13 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
 
     # Merge with X_train
     X_train = pd.concat([X_train, co_occurrence_df], axis=1).fillna(0)
-
+    """
     
     # Track Beta distributions for each number
     df['Alpha'] = df['TotalHits'] + 1
     df['Beta'] = df['TotalDraws'] - df['TotalHits'] + 1
     df['ThompsonProb'] = np.random.beta(df['Alpha'], df['Beta'])
-    
+    X_train = pd.concat([X_train, df['ThompsonProb']], axis=1).fillna(0)
         
     # Step 7: Save the preprocessed data
     if save_to_csv:

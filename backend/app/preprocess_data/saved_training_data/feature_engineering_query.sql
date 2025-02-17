@@ -37,9 +37,9 @@ Table2 AS (
 		from [dbo].[LottoTypes] as lt 
 		inner join [dbo].[Numbers] as nu 
 			on lt.Id = nu.LottoTypeId
-		where lt.LottoName = 1
+		where lt.LottoName = ?
 	) temp
-	where temp.DrawNumber > 1 --3439
+	where temp.DrawNumber > ? --3439
 ),
 Table3 AS (
 	SELECT DrawNumber,
