@@ -109,7 +109,7 @@ def training_lottery_model(X_train, y_train, config):
         # Convert feature importance to JSON format
         feature_importance_json = feature_importance.to_dict(orient="records")
         
-        return metrics, feature_importance_json
+        return metrics, feature_importance_json, pipeline
 
     except Exception as e:
         print(f"Training failed: {str(e)}")

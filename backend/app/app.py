@@ -2,6 +2,9 @@
 
 import sys
 import os
+import joblib
+import json
+import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS   # Import the CORS module
 from config import Config
@@ -12,12 +15,12 @@ from sqlalchemy.orm import joinedload
 from flask_sqlalchemy import SQLAlchemy 
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
 from potential_draws import PotentialDraws
-import json
 from pathlib import Path
-import pandas as pd
-from preprocess_data.data_preprocess import preprocess_data
+from ai_preprocess_data.data_preprocess import preprocess_data
 from ai_model_training.scikit_learn_training import train_scikit_learn_model
 from ai_model_training.train_ai_model import training_lottery_model 
+from ai_prediction.ai_predict_next_draw import predict_next_draw
+from utils.database import Database
 
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -43,6 +46,17 @@ CORS(app)
 db.init_app(app)
 
     
+@app.route("/api/predict_next_draw", methods=["GET"])
+def ai_predict_next_draw():
+    model = joblib.load("lotto_prediction_model.pkl")  # Load the model 
+    
+    db = Database()
+    query_file = "query_latest_draw_bc49.sql"
+    df = db.fetch_data(query_file)    
+    db.close()
+    latest_draw = df["DrawNumber"].values[0] - 1 # temporarily
+    numbers = predict_next_draw(model, latest_draw)
+    return jsonify(numbers.tolist()) 
     
 @app.route("/api/preprocess_dataset", methods=["GET"])
 def print_dataset():
@@ -55,7 +69,7 @@ def print_dataset():
 def scikit_learn_training_model():
     # Load the preprocessed data
 
-    saved_dir = Path(__file__).resolve().parent /  'preprocess_data' / 'saved_training_data'
+    saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data'
     X_train_path = saved_dir / 'X_train.csv'
     if X_train_path.exists():
         X_train = pd.read_csv(X_train_path)
@@ -86,7 +100,7 @@ def scikit_learn_training_model():
 @app.route("/api/train_lottery_model", methods=["GET"])
 def train_lottery_model():
     # Load the preprocessed data
-    saved_dir = Path(__file__).resolve().parent /  'preprocess_data' / 'saved_training_data'
+    saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data'
     X_train_path = saved_dir / 'X_train.csv'
     if X_train_path.exists():
         X_train = pd.read_csv(X_train_path)
@@ -112,12 +126,12 @@ def train_lottery_model():
     }
     
     # Train the model
-    metrics, feature_importance = training_lottery_model(
+    metrics, feature_importance, pipeline = training_lottery_model(
         X_train, 
         y_train, 
         model_config
     )
-
+    
     return jsonify({"metrics": metrics, "feature_importance": feature_importance})    
 
 
