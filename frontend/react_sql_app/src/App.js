@@ -14,6 +14,23 @@ import ModelTrainingResult from "./Components/ModelTrainingResult";
 import LottoModelTrainingResult from "./Components/LottoModelTrainingResult";
 import AiPredictNextDraw from "./Components/AiPredictNextDraw";
 
+import {
+  Container,
+  Grid2 as Grid,
+  Typography,
+  CssBaseline,
+  Paper,
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  TextField,
+} from "@mui/material";
+//import { Stack } from "react-bootstrap";
+
 const Styles = styled.div`
   padding: 1rem;
 
@@ -238,12 +255,6 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
     predict_next_draw: "Predict Next Draw",
   };
 
-  const handleChange1 = (value) => {
-    setSelectedStatsOption(value);
-    setSelectedAiOption("");
-    setLastSelected("selectedStatsOption");
-  };
-
   const handleChange2 = (value) => {
     setSelectedAiOption(value);
     setSelectedStatsOption("");
@@ -273,107 +284,132 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
             ) : drawNumber === null ? (
               <p>Loading...</p>
             ) : (
-              <ul className="navbar-nav">
-                <li className="nav-item">
-                  <div className="mt-1 margin-left margin-right fw-bold">
-                    <select
-                      value={selectedOption}
-                      id="rpp"
-                      className="dropdown btn bg-info text-white dropdown-toggle margin-right fw-bolder"
-                      onChange={(e) => selectLotto(e.target.value)}
-                    >
-                      {[
-                        "BC49",
-                        "LottoMax",
-                        "Lotto649",
-                        "DailyGrand",
-                        "DailyGrand_GrandNumber",
-                      ].map((lotto) => (
-                        <option key={lotto} value={lotto}>
-                          {lotto}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </li>
-                <li className="nav-item">
-                  <div className="mt-1 margin-left margin-right fw-bold">
-                    <select
-                      value={selectedStatsOption}
-                      className="dropdown btn bg-info text-white dropdown-toggle  fw-bolder"
-                      onChange={(e) => setPlayType(e.target.value)}
-                    >
-                      <option value="" disabled hidden>
-                        Select Lotto Statistics
-                      </option>
-                      {Object.keys(lottoStatisticsOptionLabels).map((item) => (
-                        <option key={item} value={item}>
-                          {lottoStatisticsOptionLabels[item]}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </li>
-                <li className="nav-item">
-                  <div className="mt-1 margin-left margin-right fw-bold">
-                    <select
-                      className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
-                      value={selectedAiOption}
-                      onChange={(e) => handleChange2(e.target.value)}
-                    >
-                      <option value="" disabled hidden>
-                        Select AI Options
-                      </option>
-                      {Object.keys(aiTrainingOptionLabels).map((item) => (
-                        <option key={item} value={item}>
-                          {aiTrainingOptionLabels[item]}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </li>
-                <li className="nav-item">
-                  <div className="mt-1 margin-left margin-right fw-bold">
-                    <select
-                      className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
-                      value={pageSize}
-                      onChange={(e) => setPageSize(e.target.value)}
-                    >
-                      {[5, 10, 20, 30, 40, 50, 100].map((pageSize) => (
-                        <option key={pageSize} value={pageSize}>
-                          {" "}
-                          {pageSize}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="bg-info text-white ps-2 fw-bolder">
-                      draws/per page
-                    </span>
-                  </div>
-                </li>
-                <li className="nav-item margin-left col-md-4">
-                  <div className="margin-left mt-1 row">
-                    <div class="col-md-5 mt-1">
-                      <label
-                        for="textInput"
-                        className="bg-info text-white ps-3 fw-bold"
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                sx={{ width: "100%" }}
+              >
+                <ul className="navbar-nav">
+                  <li className="nav-item">
+                    <div className="mt-1 margin-left margin-right fw-bold">
+                      <select
+                        value={selectedOption}
+                        id="rpp"
+                        className="dropdown btn bg-info text-white dropdown-toggle margin-right fw-bolder"
+                        onChange={(e) => selectLotto(e.target.value)}
                       >
-                        Current Draw
-                      </label>
+                        {[
+                          "BC49",
+                          "LottoMax",
+                          "Lotto649",
+                          "DailyGrand",
+                          "DailyGrand_GrandNumber",
+                        ].map((lotto) => (
+                          <option key={lotto} value={lotto}>
+                            {lotto}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <div class="col-md-4">
-                      <input
-                        className="form-control ps-3 fw-bolder text-danger fst-italic"
+                  </li>
+
+                  <li className="nav-item">
+                    <div className="mt-1 margin-left margin-right fw-bold">
+                      <select
+                        value={selectedStatsOption}
+                        className="dropdown btn bg-info text-white dropdown-toggle  fw-bolder"
+                        onChange={(e) => setPlayType(e.target.value)}
+                      >
+                        <option value="" disabled hidden>
+                          Select Lotto Statistics
+                        </option>
+                        {Object.keys(lottoStatisticsOptionLabels).map(
+                          (item) => (
+                            <option key={item} value={item}>
+                              {lottoStatisticsOptionLabels[item]}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                  </li>
+
+                  <li className="nav-item">
+                    <div className="mt-1 margin-left margin-right fw-bold">
+                      <select
+                        className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
+                        value={selectedAiOption}
+                        onChange={(e) => handleChange2(e.target.value)}
+                      >
+                        <option value="" disabled hidden>
+                          Select AI Options
+                        </option>
+                        {Object.keys(aiTrainingOptionLabels).map((item) => (
+                          <option key={item} value={item}>
+                            {aiTrainingOptionLabels[item]}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </li>
+
+                  <li className="nav-item">
+                    <div className="mt-1 margin-left margin-right fw-bold dropdown-width">
+                      <select
+                        className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
+                        value={pageSize}
+                        onChange={(e) => setPageSize(e.target.value)}
+                      >
+                        {[5, 10, 20, 30, 40, 50, 100].map((pageSize) => (
+                          <option key={pageSize} value={pageSize}>
+                            {" "}
+                            {pageSize}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="bg-info text-white ps-2 fw-bolder">
+                        draws / per page
+                      </span>
+                    </div>
+                  </li>
+
+                  <li className="nav-item">
+                    <div className="margin-left mt-1 row  dropdown-width">
+                      <div class="col-md-4 mt-1">
+                        <label
+                          for="textInput"
+                          className="bg-info text-white ps-3 fw-bold"
+                        >
+                          Current Draw
+                        </label>
+                      </div>
+                      <TextField
                         type="number"
+                        sx={{
+                          width: 200, // Width of the text field
+                          height: 40,
+
+                          borderRadius: "4px",
+                          "& .MuiInputBase-input": {
+                            color: "red", // Text color
+                            fontWeight: "bold", // Make text bold
+                            fontSize: "20px", // Text size
+                            textAlign: "center", // Align text to center
+                            fontStyle: "italic",
+                            background: "lightYellow",
+                            overflow: "auto",
+                          },
+                        }}
                         id="numberInput"
                         name="numberInput"
                         value={drawNumber}
                         onChange={handleDrawNumberChange}
                       />
                     </div>
-                  </div>
-                </li>
-              </ul>
+                  </li>
+                </ul>
+              </Stack>
             )}
           </nav>
           <>
