@@ -106,7 +106,12 @@ thead {
 }
 
 .navbar {
+  position: sticky !important;
+  top: 0;
   width: 100%;
+  background-color: white; /* Ensure it's visible */
+  z-index: 1000; /* Make sure it stays above other content */
+  margin-bottom: 1px;
 }
 
 .my-color-1 {
