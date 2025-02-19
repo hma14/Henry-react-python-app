@@ -65,7 +65,10 @@ const App = () => {
   const [lottoColumns, setLottoColumns] = useState(7);
   const [potentialColumns, setPotentialColumns] = useState(6);
   const [selectedOption, setSelectedOption] = useState("BC49");
-  const [selectedTypeOption, setSelectedTypeOption] = useState("number");
+  const [selectedStatsOption, setSelectedStatsOption] = useState("");
+  const [selectedValue, setSelectedValue] = React.useState(""); // Default empty
+  const [selectedAiOption, setSelectedAiOption] = React.useState(""); // Default empty
+  const [lastSelected, setLastSelected] = React.useState(""); // Track last changed dropdown
 
   // end
 
@@ -203,7 +206,9 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
   };
 
   const setPlayType = (value) => {
-    setSelectedTypeOption(value);
+    setSelectedStatsOption(value);
+    setSelectedAiOption("");
+    setLastSelected("selectedStatsOption");
     setSortType(value);
   };
 
@@ -215,6 +220,40 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
       setDrawNumber(numericValue);
     }
   };
+
+  const lottoStatisticsOptionLabels = {
+    number: "Lotto Numbers",
+    distance: "Number Distance",
+    totalHits: "Number's Total Hits",
+    lottoDraws: "Lotto Draw History",
+    numberDraws: "Hit Numbers in Number Category",
+    predictDraws: "Predict Next Draw",
+    openai_saying: "OpenAI Says",
+  };
+
+  const aiTrainingOptionLabels = {
+    preprocess_dataset: "Preprocess Dataset",
+    lotto_training_model: "Train Lotto Model",
+    train_lotto_model: "Lotto Model Training",
+    predict_next_draw: "Predict Next Draw",
+  };
+
+  const handleChange1 = (value) => {
+    setSelectedStatsOption(value);
+    setSelectedAiOption("");
+    setLastSelected("selectedStatsOption");
+  };
+
+  const handleChange2 = (value) => {
+    setSelectedAiOption(value);
+    setSelectedStatsOption("");
+    setLastSelected("selectedAiOption");
+  };
+
+  const selectedOp =
+    lastSelected === "selectedAiOption"
+      ? selectedAiOption
+      : selectedStatsOption;
 
   return (
     <Styles>
@@ -260,28 +299,16 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                 <li className="nav-item">
                   <div className="mt-1 margin-left margin-right fw-bold">
                     <select
-                      value={selectedTypeOption}
-                      id="rpp"
+                      value={selectedStatsOption}
                       className="dropdown btn bg-info text-white dropdown-toggle  fw-bolder"
                       onChange={(e) => setPlayType(e.target.value)}
                     >
-                      {[
-                        "number",
-                        "distance",
-                        "totalHits",
-                        "lottoDraws",
-                        "numberDraws",
-                        "predictDraws",
-                        "openai_saying",
-                        "preprocess_dataset",
-                        "training_model",
-                        "lotto_training_model",
-                        "train_lotto_model",
-                        "predict_next_draw",
-                      ].map((sortType) => (
-                        <option key={sortType} value={sortType}>
-                          {" "}
-                          By {sortType}
+                      <option value="" disabled hidden>
+                        Select Lotto Statistics
+                      </option>
+                      {Object.keys(lottoStatisticsOptionLabels).map((item) => (
+                        <option key={item} value={item}>
+                          {lottoStatisticsOptionLabels[item]}
                         </option>
                       ))}
                     </select>
@@ -290,8 +317,25 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                 <li className="nav-item">
                   <div className="mt-1 margin-left margin-right fw-bold">
                     <select
-                      id="rpp"
-                      className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
+                      className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
+                      value={selectedAiOption}
+                      onChange={(e) => handleChange2(e.target.value)}
+                    >
+                      <option value="" disabled hidden>
+                        Select AI Options
+                      </option>
+                      {Object.keys(aiTrainingOptionLabels).map((item) => (
+                        <option key={item} value={item}>
+                          {aiTrainingOptionLabels[item]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </li>
+                <li className="nav-item">
+                  <div className="mt-1 margin-left margin-right fw-bold">
+                    <select
+                      className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
                       value={pageSize}
                       onChange={(e) => setPageSize(e.target.value)}
                     >
@@ -303,7 +347,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                       ))}
                     </select>
                     <span className="bg-info text-white ps-2 fw-bolder">
-                      draws/pp
+                      draws/per page
                     </span>
                   </div>
                 </li>
@@ -334,7 +378,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
           </nav>
           <>
             {(() => {
-              switch (sortType) {
+              switch (selectedOp) {
                 case "openai_saying":
                   return <ApiOpenAI endpoint={url} />;
                 case "preprocess_dataset":

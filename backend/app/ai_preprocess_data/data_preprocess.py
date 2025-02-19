@@ -50,7 +50,7 @@ def preprocess_data(query_file, lotto_name, drawNumber = 1, save_to_csv=True):
     
     db = Database()
     query_file = "feature_engineering_query.sql"
-    df = db.fetch_data(query_file)    
+    df = db.fetch_data(query_file, params=(lotto_name, drawNumber))    
     db.close()
     
     

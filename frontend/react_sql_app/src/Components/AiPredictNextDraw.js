@@ -33,30 +33,34 @@ const AiPredictNextDraw = (props) => {
         console.log("numbers:", numbers);
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  }, [endpoint]);
 
   return (
     <div>
       <React.Fragment>
         <CssBaseline />
-        <Container
-          maxWidth={false}
-          sx={{
-            width: "100%",
-            bgcolor: "#f5f5f5",
-            height: "100%",
-            color: "InfoText",
-          }}
-        >
-          <Box sx={{ textAlign: "center", height: "10vh" }}>
-            <h1>Potential Hits for Next Draw</h1>
-          </Box>
-          {numbers && (
-            <Box sx={{ fontSize: "24px" }}>
-              <p>{numbers.join(", ")}</p>
+        {numbers && (
+          <Container
+            maxWidth={false}
+            sx={{
+              width: "100%",
+              bgcolor: "#f5f5f5",
+              height: "100%",
+              color: "InfoText",
+            }}
+          >
+            <Box
+              sx={{ color: "yellowgreen", textAlign: "center", height: "10vh" }}
+            >
+              <h1>Potential Hits for Next Draw</h1>
             </Box>
-          )}
-        </Container>
+            <Typography
+              sx={{ fontSize: "24px", color: "green", textAlign: "center" }}
+            >
+              <span>{numbers.sort().join(", ")}</span>
+            </Typography>
+          </Container>
+        )}
       </React.Fragment>
     </div>
   );
