@@ -46,61 +46,72 @@ const LottoModelTrainingResult = (props) => {
     <div>
       <React.Fragment>
         <CssBaseline />
-        <Container
-          maxWidth={false}
-          sx={{
-            width: "100%",
-            bgcolor: "#f5f5f5",
-            height: "100%",
-            color: "InfoText",
-          }}
-        >
-          <Box sx={{ textAlign: "center", height: "10vh" }}>
-            <h1>Model Training Results</h1>
-          </Box>
-          <Box sx={{ fontSize: "24px" }}>
-            <Grid container spacing={2}>
-              {metrics && (
-                <Grid size={5}>
-                  <h3>Performance Metrics</h3>
-                  <ul>
-                    {Object.keys(metrics).map((key) => (
-                      <li key={key}>
-                        <Typography>
-                          {key}:{" "}
-                          <span style={{ color: "red", fontWeight: "bolder" }}>
-                            {(
-                              metrics[key].reduce((a, b) => a + b, 0) /
-                              metrics[key].length
-                            ).toFixed(4)}
-                          </span>
-                        </Typography>
-                      </li>
-                    ))}
-                  </ul>
-                </Grid>
-              )}
 
-              {featureImportance.length > 0 && (
-                <Grid size={5}>
-                  <h3>Feature Importance</h3>
-                  <ul>
-                    {featureImportance.map((feat, index) => (
-                      <li key={index}>
-                        <Typography>
-                          {feat.feature}:{" "}
-                          <span style={{ color: "red", fontWeight: "bolder" }}>
-                            {feat.importance.toFixed(4)}
-                          </span>
-                        </Typography>
-                      </li>
-                    ))}
-                  </ul>
+        <div className="card">
+          <h1 className="text-info center">Model Training Results</h1>
+          {metrics ? (
+            <>
+              <Box sx={{ fontSize: "24px" }}>
+                <Grid container spacing={2}>
+                  {metrics && (
+                    <Grid size={5}>
+                      <h3>Performance Metrics</h3>
+                      <ul>
+                        {Object.keys(metrics).map((key) => (
+                          <li key={key}>
+                            <Typography>
+                              {key}:{" "}
+                              <span
+                                style={{ color: "red", fontWeight: "bolder" }}
+                              >
+                                {(
+                                  metrics[key].reduce((a, b) => a + b, 0) /
+                                  metrics[key].length
+                                ).toFixed(4)}
+                              </span>
+                            </Typography>
+                          </li>
+                        ))}
+                      </ul>
+                    </Grid>
+                  )}
+
+                  {featureImportance.length > 0 && (
+                    <Grid size={5}>
+                      <h3>Feature Importance</h3>
+                      <ul>
+                        {featureImportance.map((feat, index) => (
+                          <li key={index}>
+                            <Typography>
+                              {feat.feature}:{" "}
+                              <span
+                                style={{ color: "red", fontWeight: "bolder" }}
+                              >
+                                {feat.importance.toFixed(4)}
+                              </span>
+                            </Typography>
+                          </li>
+                        ))}
+                      </ul>
+                    </Grid>
+                  )}
                 </Grid>
-              )}
-            </Grid>
-          </Box>
-        </Container>
+              </Box>
+            </>
+          ) : (
+            <Box
+              sx={{
+                color: "green",
+                fontWeight: "bold",
+                fontSize: "18px",
+                textAlign: "center",
+                fontStyle: "italic",
+              }}
+            >
+              <span>Loading...</span>
+            </Box>
+          )}
+        </div>
       </React.Fragment>
     </div>
   );

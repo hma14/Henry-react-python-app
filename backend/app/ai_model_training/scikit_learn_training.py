@@ -15,7 +15,7 @@ def train_scikit_learn_model(X_train, X_test, y_train, y_test, model_to_be_saved
         class_weight='balanced'  # Handle class imbalance (if any)
     )
 
-
+    X_train = X_train.iloc[:len(y_train)]
     
     # Train the model
     model.fit(X_train, y_train.values.ravel())  # .ravel() to flatten y_train if needed

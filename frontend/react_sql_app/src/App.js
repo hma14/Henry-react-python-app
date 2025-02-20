@@ -250,7 +250,6 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
 
   const aiTrainingOptionLabels = {
     preprocess_dataset: "Preprocess Dataset",
-    lotto_training_model: "Train Lotto Model",
     train_lotto_model: "Lotto Model Training",
     predict_next_draw: "Predict Next Draw",
   };
@@ -432,8 +431,6 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                   return <ApiOpenAI endpoint={url} />;
                 case "preprocess_dataset":
                   return <DisplayDataset endpoint={url20} />;
-                case "training_model":
-                  return <ModelTrainingResult endpoint={url21} />;
                 case "train_lotto_model":
                   return <LottoModelTrainingResult endpoint={url22} />;
                 case "predict_next_draw":

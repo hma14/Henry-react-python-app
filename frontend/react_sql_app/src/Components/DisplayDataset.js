@@ -3,6 +3,19 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
+import {
+  Container,
+  Grid2 as Grid,
+  Typography,
+  CssBaseline,
+  Paper,
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 
 const DisplayDataset = (props) => {
   const { endpoint } = props;
@@ -22,14 +35,24 @@ const DisplayDataset = (props) => {
 
   return (
     <div className="card">
-      <h3 className="text-info">Displaying Dataset</h3>
+      <h1 className="text-info center">Displaying Dataset</h1>
       {data ? (
         <div
           className="card-body  ml-4"
           dangerouslySetInnerHTML={{ __html: data }}
         />
       ) : (
-        <p>Loading...</p>
+        <Box
+          sx={{
+            color: "green",
+            fontWeight: "bold",
+            fontSize: "18px",
+            textAlign: "center",
+            fontStyle: "italic",
+          }}
+        >
+          <p>Loading...</p>
+        </Box>
       )}
     </div>
   );
