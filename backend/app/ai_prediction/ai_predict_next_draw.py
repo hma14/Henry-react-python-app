@@ -41,4 +41,4 @@ def predict_next_draw(pipeline, latest_draw):
     print("Predicted hit numbers:", top_hit_numbers)
     
     X_new.to_csv("predicted_numbers.csv", index=False)
-    return top_hit_numbers
+    return X_new, top_hit_numbers

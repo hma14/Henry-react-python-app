@@ -29,6 +29,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+import LottoPlot from "./Components/LottoPlot";
 //import { Stack } from "react-bootstrap";
 
 const Styles = styled.div`
@@ -162,6 +163,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
   const url21 = "http://127.0.0.1:5001/api/train_scikit_learn_model";
   const url22 = "http://127.0.0.1:5001/api/train_lottery_model";
   const url23 = "http://127.0.0.1:5001/api/predict_next_draw";
+  const url24 = "http://127.0.0.1:5001/plot";
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -251,7 +253,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
   const aiTrainingOptionLabels = {
     preprocess_dataset: "Preprocess Dataset",
     train_lotto_model: "Lotto Model Training",
-    predict_next_draw: "Predict Next Draw",
+    plot_predicted_probability: "Plot Probability",
   };
 
   const handleChange2 = (value) => {
@@ -433,8 +435,8 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                   return <DisplayDataset endpoint={url20} />;
                 case "train_lotto_model":
                   return <LottoModelTrainingResult endpoint={url22} />;
-                case "predict_next_draw":
-                  return <AiPredictNextDraw endpoint={url23} />;
+                case "plot_predicted_probability":
+                  return <LottoPlot endpoint={url24} />;
                 case "lottoDraws":
                   return <LottoDraws endpoint={url7} columns={lottoColumns} />;
                 case "numberDraws":

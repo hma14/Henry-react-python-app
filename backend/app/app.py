@@ -5,7 +5,7 @@ import os
 import joblib
 import json
 import pandas as pd
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS   # Import the CORS module
 from config import Config
 from openai_api import get_openai_response, get_string_response
@@ -21,6 +21,7 @@ from ai_model_training.scikit_learn_training import train_scikit_learn_model
 from ai_model_training.train_ai_model import training_lottery_model 
 from ai_prediction.ai_predict_next_draw import predict_next_draw
 from utils.database import Database
+from ai_prediction.plot import plot
 
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -30,6 +31,8 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 app = Flask(__name__)
 
 app.config.from_object(Config)
+
+PLOT_FOLDER = "static/plots"
 
 # frontend url: http://ai.lottotry.com
 # CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})
@@ -45,6 +48,30 @@ CORS(app)
 
 db.init_app(app)
 
+
+@app.route("/plot",  methods=["GET"])
+def get_plot():
+    """
+    save_dir = Path(__file__).resolve().parent / 'ai_preprocess_data' / 'saved_training_data'
+    plot_path = os.path.join(save_dir, "lottery_prediction.png")
+    return send_file(plot_path, mimetype="image/png")
+    """
+
+    model = joblib.load("lotto_prediction_model.pkl")  # Load the model 
+    
+    db = Database()
+    query_file = "query_latest_draw_bc49.sql"
+    df = db.fetch_data(query_file)    
+    db.close()
+    latest_draw = df["DrawNumber"].values[0] - 1 # temporarily
+    X_new, numbers = predict_next_draw(model, latest_draw)
+    
+    # save the result to Plot image
+    img_base64 = plot(X_new, width=10, height=3)
+    
+     # Send the base64 image as JSON
+    return jsonify({"numbers": numbers.tolist(), "image": img_base64})
+
     
 @app.route("/api/predict_next_draw", methods=["GET"])
 def ai_predict_next_draw():
@@ -55,7 +82,10 @@ def ai_predict_next_draw():
     df = db.fetch_data(query_file)    
     db.close()
     latest_draw = df["DrawNumber"].values[0] - 1 # temporarily
-    numbers = predict_next_draw(model, latest_draw)
+    X_new, numbers = predict_next_draw(model, latest_draw)
+    
+    # save the result to Plot image
+    plot(X_new)
     return jsonify(numbers.tolist()) 
     
 @app.route("/api/preprocess_dataset", methods=["GET"])
