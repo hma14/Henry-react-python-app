@@ -33,12 +33,15 @@ evn/
 venv/
 .venv/
 frontend/react_sql_app/build/
-__pycache__
 
 
 backend/app/__pycache__/
 backend/app/config.py/
 backend/app/ai_preprocess_data/*.csv
+predicted_numbers.csv
+backend/app/ai_prediction/__pycache__/ai_predict_next_draw.cpython-311.pyc
+backend/app/ai_prediction/__pycache__/plot.cpython-311.pyc
+
 
 .env
 docs/
