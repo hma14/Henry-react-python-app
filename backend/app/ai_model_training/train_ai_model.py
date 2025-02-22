@@ -37,7 +37,7 @@ def training_lottery_model(X_train, y_train, config):
         # followed by a machine learning model. It is used to chain multiple transformers and
         # estimators together into a single object for ease of use and reproducibility.
         pipeline = Pipeline([
-            ('scaler', MinMaxScaler()),  # Scale only numerical features
+            ('scaler', StandardScaler()),  # Scale only numerical features
             ('smote', SMOTE(sampling_strategy=0.5, random_state=42)),
             ('classifier', RandomForestClassifier(
                 class_weight=config.get('class_weight'),
@@ -48,8 +48,7 @@ def training_lottery_model(X_train, y_train, config):
         ])
         
         # 3. Feature Validation
-        required_features = ['Distance', 'HitsLast10Draws', 'MissStreak', 'Temperature', 
-                            'PrevDrawEvenCount', 'HitsLastMonth', 'WeightedHits', 'ThompsonProb']
+        required_features = ['Distance_Active', 'Consecutive_Hits', 'NumDrawsWhenHit_Active', "HitsLast10_Active"] 
         
         if missing := [f for f in required_features if f not in X_train.columns]:
             raise ValueError(f"Missing critical features: {missing}")

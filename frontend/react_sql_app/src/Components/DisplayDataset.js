@@ -35,7 +35,7 @@ const DisplayDataset = (props) => {
 
   return (
     <div className="card">
-      <h1 className="text-info center">Displaying Dataset</h1>
+      <h1 className="text-info center">Preprocess Dataset Results</h1>
       {data ? (
         <div
           className="card-body  ml-4"
