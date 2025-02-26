@@ -47,3 +47,5 @@ backend/app/ai_prediction/__pycache__/plot.cpython-311.pyc
 docs/
 backend/app/preprocess_data/saved_training_data/*.csv
 backend/app/preprocess_data/__pycache__
+
+backend/app/ai_preprocess_data/saved_training_data/feature_engineering_query_dev.sql
