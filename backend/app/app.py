@@ -18,8 +18,9 @@ from potential_draws import PotentialDraws
 from pathlib import Path
 from ai_preprocess_data.data_preprocess import preprocess_data
 from ai_model_training.scikit_learn_training import train_scikit_learn_model
-from ai_model_training.train_ai_model import training_lottery_model 
+from ai_model_training.train_ai_model_LSTM import training_LSTM_model 
 from ai_prediction.ai_predict_next_draw import predict_next_draw
+from ai_model_training.train_ai_model_Pipeline import training_lottery_model_Pipeline
 from utils.database import Database
 from ai_prediction.plot import plot
 
@@ -48,6 +49,21 @@ CORS(app)
 
 db.init_app(app)
 
+@app.route("/api/predict_next_draw", methods=["GET"])
+def ai_predict_next_draw():
+    model = joblib.load("lotto_prediction_model.pkl")  # Load the model 
+    
+    db = Database()
+    query_file = "query_latest_draw_bc49.sql"
+    df = db.fetch_data(query_file)    
+    db.close()
+    latest_draw = df["DrawNumber"].values[0] 
+    metrics, feature_importance_json, X_new, top_hit_numbers = training_lottery_model_Pipeline(model, latest_draw)
+    
+    # save the result to Plot image
+    img_base64 = plot(X_new, width=10, height=3)
+    
+    return jsonify({"numbers": top_hit_numbers.tolist(), "image": img_base64, "metrics": metrics, "feature_importance": feature_importance_json}) 
 
 @app.route("/plot",  methods=["GET"])
 def get_plot():
@@ -57,7 +73,66 @@ def get_plot():
     return send_file(plot_path, mimetype="image/png")
     """
 
-    model = joblib.load("lotto_prediction_model.pkl")  # Load the model 
+    model = joblib.load("lottery_model.pkl")  # Load the model 
+    
+    db = Database()
+    query_file = "query_latest_draw_bc49.sql"
+    df = db.fetch_data(query_file)    
+    db.close()
+    latest_draw = df["DrawNumber"].values[0] - 1 # temporarily
+    X_new, numbers = predict_next_draw(model, latest_draw)
+    
+    # save the result to Plot image
+    img_base64 = plot(X_new, width=10, height=3)
+    
+     # Send the base64 image as JSON
+    return jsonify({"numbers": numbers.tolist(), "image": img_base64})
+
+@app.route("/api/train_lottery_model", methods=["GET"])
+def train_lottery_model():
+    
+    # Load the preprocessed data
+    saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data'
+    X_train_path = saved_dir / 'X_train.csv'
+    if X_train_path.exists():
+        X_train = pd.read_csv(X_train_path)
+
+    X_test_path = saved_dir / 'X_test.csv'
+    if X_test_path.exists():
+        X_test = pd.read_csv(X_test_path)
+
+
+    y_train_path = saved_dir / 'y_train.csv'
+    if y_train_path.exists():
+        y_train = pd.read_csv(y_train_path)
+
+    y_test_path = saved_dir / 'y_test.csv'
+    if y_test_path.exists():
+        y_test = pd.read_csv(y_test_path)
+
+    model_config = {
+        'class_weight': 'balanced_subsample',
+        'n_estimators': 200,
+        'max_depth': 10,
+        'sampling_ratio': 0.5
+    }
+    
+    # Train the model
+    metrics, feature_importance_json, X_new, top_hit_numbers = training_lottery_model_Pipeline(
+        X_train, 
+        y_train, 
+        model_config
+    )
+    
+    img_base64 = plot(X_new, width=10, height=3)
+    
+    return jsonify({"numbers": top_hit_numbers.tolist(), "image": img_base64, "metrics": metrics, "feature_importance": feature_importance_json, })     
+
+
+@app.route("/lstm/plot",  methods=["GET"])
+def get_lstm_plot():
+
+    model = joblib.load("lstm_model.pkl")  # Load the model 
     
     db = Database()
     query_file = "query_latest_draw_bc49.sql"
@@ -73,26 +148,13 @@ def get_plot():
     return jsonify({"numbers": numbers.tolist(), "image": img_base64})
 
     
-@app.route("/api/predict_next_draw", methods=["GET"])
-def ai_predict_next_draw():
-    model = joblib.load("lotto_prediction_model.pkl")  # Load the model 
-    
-    db = Database()
-    query_file = "query_latest_draw_bc49.sql"
-    df = db.fetch_data(query_file)    
-    db.close()
-    latest_draw = df["DrawNumber"].values[0] - 1 # temporarily
-    X_new, numbers = predict_next_draw(model, latest_draw)
-    
-    # save the result to Plot image
-    plot(X_new)
-    return jsonify(numbers.tolist()) 
     
 @app.route("/api/preprocess_dataset", methods=["GET"])
 def print_dataset():
     lotto_name = int(request.args.get("lotto_name", 1))
+    to_draw_number = int(request.args.get("drawNumber", 1))
     
-    return preprocess_data('feature_engineering_query.sql', lotto_name)
+    return preprocess_data('feature_engineering_query.sql', lotto_name, to_draw_number)
 
 
 @app.route("/api/train_scikit_learn_model", methods=["GET"])
@@ -127,8 +189,8 @@ def scikit_learn_training_model():
     
     return jsonify(response)
 
-@app.route("/api/train_lottery_model", methods=["GET"])
-def train_lottery_model():
+@app.route("/api/lstm_predict_next_draw", methods=["GET"])
+def train_LSTM_model():
     # Load the preprocessed data
     saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data'
     X_train_path = saved_dir / 'X_train.csv'
@@ -147,22 +209,15 @@ def train_lottery_model():
     y_test_path = saved_dir / 'y_test.csv'
     if y_test_path.exists():
         y_test = pd.read_csv(y_test_path)
-
-    model_config = {
-        'class_weight': 'balanced_subsample',
-        'n_estimators': 200,
-        'max_depth': 10,
-        'sampling_ratio': 0.5
-    }
     
     # Train the model
-    metrics, feature_importance, pipeline = training_lottery_model(
+    return training_LSTM_model(
         X_train, 
+        X_test,
         y_train, 
-        model_config
+        y_test
     )
     
-    return jsonify({"metrics": metrics, "feature_importance": feature_importance})    
 
 
 @app.route("/api/lotto/allNumbers", methods=["GET"])

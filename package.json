@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "lint": "^0.8.19"
+    "chart.js": "^4.4.8",
+    "lint": "^0.8.19",
+    "react-chartjs-2": "^5.3.0"
   }
 }

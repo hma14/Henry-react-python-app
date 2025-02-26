@@ -10,20 +10,19 @@ def predict_next_draw(pipeline, latest_draw):
 
     # Create a DataFrame with the same features used in training
     X_new = pd.DataFrame({
-        "DrawNumber": [latest_draw + 1] * len(lottery_numbers),  # Assume predicting for the next draw
-        "Number":lottery_numbers,
-        "NumberofDrawsWhenHit": np.random.randint(0, 15, len(lottery_numbers)),  # Example: random probabilities
-        "ThompsonProb": np.random.uniform(0, 1, len(lottery_numbers)),  # Example: random probabilities
-        "Distance": np.random.randint(1, 50, len(lottery_numbers)),  # Example: random distances
-        "TotalDraws": np.random.randint(50, 500, len(lottery_numbers)),  # Example: past appearances
-        "PrevDrawEvenCount": np.random.randint(0, 6, len(lottery_numbers)),  # Example: even numbers in previous draw
-        "Temperature": np.random.uniform(10, 30, len(lottery_numbers)),  # Example: weather impact
-        "WeightedHits": np.random.uniform(0, 1, len(lottery_numbers)),  # Example: adjusted frequency
-        "MissStreak": np.random.randint(0, 20, len(lottery_numbers)),  # Example: streak since last hit
-        "HitsLast10Draws": np.random.randint(0, 5, len(lottery_numbers)),  # Example: recent performance
-        "HitsLastMonth": np.random.randint(0, 10, len(lottery_numbers)),  # Example: performance in last month
-        "TotalHits": np.random.randint(10, 100, len(lottery_numbers)),  # Example: overall frequency
-        "IsHit": [0] * len(lottery_numbers)  # Placeholder (not used in prediction)
+        "DrawNumber": [latest_draw + 1] * len(lottery_numbers),
+        "Number": lottery_numbers, 
+        "Distance_Boiling": np.random.randint(0, 1, len(lottery_numbers)), 
+        "Distance_Hot": np.random.randint(0, 1, len(lottery_numbers)), 
+        "Distance_Normal":np.random.randint(0, 1, len(lottery_numbers)), 
+        "Distance_Cold": np.random.randint(0, 1, len(lottery_numbers)),  # Example: random probabilities
+        "Distance_Freezing": np.random.uniform(0, 1, len(lottery_numbers)),  # Example: random probabilities
+        "MissStreak_RollingMean": np.random.randint(0, 1, len(lottery_numbers)),  # Example: random distances
+        "MissStreak_RollingStd": np.random.randint(0, 1, len(lottery_numbers)),  # Example: past appearances
+        "MissStreak_RollingSum": np.random.randint(0, 10, len(lottery_numbers)),  # Example: even numbers in previous draw
+        "HitsLastMonth": np.random.randint(1, 8, len(lottery_numbers)),  # Example: even numbers in previous draw
+        "MissStreak": np.random.randint(0, 1, len(lottery_numbers)),  # Example: even numbers in previous draw
+        "ThompsonProb": np.random.randint(0, 1, len(lottery_numbers)),  # Example: even numbers in previous draw
     })
 
     print(f"pipeline.feature_names_in_ = {pipeline.feature_names_in_}")

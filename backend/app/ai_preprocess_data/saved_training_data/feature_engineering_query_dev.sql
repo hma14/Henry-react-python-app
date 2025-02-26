@@ -39,7 +39,7 @@ Table2 AS (
 			on lt.Id = nu.LottoTypeId
 		where lt.LottoName = ?
 	) temp
-	where temp.DrawNumber > ? --3439
+	where temp.DrawNumber > ? and temp.DrawNumber <= ? --3439
 ),
 Table3 AS (
 	SELECT DrawNumber,
@@ -82,6 +82,6 @@ LEFT JOIN UnpivotedTable1 t2
 	-- Join previous draw's EvenCount
 LEFT JOIN Table3 t1_prev    
 	ON t1.DrawNumber = t1_prev.DrawNumber
-	WHERE t1.DrawNumber < (SELECT MAX(DrawNumber) FROM Table2)  -- Exclude latest draw
+	WHERE t1.DrawNumber <= (SELECT MAX(DrawNumber) FROM Table2)  -- Exclude latest draw
 
 ORDER BY t1.DrawNumber ASC, t1.Number ASC

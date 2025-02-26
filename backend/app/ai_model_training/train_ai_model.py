@@ -7,8 +7,25 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from imblearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
 import joblib
+from lightgbm import LGBMClassifier
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping
 
-def training_lottery_model(X_train, y_train, config):
+
+
+lookback_window = 30 
+# Convert tabular data to time-series format
+def create_sequences(X, y, lookback=lookback_window):
+    Xs, ys = [], []
+    for i in range(len(X) - lookback):
+        Xs.append(X.iloc[i:i+lookback].values)
+        ys.append(y.iloc[i+lookback])
+    return np.array(Xs), np.array(ys)
+
+
+def training_lottery_model(X_train, X_test, y_train, y_test, config):
     """
     Trains a lottery prediction model with best practices.
     
@@ -48,7 +65,8 @@ def training_lottery_model(X_train, y_train, config):
         ])
         
         # 3. Feature Validation
-        required_features = ['Distance_Active', 'Consecutive_Hits', 'NumDrawsWhenHit_Active', "HitsLast10_Active"] 
+        required_features = [ 'Distance_Boiling','Distance_Normal','Distance_Cold','Distance_Freezing', 'HitsLastMonth',
+                              'MissStreak', 'MissStreak_RollingMean', 'MissStreak_RollingStd', 'MissStreak_RollingSum' ] 
         
         if missing := [f for f in required_features if f not in X_train.columns]:
             raise ValueError(f"Missing critical features: {missing}")
@@ -72,11 +90,14 @@ def training_lottery_model(X_train, y_train, config):
             y_fold_train = y_fold_train.values.ravel()
             y_val = y_val.values.ravel()
 
-            pipeline.fit(X_fold_train, y_fold_train)
+            # Default batch size is batch_size=32, but you can experiment with 64 or 128.
+            #pipeline.fit(X_train, y_train, batch_size=64, epochs=20, validation_data=(X_val, y_val)) 
+            pipeline.fit(X_train, y_train)
             
             # Validate on next temporal chunk
-            y_pred = pipeline.predict(X_val)
+            # y_pred = pipeline.predict(X_val)
             y_proba = pipeline.predict_proba(X_val)[:, 1]
+            y_pred = (y_proba > 0.5).astype(int)  # Only predict "hit" if probability > 70%
             
              # Only compute AUC if both classes exist in y_val
             if len(set(y_val)) < 2:
@@ -89,6 +110,72 @@ def training_lottery_model(X_train, y_train, config):
             #metrics['roc_auc'].append(roc_auc_score(y_val, y_proba))
             metrics['precision'].append(precision_score(y_val, y_pred, zero_division=1))
             metrics['recall'].append(recall_score(y_val, y_pred, zero_division=1))
+
+
+        # Use Focal Loss (handles extreme imbalance better):
+        # LightGBM is trained for binary classification (hit or miss).
+        
+        """     
+        LightGBM (LGBMClassifier) handles structured/tabular data well.
+        LSTM (Recurrent Neural Network) captures temporal (time-dependent) patterns in the lottery draws.
+        Class weighting & Focal Loss help deal with imbalance (since lottery hits are rare).
+        Combining both models could allow you to compare traditional ML with deep learning and find the best approach.
+        """  
+
+        # Train LightGBM Model  
+        lgbm_model = LGBMClassifier(
+            objective='binary',
+            class_weight={0:1, 1:15},  # Since most numbers don’t hit, the dataset is imbalanced. 
+                                    # This assigns a weight of 1 to "misses" (0) and 10 to "hits" (1), 
+                                    # forcing the model to focus more on predicting rare "hits".
+            metric='auc'               # Uses Area Under the Curve (AUC) for performance evaluation, 
+                                    # which is useful for imbalanced datasets.
+        )
+        print(X_train.shape, y_train.shape)
+        lgbm_model.fit(X_train, y_train)
+        y_pred_lgbm = lgbm_model.predict(X_test)
+        
+        # Evaluate
+        accuracy = accuracy_score(y_test, y_pred_lgbm)
+        auc = roc_auc_score(y_test, y_pred_lgbm)
+        print(f"LGBM Accuracy: {accuracy:.4f}, AUC: {auc:.4f}")
+        
+                # Use the last 10 draws to predict the next one, It learns patterns from past 10 draws (lookback_window).    
+        n_features = X_train.shape[1]  #  Gets the number of input features (e.g., Distance, HitsLast10Draws, Temperature, etc.).
+        
+        X_train_seq, y_train_seq = create_sequences(X_train, y_train)
+        X_test_seq, y_test_seq = create_sequences(X_test, y_test)
+        
+        lstm_model = Sequential([           # Defines a sequential neural network model.
+            LSTM(64, input_shape=(lookback_window, n_features)),  # Adds an LSTM layer with 64 memory units.
+            Dense(1, activation='sigmoid')  # A single neuron output with a sigmoid activation function,
+                                            # Output is a probability (between 0 and 1), predicting the likelihood of a number hitting in the next draw.
+        ])
+        
+        optimizer = Adam(learning_rate=0.0001)  # Default: 0.001 (try 0.0005 or 0.0001 if unstable)
+        lstm_model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+        #lstm_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        
+        # Train LSTM
+        #lstm_model.fit(X_train_seq, y_train_seq, epochs=20, batch_size=64, validation_data=(X_test_seq, y_test_seq))
+        early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+        lstm_model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val), callbacks=[early_stop])
+
+
+        
+        # Predictions
+        y_pred_lstm = (lstm_model.predict(X_test_seq) > 0.5).astype(int)
+
+        # Evaluate
+        accuracy_lstm = accuracy_score(y_test_seq, y_pred_lstm)
+        auc_lstm = roc_auc_score(y_test_seq, y_pred_lstm)
+        print(f"LSTM Accuracy: {accuracy_lstm:.4f}, AUC: {auc_lstm:.4f}")
+        
+        
+        # Compare Performance
+        print(f"LightGBM: Accuracy={accuracy:.4f}, AUC={auc:.4f}")
+        print(f"LSTM: Accuracy={accuracy_lstm:.4f}, AUC={auc_lstm:.4f}")
+
 
         # 5. Final Training
         y_train = y_train.values.ravel()        
