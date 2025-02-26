@@ -50,13 +50,17 @@ def save_training_data(X_train, X_test, y_train, y_test):
 def preprocess_data(query_file, lotto_name, to_draw_number, from_draw_number = 1, save_to_csv=True):
     
     db = Database()
-    query_file = "feature_engineering_query_dev.sql"
+    query_file = "feature_engineering_query.sql"
     df = db.fetch_data(query_file, params=(lotto_name, from_draw_number, to_draw_number))    
     db.close()
     
         
     # Step 2: Handle missing values
-    df = df.fillna(0)
+    if df is not None:
+        df = df.fillna(0)  
+    else:
+        print("Error: df is None!")
+
     
     
     # Sort draws chronologically and reset index
