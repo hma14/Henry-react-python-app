@@ -17,7 +17,7 @@ def plot(X_new, width=12, height=6):
     
     # Create the figure
     fig, ax = plt.subplots(figsize=(width, height))
-
+    
     # Bar plot
     ax.bar(X_new["Number"], X_new["Probability"], color="blue", alpha=0.7)
     ax.set_xlabel("Lottery Number (1-49)")

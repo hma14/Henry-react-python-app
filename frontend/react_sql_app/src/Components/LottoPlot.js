@@ -96,7 +96,9 @@ const LottoPlot = (props) => {
             </div>
 
             <div className="card">
-              <h1 className="text-info center">Lottery Prediction Plot</h1>
+              <h1 className="text-info center">
+                Lottery Prediction Plot with Pipeline Model
+              </h1>
               <img src={image} alt="Lottery Plot" style={{ width: "100%" }} />
               <Box sx={{ marginTop: "10px" }}>
                 <Typography

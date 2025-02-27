@@ -31,9 +31,9 @@ def get_temperature(Distance):
 
 
 
-def save_training_data(X_train, X_test, y_train, y_test):
+def save_training_data(dir, X_train, X_test, y_train, y_test):
     """Saves training and testing datasets as CSV files."""
-    save_dir = Path(__file__).resolve().parent / 'saved_training_data'
+    save_dir = Path(__file__).resolve().parent / 'saved_training_data' / dir
     os.makedirs(save_dir, exist_ok=True)
 
     datasets = {
@@ -127,7 +127,7 @@ def preprocess_data(query_file, lotto_name, to_draw_number, from_draw_number = 1
     # Save the preprocessed data
     if save_to_csv:
         try:
-            save_training_data(X_train, X_test, y_train, y_test)
+            save_training_data("Pipeline", X_train, X_test, y_train, y_test)
             print("File saved successfully!")
         except Exception as e:
             print("Error while saving: ", e)
