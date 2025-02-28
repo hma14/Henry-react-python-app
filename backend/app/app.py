@@ -186,7 +186,7 @@ def scikit_learn_training_model():
 @app.route("/api/lstm_predict_next_draw", methods=["GET"])
 def train_LSTM_model():
     # Load the preprocessed data
-    saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data'
+    saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data' / 'Pipeline'
     X_train_path = saved_dir / 'X_train.csv'
     if X_train_path.exists():
         X_train = pd.read_csv(X_train_path)
@@ -203,15 +203,22 @@ def train_LSTM_model():
     y_test_path = saved_dir / 'y_test.csv'
     if y_test_path.exists():
         y_test = pd.read_csv(y_test_path)
-    
-    # Train the model
-    return training_LSTM_model(
+        
+    X_new, numbers = training_LSTM_model(
         X_train, 
         X_test,
         y_train, 
-        y_test
+        y_test,
+        lookback_window=100, 
+        epochs=20
     )
     
+    # save the result to Plot image
+    img_base64 = plot(X_new, width=10, height=3)
+    
+     # Send the base64 image as JSON
+    return jsonify({"numbers": numbers.tolist(), "image": img_base64})
+        
 
 
 @app.route("/api/lotto/allNumbers", methods=["GET"])

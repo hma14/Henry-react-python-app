@@ -13,6 +13,7 @@ import DisplayDataset from "./Components/DisplayDataset";
 import PredictionChart from "./Components/PredictionChart_LSTM";
 import LottoPlot from "./Components/LottoPlot";
 import LottoPlot_LSBM from "./Components/LottoPlot_LSBM";
+import LottoPlot_LSTM from "./Components/LottoPlot_LSTM";
 
 import {
   Container,
@@ -258,11 +259,9 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
 
   const aiTrainingOptionLabels = {
     preprocess_dataset: "Preprocess Dataset",
-    train_lotto_model: "Lotto Model Training",
+    train_lotto_model: "Train Pipeline Prediction",
     train_lotto_model_lgbm: "Train LightGBM Prediction",
     train_LSTM_model: "Train LSTM Prediction",
-    plot_predicted_probability: "Plot Probability",
-    plot_LSTM_prediction_chart: "Plot LSTM Prediction Chart",
   };
 
   const handleChange2 = (value) => {
@@ -449,7 +448,7 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
                     <LottoPlot_LSBM endpoint={url23} drawNumber={drawNumber} />
                   );
                 case "train_LSTM_model":
-                  return <PredictionChart endpoint={url25} />;
+                  return <LottoPlot_LSTM endpoint={url25} />;
                 case "lottoDraws":
                   return <LottoDraws endpoint={url7} columns={lottoColumns} />;
                 case "numberDraws":

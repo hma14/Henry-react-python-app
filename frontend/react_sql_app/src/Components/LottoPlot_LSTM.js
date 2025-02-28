@@ -14,7 +14,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 
-const LottoPlot_LSBM = (props) => {
+const LottoPlot_LSTM = (props) => {
   const { endpoint } = props;
   const [image, setImage] = useState("");
   const [numbers, setNumbers] = useState("");
@@ -44,7 +44,7 @@ const LottoPlot_LSBM = (props) => {
           <div className="card">
             <h1 className="text-info center">
               Lottery Prediction Plot with{" "}
-              <span style={{ color: "red" }}>LightGBM</span> Model
+              <span style={{ color: "red" }}>LGTM</span> Model
             </h1>
             <img src={image} alt="Lottery Plot" style={{ width: "100%" }} />
             <Box sx={{ marginTop: "10px" }}>
@@ -80,4 +80,4 @@ const LottoPlot_LSBM = (props) => {
   );
 };
 
-export default LottoPlot_LSBM;
+export default LottoPlot_LSTM;
