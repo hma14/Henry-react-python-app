@@ -45,6 +45,7 @@ backend/app/ai_prediction/__pycache__/plot.cpython-311.pyc
 backend/app/utils/__pycache__/database.cpython-311.pyc
 backend/app/ai_model_training/__pycache__/train_ai_model_Pipeline.cpython-311.pyc
 backend/app/utils/__pycache__/database.cpython-311.pyc
+backend/app/ai_model_training/__pycache__/train_ai_model_lgbm.cpython-311.pyc
 backend/app/ai_preprocess_data/saved_training_data/*.csv
 backend/app/ai_preprocess_data/saved_training_data/Pipeline/*.csv
 feature_scaler.pkl
