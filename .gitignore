@@ -34,7 +34,6 @@ venv/
 .venv/
 frontend/react_sql_app/build/
 
-*.pyc
 
 backend/app/__pycache__/
 backend/app/config.py/
@@ -43,6 +42,9 @@ predicted_numbers.csv
 backend/app/ai_prediction/__pycache__/ai_predict_next_draw.cpython-311.pyc
 backend/app/ai_preprocess_data/__pycache__/data_preprocess.cpython-311.pyc
 backend/app/ai_prediction/__pycache__/plot.cpython-311.pyc
+backend/app/utils/__pycache__/database.cpython-311.pyc
+backend/app/ai_model_training/__pycache__/train_ai_model_Pipeline.cpython-311.pyc
+backend/app/ai_model_training/__pycache__/train_ai_model_Pipeline.cpython-311.pyc
 backend/app/ai_preprocess_data/saved_training_data/*.csv
 backend/app/ai_preprocess_data/saved_training_data/Pipeline/*.csv
 feature_scaler.pkl
