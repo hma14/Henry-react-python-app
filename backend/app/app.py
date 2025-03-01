@@ -50,15 +50,32 @@ CORS(app)
 
 db.init_app(app)
 
+lotto_table_map = {
+    1: "BC49",
+    2: "Lotto649",
+    3: "LottoMax",
+    4: "DailyGrand"
+}
+
+def get_table_name(lotto_id):
+    lotto_table_map = {
+        1: "BC49",
+        2: "Lotto649",
+        3: "LottoMax"
+    }
+    return lotto_table_map.get(lotto_id, "Unknown")
+
+
 @app.route("/api/predict_next_draw_lgbm", methods=["GET"])
 def ai_predict_next_draw_lgbm():
         # Load the preprocessed data
     lotto_name = int(request.args.get("lotto_name", 1))
     to_draw_number = int(request.args.get("drawNumber", 1))
+    num_range = get_lotto_number_range(lotto_name=lotto_name)
     
     X_new, top_hit_numbers = train_ai_model_LightGBM(lotto_name, to_draw_number)
     
-    img_base64 = plot(X_new, width=10, height=3)
+    img_base64 = plot(X_new, num_range, width=10, height=3)
     
     return jsonify({"image": img_base64, "numbers": top_hit_numbers.tolist() })     
 
@@ -84,7 +101,8 @@ def ai_predict_next_draw():
 
 @app.route("/api/train_lottery_model", methods=["GET"])
 def train_lottery_model():
-    
+    lotto_name = int(request.args.get("lotto_name", 1))
+    num_range = get_lotto_number_range(lotto_name=lotto_name)
     # Load the preprocessed data
     saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data' / "Pipeline"
     X_train_path = saved_dir / 'X_train.csv'
@@ -118,37 +136,20 @@ def train_lottery_model():
         model_config
     )
     
-    img_base64 = plot(X_new, width=10, height=3)
+    img_base64 = plot(X_new,num_range, width=10, height=3)
     
     return jsonify({"numbers": top_hit_numbers.tolist(), "image": img_base64, "metrics": metrics, "feature_importance": feature_importance_json, })     
 
-
-@app.route("/lstm/plot",  methods=["GET"])
-def get_lstm_plot():
-
-    model = joblib.load("lstm_model.pkl")  # Load the model 
-    
-    db = Database()
-    query_file = "query_latest_draw_bc49.sql"
-    df = db.fetch_data(query_file)    
-    db.close()
-    latest_draw = df["DrawNumber"].values[0] - 1 # temporarily
-    X_new, numbers = predict_next_draw(model, latest_draw)
-    
-    # save the result to Plot image
-    img_base64 = plot(X_new, width=10, height=3)
-    
-     # Send the base64 image as JSON
-    return jsonify({"numbers": numbers.tolist(), "image": img_base64})
 
     
     
 @app.route("/api/preprocess_dataset", methods=["GET"])
 def print_dataset():
-    lotto_name = int(request.args.get("lotto_name", 1))
-    to_draw_number = int(request.args.get("drawNumber", 1))
+    lotto_id = int(request.args.get("lotto_name", 1))
+    to_draw_number = int(request.args.get("drawNumber", 1)) 
+    table_name = get_table_name(lotto_id)
     
-    return preprocess_data('feature_engineering_query.sql', lotto_name, to_draw_number)
+    return preprocess_data('feature_engineering_query.sql', table_name, lotto_id, to_draw_number)
 
 
 @app.route("/api/train_scikit_learn_model", methods=["GET"])

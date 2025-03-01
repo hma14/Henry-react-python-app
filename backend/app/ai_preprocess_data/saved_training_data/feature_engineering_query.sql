@@ -1,8 +1,9 @@
 
+
 WITH  OrderedTable1 AS (
     SELECT *,
         ROW_NUMBER() OVER (ORDER BY DrawNumber) AS Seq
-    FROM [dbo].[BC49]
+    FROM {TABLE_NAME}
 ),
 UnpivotedTable1 AS (
     SELECT DrawNumber, 
@@ -50,7 +51,7 @@ Table3 AS (
          CASE WHEN Number5 % 2 = 0 THEN 1 ELSE 0 END +
          CASE WHEN Number6 % 2 = 0 THEN 1 ELSE 0 END +
          CASE WHEN Bonus % 2 = 0 THEN 1 ELSE 0 END) AS EvenCount
-    FROM [dbo].[BC49]
+    FROM {TABLE_NAME}
 )  
 
 SELECT 

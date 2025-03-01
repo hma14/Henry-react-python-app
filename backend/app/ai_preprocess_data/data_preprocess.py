@@ -47,9 +47,9 @@ def save_training_data(dir, X_train, X_test, y_train, y_test):
         df.to_csv(save_dir / f"{name}.csv", index=False)
 
 
-def preprocess_data(query_file, lotto_name, to_draw_number, from_draw_number = 1, save_to_csv=True):
+def preprocess_data(query_file, table_name, lotto_name, to_draw_number, from_draw_number = 1, save_to_csv=True):
     
-    db = Database()
+    db = Database(table_name)
     query_file = "feature_engineering_query.sql"
     df = db.fetch_data(query_file, params=(lotto_name, from_draw_number, to_draw_number))    
     db.close()

@@ -5,10 +5,16 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 class Database:
-    def __init__(self):
+    def __init__(self, table_name):
         """Initialize database connection by loading environment variables."""
         self._load_env()
         self.connection = self._connect()
+        self.table_name = table_name
+        
+        # Define a whitelist of allowed tables to prevent SQL injection
+        self.allowed_tables = {"BC49", "LottoMax", "Lotto649"}
+        if self.table_name not in self.allowed_tables:
+            raise ValueError(f"Invalid table name: {self.table_name}")
 
     def _load_env(self):
         """Load environment variables from the project's root directory."""
@@ -48,6 +54,7 @@ class Database:
             with open(query_path, "r") as file:
                 query = file.read()
 
+            query = query.replace("{TABLE_NAME}", self.table_name)
             return pd.read_sql(query, self.connection, params=params)
         
         except Exception as e:

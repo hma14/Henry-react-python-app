@@ -164,7 +164,8 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
     drawNumber;
 
   const url21 = "http://127.0.0.1:5001/api/train_scikit_learn_model";
-  const url22 = "http://127.0.0.1:5001/api/train_lottery_model";
+  const url22 =
+    "http://127.0.0.1:5001/api/train_lottery_model?lotto_name=" + lottoName;
   const url23 =
     "http://127.0.0.1:5001/api/predict_next_draw_lgbm?lotto_name=" +
     lottoName +

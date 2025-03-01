@@ -32,7 +32,7 @@ def training_lottery_model_Pipeline(X_train, y_train, config):
         
         pipeline = Pipeline([
             ('scaler', StandardScaler()),  # Scale only numerical features
-            ('smote', SMOTE(sampling_strategy=0.5, random_state=42)),
+            ('smote', SMOTE(random_state=42)),
             ('classifier', RandomForestClassifier(
                 class_weight=config.get('class_weight'),
                 n_estimators=config.get('n_estimators'),
