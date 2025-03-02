@@ -46,6 +46,8 @@ backend/app/utils/__pycache__/database.cpython-311.pyc
 backend/app/ai_model_training/__pycache__/train_ai_model_Pipeline.cpython-311.pyc
 backend/app/utils/__pycache__/database.cpython-311.pyc
 backend/app/ai_model_training/__pycache__/train_ai_model_lgbm.cpython-311.pyc
+backend/app/ai_model_training/__pycache__/train_ai_model_Pipeline.cpython-311.pyc
+        modified:   backend/app/ai_model_training/train_ai_model_Pipeline.py
 backend/app/ai_preprocess_data/saved_training_data/*.csv
 backend/app/ai_preprocess_data/saved_training_data/Pipeline/*.csv
 feature_scaler.pkl

@@ -70,7 +70,7 @@ def training_lottery_model_Pipeline(X_train, y_train, config):
             # Validate on next temporal chunk
             # y_pred = pipeline.predict(X_val)
             y_proba = pipeline.predict_proba(X_val)[:, 1]
-            y_pred = (y_proba > 0.5).astype(int)  # Only predict "hit" if probability > 70%
+            y_pred = (y_proba > 0.6).astype(int)  # Only predict "hit" if probability > 70%
             
             # Only compute AUC if both classes exist in y_val
             if len(set(y_val)) < 2:
