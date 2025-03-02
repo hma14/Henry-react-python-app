@@ -133,8 +133,6 @@ def train_multi_models():
     return jsonify({"numbers": top_hit_numbers, "images": images, "metrics": metrics, "feature_importance": feature_importance_json })     
     
     
-    return jsonify({"numbers": top_hit_numbers.tolist(), "images": images.tolist(), "metrics": metrics, "feature_importance": feature_importance_json })     
-
 
 @app.route("/api/train_lottery_model", methods=["GET"])
 def train_lottery_model():
