@@ -14,7 +14,7 @@ import PredictionChart from "./Components/PredictionChart_LSTM";
 import LottoPlot from "./Components/LottoPlot";
 import LottoPlot_LSBM from "./Components/LottoPlot_LSBM";
 import LottoPlot_LSTM from "./Components/LottoPlot_LSTM";
-
+import LottoPlot_Multi_Models from "./Components/LottoPlot_Multi_Models";
 import {
   Container,
   Grid2 as Grid,
@@ -165,13 +165,26 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
 
   const url21 = "http://127.0.0.1:5001/api/train_scikit_learn_model";
   const url22 =
-    "http://127.0.0.1:5001/api/train_lottery_model?lotto_name=" + lottoName;
+    "http://127.0.0.1:5001/api/train_lottery_model?lotto_name=" +
+    lottoName +
+    "&drawNumber=" +
+    drawNumber;
   const url23 =
     "http://127.0.0.1:5001/api/predict_next_draw_lgbm?lotto_name=" +
     lottoName +
     "&drawNumber=" +
     drawNumber;
-  const url25 = "http://127.0.0.1:5001/api/lstm_predict_next_draw";
+  const url24 =
+    "http://127.0.0.1:5001/api/train_multi_models?lotto_name=" +
+    lottoName +
+    "&drawNumber=" +
+    drawNumber;
+
+  const url25 =
+    "http://127.0.0.1:5001/api/lstm_predict_next_draw?lotto_name=" +
+    lottoName +
+    "&drawNumber=" +
+    drawNumber;
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -259,10 +272,10 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
   };
 
   const aiTrainingOptionLabels = {
-    preprocess_dataset: "Preprocess Dataset",
     train_lotto_model: "Train Pipeline Prediction",
     train_lotto_model_lgbm: "Train LightGBM Prediction",
     train_LSTM_model: "Train LSTM Prediction",
+    train_multi_models: "Train Multi Models Prediction",
   };
 
   const handleChange2 = (value) => {
@@ -440,14 +453,12 @@ const url8 = 'http://ep.lottotry.com:5001/api/lotto/numberDraws?lotto_name=' + l
               switch (selectedOp) {
                 case "openai_saying":
                   return <ApiOpenAI endpoint={url} />;
-                case "preprocess_dataset":
-                  return <DisplayDataset endpoint={url20} />;
                 case "train_lotto_model":
-                  return <LottoPlot endpoint={url22} drawNumber={drawNumber} />;
+                  return <LottoPlot endpoint={url22} />;
                 case "train_lotto_model_lgbm":
-                  return (
-                    <LottoPlot_LSBM endpoint={url23} drawNumber={drawNumber} />
-                  );
+                  return <LottoPlot_LSBM endpoint={url23} />;
+                case "train_multi_models":
+                  return <LottoPlot_Multi_Models endpoint={url24} />;
                 case "train_LSTM_model":
                   return <LottoPlot_LSTM endpoint={url25} />;
                 case "lottoDraws":

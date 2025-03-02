@@ -47,7 +47,7 @@ def save_training_data(dir, X_train, X_test, y_train, y_test):
         df.to_csv(save_dir / f"{name}.csv", index=False)
 
 
-def preprocess_data(query_file, table_name, lotto_name, to_draw_number, from_draw_number = 1, save_to_csv=True):
+def preprocess_data(table_name, lotto_name, to_draw_number, from_draw_number = 1, save_to_csv=True):
     
     db = Database(table_name)
     query_file = "feature_engineering_query.sql"
@@ -114,29 +114,5 @@ def preprocess_data(query_file, table_name, lotto_name, to_draw_number, from_dra
     X_train = pd.concat([X_train, df.loc[X_train.index,'ThompsonProb']], axis=1).fillna(0)
     X_test= pd.concat([X_test, df.loc[X_test.index,'ThompsonProb']], axis=1).fillna(0)
     
-    print('----------------')
-    print(X_train.columns)  # Prints the feature names
-    print(X_train.head())   # Prints the first few rows to check the data
-    print('----------------')
+    return X_train, X_test, y_train, y_test
     
-        
-    
-    
-    
-            
-    # Save the preprocessed data
-    if save_to_csv:
-        try:
-            save_training_data("Pipeline", X_train, X_test, y_train, y_test)
-            print("File saved successfully!")
-        except Exception as e:
-            print("Error while saving: ", e)
-            
-    
-    
-    return f"""
-                <h2>X_train</h2> {X_train.to_html()}
-                <h2>X_test</h2> {X_test.to_html()}
-                <h2>y_train</h2> {y_train.to_frame().to_html()}
-                <h2>y_test</h2> {y_test.to_frame().to_html()}
-            """
