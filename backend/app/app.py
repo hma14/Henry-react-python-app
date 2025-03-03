@@ -1,22 +1,40 @@
 # cSpell: disable
 
+import sys
 import os
-from flask import Flask, jsonify, request
-from flask_cors import CORS  # Import the CORS module
+import joblib
+import json
+import pandas as pd
+from flask import Flask, jsonify, request, send_file
+from flask_cors import CORS   # Import the CORS module
 from config import Config
 from openai_api import get_openai_response, get_string_response
 from datetime import datetime
-from sqlalchemy import and_, or_, func, desc
+from sqlalchemy import and_, or_, func, desc 
 from sqlalchemy.orm import joinedload
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy 
 from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
 from potential_draws import PotentialDraws
-import json
+from pathlib import Path
+from ai_preprocess_data.data_preprocess import preprocess_data
+from ai_model_training.scikit_learn_training import train_scikit_learn_model
+from ai_model_training.train_ai_model_lstm import training_LSTM_model 
+from ai_prediction.ai_predict_next_draw import predict_next_draw
+from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pipeline
+from utils.database import Database
+from ai_prediction.plot import plot
+from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
+
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+#print(sys.path)
 
 
 app = Flask(__name__)
 
 app.config.from_object(Config)
+
+PLOT_FOLDER = "static/plots"
 
 # frontend url: http://ai.lottotry.com
 # CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})
@@ -32,6 +50,176 @@ CORS(app)
 
 db.init_app(app)
 
+lotto_table_map = {
+    1: "BC49",
+    2: "Lotto649",
+    3: "LottoMax",
+    4: "DailyGrand"
+}
+
+def get_table_name(lotto_id):
+    lotto_table_map = {
+        1: "BC49",
+        2: "Lotto649",
+        3: "LottoMax"
+    }
+    return lotto_table_map.get(lotto_id, "Unknown")
+
+
+@app.route("/api/predict_next_draw_lgbm", methods=["GET"])
+def ai_predict_next_draw_lgbm():
+    
+    # Load the preprocessed data
+    lotto_id = int(request.args.get("lotto_name", 1))
+    to_draw_number = int(request.args.get("drawNumber", 1))
+    num_range = get_lotto_number_range(lotto_name=lotto_id)
+    table_name = get_table_name(lotto_id)
+    
+    X_new, top_hit_numbers = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
+    
+    img_base64 = plot(X_new, num_range, width=10, height=3)
+    
+    return jsonify({"image": img_base64, "numbers": top_hit_numbers.tolist() })     
+
+    
+
+
+@app.route("/api/train_multi_models", methods=["GET"])
+def train_multi_models():
+    lotto_id = int(request.args.get("lotto_name", 1))
+    to_draw_number = int(request.args.get("drawNumber", 1)) 
+    num_range = get_lotto_number_range(lotto_name=lotto_id)
+    table_name = get_table_name(lotto_id)
+
+    model_config = {
+        'class_weight': 'balanced_subsample',
+        'n_estimators': 200,
+        'max_depth': 10,
+        'sampling_ratio': 0.5
+    }
+    
+    X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
+    
+    # Train Pipleline model
+    metrics, feature_importance_json, X_new, top_hit_numbers_pipeline = training_lottery_model_Pipeline(
+        X_train, 
+        y_train, 
+        model_config
+    )
+    
+    img_base64_pipeline = plot(X_new,num_range, width=10, height=2)
+    
+        
+    X_new, nutop_hit_numbers_lstm = training_LSTM_model(
+        X_train, 
+        X_test,
+        y_train, 
+        y_test,
+        lookback_window=100, 
+        epochs=20
+    )
+    
+    # save the result to Plot image
+    img_base64_lstm = plot(X_new, num_range, width=10, height=2)
+    
+
+    X_new, top_hit_numbers_lgbm = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
+    
+    img_base64_lgbm = plot(X_new, num_range, width=10, height=2)
+    
+    top_hit_numbers = [top_hit_numbers_pipeline.tolist(), nutop_hit_numbers_lstm.tolist(), top_hit_numbers_lgbm.tolist()]
+    images = [img_base64_pipeline, img_base64_lstm, img_base64_lgbm]
+    
+    return jsonify({"numbers": top_hit_numbers, "images": images, "metrics": metrics, "feature_importance": feature_importance_json })     
+    
+    
+
+@app.route("/api/train_lottery_model", methods=["GET"])
+def train_lottery_model():
+    lotto_id = int(request.args.get("lotto_name", 1))
+    to_draw_number = int(request.args.get("drawNumber", 1)) 
+    num_range = get_lotto_number_range(lotto_name=lotto_id)
+    table_name = get_table_name(lotto_id)
+
+    model_config = {
+        'class_weight': 'balanced_subsample',
+        'n_estimators': 200,
+        'max_depth': 10,
+        'sampling_ratio': 0.5
+    }
+    
+    X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
+    
+    # Train the model
+    metrics, feature_importance_json, X_new, top_hit_numbers = training_lottery_model_Pipeline(
+        X_train, 
+        y_train, 
+        model_config
+    )
+    
+    img_base64 = plot(X_new,num_range, width=10, height=3)
+    
+    return jsonify({"numbers": top_hit_numbers.tolist(), "image": img_base64, "metrics": metrics, "feature_importance": feature_importance_json })     
+
+
+
+@app.route("/api/train_scikit_learn_model", methods=["GET"])
+def scikit_learn_training_model():
+    # Load the preprocessed data
+
+    saved_dir = Path(__file__).resolve().parent /  'ai_preprocess_data' / 'saved_training_data'
+    X_train_path = saved_dir / 'X_train.csv'
+    if X_train_path.exists():
+        X_train = pd.read_csv(X_train_path)
+
+    X_test_path = saved_dir / 'X_test.csv'
+    if X_test_path.exists():
+        X_test = pd.read_csv(X_test_path)
+
+
+    y_train_path = saved_dir / 'y_train.csv'
+    if y_train_path.exists():
+        y_train = pd.read_csv(y_train_path)
+
+    y_test_path = saved_dir / 'y_test.csv'
+    if y_test_path.exists():
+        y_test = pd.read_csv(y_test_path)
+
+    df = train_scikit_learn_model(X_train, X_test, y_train, y_test, 'lotto_prediction_model.pkl') # call train_scikit_learn_model
+    
+    # Convert DataFrame to JSON
+    response = {
+        "numbers": df["Number"].tolist(),
+        "probabilities": df["Probability"].tolist()
+    }
+    
+    return jsonify(response)
+
+@app.route("/api/lstm_predict_next_draw", methods=["GET"])
+def train_LSTM_model():
+    lotto_id = int(request.args.get("lotto_name", 1))
+    num_range = get_lotto_number_range(lotto_name=lotto_id)
+    table_name = get_table_name(lotto_id)
+    to_draw_number = int(request.args.get("drawNumber", 1))
+        
+    X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
+        
+    X_new, numbers = training_LSTM_model(
+        X_train, 
+        X_test,
+        y_train, 
+        y_test,
+        lookback_window=100, 
+        epochs=20
+    )
+    
+    # save the result to Plot image
+    img_base64 = plot(X_new, num_range, width=10, height=3)
+    
+     # Send the base64 image as JSON
+    return jsonify({"numbers": numbers.tolist(), "image": img_base64})
+        
+
 
 @app.route("/api/lotto/allNumbers", methods=["GET"])
 def get_data_4():
@@ -46,7 +234,13 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    lotto_data = retrieve_data(
+        lotto_name, page_size, number_range, start_index, drawNumber
+    )
+    if lotto_data is not None:
+        return lotto_data
+    else:
+        return "Error on calling get_data_4 (allNumbers)"
 
 
 @app.route("/api/lotto/predict", methods=["GET"])
@@ -225,6 +419,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
         }
         for entry in sorted_list
     ]
+
     return jsonify({"data": sorted_result_list})
 
 
@@ -245,5 +440,5 @@ def get_target_draw_number(lotto_name):
 
 if __name__ == "__main__":
     # app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
-    app.run(debug=False, host="ep.lottotry.com", port=5000)
-    #app.run(debug=True, host="0.0.0.0", port=5000)
+    # app.run(debug=False, host="ep.lottotry.com", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5001)

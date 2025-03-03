@@ -1,0 +1,3 @@
+SELECT TOP 1 DrawNumber 
+FROM BC49 
+ORDER BY DrawNumber DESC;

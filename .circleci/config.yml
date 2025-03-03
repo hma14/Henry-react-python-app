@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build_backend:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.11
     steps:
       - checkout
       - run:
@@ -32,7 +32,7 @@ jobs:
           name: Install pytest manually
           command: |
             source venv/bin/activate
-            pip install pytest      
+            pip install pytest
       - run:
           name: Run Python tests
           command: |
@@ -41,19 +41,25 @@ jobs:
 
   build_frontend:
     docker:
-      - image: circleci/node:14
+      - image: circleci/node:17
+    working_directory: ~/project/frontend
     steps:
       - checkout
       - run:
           name: Install Node.js dependencies
           command: |
             cd frontend/react_sql_app
-            npm install  
+            npm install
+      - run:
+          name: Run ESLint
+          command: |
+            cd frontend/react_sql_app
+            npm run lint  # Run linting inside the correct directory
       - run:
           name: Build React app
-          command: |           
+          command: |
             cd frontend/react_sql_app
-            npm run build
+            CI=false npm run build
       - persist_to_workspace:
           root: frontend/react_sql_app
           paths:
@@ -61,7 +67,7 @@ jobs:
 
   deploy:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.11
     steps:
       - attach_workspace:
           at: /home/circleci/workspace
@@ -77,13 +83,13 @@ jobs:
       - run:
           name: List Directory Contents
           command: ls -la backend/app/venv
- #     - run:
- #         name: Deploy Backend and Frontend
- #         command: |
- #           source backend/app/venv/bin/activate
-            # Your backend deploy commands here, e.g.:
-            # scp -r /workspace/* user@server:/path/to/deploy/
-            # Deploy React build files (example):
+  #     - run:
+  #         name: Deploy Backend and Frontend
+  #         command: |
+  #           source backend/app/venv/bin/activate
+  # Your backend deploy commands here, e.g.:
+  # scp -r /workspace/* user@server:/path/to/deploy/
+  # Deploy React build files (example):
 #            scp -r /workspace/build/* hma14@ai.lottotry.com:/var/www/html/
 
 workflows:

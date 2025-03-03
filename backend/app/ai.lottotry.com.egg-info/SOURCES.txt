@@ -1,0 +1,6 @@
+pyproject.toml
+setup.py
+ai.lottotry.com.egg-info/PKG-INFO
+ai.lottotry.com.egg-info/SOURCES.txt
+ai.lottotry.com.egg-info/dependency_links.txt
+ai.lottotry.com.egg-info/top_level.txt

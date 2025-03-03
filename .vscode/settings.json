@@ -1,5 +1,9 @@
 {
-    "cSpell.words": [
-        "openai"
-    ]
+  "cSpell.words": ["openai"],
+  "cSpell.ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "**/migrations/**",
+    "**/*.log"
+  ]
 }

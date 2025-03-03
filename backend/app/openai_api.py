@@ -1,36 +1,25 @@
 import os
 from openai import OpenAI
 from config import Config
+from dotenv import load_dotenv
 
-
+load_dotenv()
+ChatGPT_API_KEY = os.getenv("ChatGPT_API_KEY")
 
 
 def get_string_response():
-    ret = f"To generate a set of 7 random numbers based on the provided historical data, I would usually look at the frequency of each number to determine which numbers are drawn more often. \
-        However, with the limited data you've provided, any patterns or trends may not be statistically significant, and using them to predict future numbers may not be any more effective \
-            than generating completely random numbers. Nonetheless, I can provide you with a simple algorithmic approach to generate a pseudo-random set of numbers based on the provided history, \
-                taking into account the frequency of each number: 1. Calculate the frequency of each number within the provided draws. 2. Normalize these frequencies to create weighted probabilities. \
-                    3. Use these weighted probabilities to generate a random set of 7 unique numbers. For your specific request, \
-                        you haven't specifically stated how you want the generated numbers to use the previous draws, \
-                            so I'll provide you with a basic implementation without weighted probabilities since we don't have a programming environment here: \
-                                - Randomly pick a number from each of the previous draws. - Ensure that you pick unique numbers until you have a set of 7. \
-                                    Here is an 'emulated' set, with each number taken from different draws at random (keeping the uniqueness constraint in mind): \
-                                        - From draw 951: 17 - From draw 952: 33 - From draw 953: 31 - From draw 954: 2 - From draw 955: 46 - From draw 956: \
-                                            4 - From draw 957: 36 Resulting set: 17, 33, 31, 2, 46, 4, 36 Bear in mind, this is a quick emulation and does not \
-                                                actually use a randomizing function due to the natural constraints of this environment. For a true random set based on frequency or any other criteria, \
-                                                    you'd want to use statistical software or a programming language like Python or R, \
-                                                        which can handle weighted probabilities and random number generation more effectively."
-    return ret
+    return """ Certainly! Distillation in the context of AI models, particularly in machine learning, refers to a technique called **model distillation** or **knowledge distillation**. This process involves transferring knowledge from a large, complex model (often referred to as the "teacher" model) to a smaller, simpler model (the "student" model). The goal is to create a smaller model that can perform similarly to the larger model but with reduced computational resources, making it more efficient for deployment. ### How Does Distillation Work? 1. **Teacher Model**: A large, pre-trained model (e.g., a deep neural network) is used as the teacher. This model is typically highly accurate but computationally expensive. 2. **Student Model**: A smaller, simpler model is trained to mimic the behavior of the teacher model. The student model has fewer parameters and is designed to be more efficient. 3. **Soft Targets**: Instead of training the student model directly on the hard labels (e.g., class labels in classification tasks), the student is trained on the "soft targets" produced by the teacher model. Soft targets are the probability distributions over classes (outputs of the teacher''s softmax layer), which contain more nuanced information than hard labels. 4. **Loss Function**: The student model is trained using a loss function that minimizes the difference between its predictions and the teacher's soft targets. This often involves a combination of: - **Distillation Loss**: Measures how well the student's output matches the teacher''s soft targets. - **Cross-Entropy Loss**: Ensures the student still learns from the true labels (hard targets). 5. **Temperature Scaling**: During distillation, a "temperature" parameter is often applied to the softmax function of the teacher model. This softens the probability distribution, making it easier for the student to learn from the teacher's outputs. ### Why Use Distillation? - **Efficiency**: The student model is smaller and faster, making it suitable for deployment on devices with limited computational resources (e.g., mobile phones, IoT devices). - **Performance**: The student model can achieve performance close to the teacher model, even with fewer parameters. - **Generalization**: The student model often generalizes better because it learns from the teacher's rich, probabilistic outputs rather than just hard labels. ### Applications of Distillation - **Model Compression**: Reducing the size of large models for deployment in resource-constrained environments. - **Ensemble Distillation**: Combining the knowledge of multiple teacher models into a single student model. - **Transfer Learning**: Using a pre-trained teacher model to guide the training of a student model on a new task. ### Example Suppose you have a large, state-of-the-art language model like GPT-4. You can use distillation to create a smaller version of this model that retains much of its performance but is lightweight enough to run on a smartphone. The smaller model learns from the outputs of GPT-4, capturing its "knowledge" in a more compact form. In summary, distillation is a powerful technique for creating efficient, high-performing AI models by transferring knowledge from larger, more complex models to smaller, more practical ones."""
+
 
 def get_openai_response():    
     
-    client = OpenAI(api_key=Config.OPEN_AI_KEY)
+    client = OpenAI(api_key=ChatGPT_API_KEY)
     
     conversation = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "here are DrawNumber and Number1, ... Number7 stats in the past, \
                 generate a set of 7 random numbers based on following history?"},
-    
+        
         {"role": "user", "content": \
                "951 4	17	20	23	25	27	41, \
                 952	5	6	12	28	33	41	47, \

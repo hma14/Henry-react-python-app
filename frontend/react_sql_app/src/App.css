@@ -1,5 +1,3 @@
-
-
 .App {
   text-align: center;
 }
@@ -24,7 +22,6 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  
 }
 
 .App-link {
@@ -40,7 +37,6 @@
     transform: rotate(360deg);
   }
 }
-
 
 .pagination {
   display: flex;
@@ -79,7 +75,6 @@
 }
 
 .paginationItem.active {
-
   background: rgb(248, 51, 232);
   border: 1px solid #fdfcfc;
   color: #fdfcfc;
@@ -93,7 +88,6 @@
   color: rgb(252, 249, 252);
 }
 
-
 thead {
   flex: 0 0 auto;
 }
@@ -103,11 +97,8 @@ thead {
   margin-right: auto;
 }
 
-
-
 .margin-left {
   margin-left: 12px;
-
 }
 
 .margin-right {
@@ -115,7 +106,12 @@ thead {
 }
 
 .navbar {
+  position: sticky !important;
+  top: 0;
   width: 100%;
+  background-color: white; /* Ensure it's visible */
+  z-index: 1000; /* Make sure it stays above other content */
+  margin-bottom: 1px;
 }
 
 .my-color-1 {
@@ -133,7 +129,6 @@ thead {
 .my-color-4 {
   color: rgba(84, 29, 193, 0.616);
 }
-
 
 .bg-greenyellow {
   background-color: rgb(240, 222, 164) !important;
@@ -253,7 +248,6 @@ thead {
   padding: 0rem !important;
 }
 
-
 .btn:focus {
   outline: none;
   box-shadow: none;
@@ -281,13 +275,13 @@ thead {
 }
 
 .my-input {
-    width: 200px; /* Adjust the width as needed */
-    height: 40px; /* Set the height to resemble a scrollbar */
-    padding: 0;
-    margin: 0;
-    border: 2px solid #ccc;
-    overflow-y: scroll; /* Enable vertical scrolling */
-    resize: none; /* Prevent resizing of the input */
+  width: 200px; /* Adjust the width as needed */
+  height: 40px; /* Set the height to resemble a scrollbar */
+  padding: 0;
+  margin: 0;
+  border: 2px solid #ccc;
+  overflow-y: scroll; /* Enable vertical scrolling */
+  resize: none; /* Prevent resizing of the input */
 }
 
 .fs-7 {
@@ -295,7 +289,9 @@ thead {
 }
 
 .table-container {
-  overflow-x: auto!important; /* Horizontal scrollbar when needed */
+  overflow-x: auto !important; /* Horizontal scrollbar when needed */
 }
 
-
+.dropdown-width {
+  width: 300px;
+}
