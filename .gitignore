@@ -35,6 +35,11 @@ venv/
 frontend/react_sql_app/build/
 
 
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
 backend/app/__pycache__/
 backend/app/config.py/
 backend/app/ai_preprocess_data/*.csv
@@ -52,6 +57,8 @@ backend/app/ai_preprocess_data/saved_training_data/*.csv
 backend/app/ai_preprocess_data/saved_training_data/Pipeline/*.csv
 feature_scaler.pkl
 lottery_model.pkl
+
+
 
 .env
 docs/
