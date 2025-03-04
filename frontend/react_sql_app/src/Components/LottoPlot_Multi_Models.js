@@ -96,7 +96,14 @@ const LottoPlot_Multi_Models = (props) => {
               </Box>
             </div>
             {images.map((image, index) => (
-              <div className="card" style={{ marginBottom: "5px" }}>
+              <div
+                className="card borderRadius"
+                style={{
+                  marginBottom: "4px",
+                  borderStyle: "outset",
+                  borderWidth: "2px",
+                }}
+              >
                 <h1 className="text-info center">
                   Lottery Prediction Plot with{" "}
                   <span style={{ color: "red" }}>Pipeline</span> Model
