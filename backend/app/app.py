@@ -127,10 +127,15 @@ def train_multi_models():
     
     img_base64_lgbm = plot(X_new, num_range, width=10, height=2)
     
+    full_range = set(range(1, num_range + 1))
     top_hit_numbers = [top_hit_numbers_pipeline.tolist(), nutop_hit_numbers_lstm.tolist(), top_hit_numbers_lgbm.tolist()]
+    missed_numbers = sorted(full_range - {num for sublist in top_hit_numbers for num in sublist}, reverse=False)
+    
     images = [img_base64_pipeline, img_base64_lstm, img_base64_lgbm]
     
-    return jsonify({"numbers": top_hit_numbers, "images": images, "metrics": metrics, "feature_importance": feature_importance_json })     
+    model_names = ["Pipeline", "LSTM", "LightGBM"]
+    
+    return jsonify({"numbers": top_hit_numbers, "images": images, "metrics": metrics, "feature_importance": feature_importance_json, "missed_numbers":  missed_numbers, "model_names": model_names})     
     
     
 

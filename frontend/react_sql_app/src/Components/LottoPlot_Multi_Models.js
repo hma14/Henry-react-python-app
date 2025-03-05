@@ -20,6 +20,8 @@ const LottoPlot_Multi_Models = (props) => {
   const [numbers, setNumbers] = useState([]);
   const [metrics, setMetrics] = useState(null);
   const [featureImportance, setFeatureImportance] = useState([]);
+  const [missedNumbers, setMissedNumbers] = useState([]);
+  const [modelNames, setModelNames] = useState([]);
 
   useEffect(() => {
     axios
@@ -36,6 +38,8 @@ const LottoPlot_Multi_Models = (props) => {
           setNumbers(parsedData.numbers);
           setFeatureImportance(parsedData.feature_importance);
           setMetrics(parsedData.metrics);
+          setMissedNumbers(parsedData.missed_numbers);
+          setModelNames(parsedData.model_names);
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
@@ -106,7 +110,8 @@ const LottoPlot_Multi_Models = (props) => {
               >
                 <h1 className="text-info center">
                   Lottery Prediction Plot with{" "}
-                  <span style={{ color: "red" }}>Pipeline</span> Model
+                  <span style={{ color: "red" }}>{modelNames[index]}</span>{" "}
+                  Model
                 </h1>
 
                 <img src={image} alt="Lottery Plot" style={{ width: "100%" }} />
@@ -130,6 +135,40 @@ const LottoPlot_Multi_Models = (props) => {
                 </Box>
               </div>
             ))}
+            <div className="card" style={{ marginTop: "10px" }}>
+              <Box sx={{ marginTop: "10px" }}>
+                <Typography
+                  sx={{
+                    fontSize: "24px",
+                    color: "green",
+                    textAlign: "center",
+                  }}
+                >
+                  <p style={{ color: "gray", fontSize: "18px" }}>
+                    Below are the{" "}
+                    <span style={{ color: "red", fontStyle: "italic" }}>
+                      missing
+                    </span>{" "}
+                    numbers excluded from above predicted numbers:
+                  </p>
+                  <p>
+                    <span
+                      style={{
+                        color: "red",
+                        fontStyle: "italic",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {missedNumbers.length}
+                    </span>{" "}
+                    missing numbers
+                  </p>
+                  <span style={{ color: "Highlight", fontSize: "32px" }}>
+                    {missedNumbers.join(", ")}
+                  </span>
+                </Typography>
+              </Box>
+            </div>
           </>
         ) : (
           <Box
