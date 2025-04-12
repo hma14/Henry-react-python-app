@@ -1,47 +1,39 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        
-        {
-            "name": "Python: Flask",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/app/app.py",
-            "console": "integratedTerminal",
-            "env": {
-                "FLASK_APP": "app.py",
-                "FLASK_ENV": "development"
-            },
-            "args": [
-                "run",
-                "--no-debugger",
-                "--no-reload"
-            ],
-            "jinja": true
-        },
-        {
-            "name": "Launch MS Edge against localhost",
-            "type": "msedge",
-            "request": "launch",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/frontend/react_sql_app/src",
-            "sourceMaps": true,
-            "trace": true
-        },
-        {
-            "name": "Python Debugger: Python File",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}"
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Debug Both Frontend and Backend",
-            "configurations": [
-                "Python: Flask",
-                "Launch MS Edge against localhost"
-            ]
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Flask",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/app/app.py",
+      "console": "integratedTerminal",
+      "env": {
+        "FLASK_APP": "app.py",
+        "FLASK_ENV": "development"
+      },
+      "args": ["run", "--no-debugger", "--no-reload"],
+      "jinja": true
+    },
+    {
+      "name": "Launch MS Edge against localhost",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/frontend/react_sql_app/src",
+      "sourceMaps": true,
+      "trace": true
+    },
+    {
+      "name": "Python Debugger: Python File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Both Frontend and Backend",
+      "configurations": ["Python: Flask", "Launch MS Edge against localhost"]
+    }
+  ]
 }

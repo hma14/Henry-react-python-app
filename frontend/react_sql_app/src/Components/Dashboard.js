@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import ApiNumbers from "./Components/ApiNumbers";
+import ApiNumbers from "./ApiNumbers";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styled from "styled-components";
 import axios from "axios";
-import "./App.css";
-import LottoTryLogo from "./images/LottoTryLogo.png";
-import PredictDraws from "./Components/PredictDraws";
-import LottoDraws from "./Components/LottoDraws";
-import NumberDrawsInDistance from "./Components/NumberDrawsInDistance";
-import ApiOpenAI from "./Components/ApiOpenAI";
-import DisplayDataset from "./Components/DisplayDataset";
-import PredictionChart from "./Components/PredictionChart_LSTM";
-import LottoPlot from "./Components/LottoPlot";
-import LottoPlot_LSBM from "./Components/LottoPlot_LSBM";
-import LottoPlot_LSTM from "./Components/LottoPlot_LSTM";
-import LottoPlot_Multi_Models from "./Components/LottoPlot_Multi_Models";
+import "../App.css";
+import LottoTryLogo from "../images/LottoTryLogo.png";
+import PredictDraws from "./PredictDraws";
+import LottoDraws from "./LottoDraws";
+import NumberDrawsInDistance from "./NumberDrawsInDistance";
+import ApiOpenAI from "./ApiOpenAI";
+import DisplayDataset from "./DisplayDataset";
+import PredictionChart from "./PredictionChart_LSTM";
+import LottoPlot from "./LottoPlot";
+import LottoPlot_LSBM from "./LottoPlot_LSBM";
+import LottoPlot_LSTM from "./LottoPlot_LSTM";
+import LottoPlot_Multi_Models from "./LottoPlot_Multi_Models";
 import {
   Container,
   Grid2 as Grid,
@@ -73,7 +73,7 @@ const Styles = styled.div`
   }
 `;
 
-const App = () => {
+const Dashboard = () => {
   //const [selectedLotto, setSelectedLotto] = useState('AllNumbers')
   const [sortType, setSortType] = useState("number");
   const [, setNumberRange] = useState(49);
@@ -96,6 +96,8 @@ const App = () => {
   const [pageSize, setPageSize] = useState(10);
   const [drawNumber, setDrawNumber] = useState(1);
   const [error, setError] = useState(null);
+
+  /*
 
   const url10 =
     "http://ep.lottotry.com:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
@@ -175,8 +177,8 @@ const App = () => {
     lottoName +
     "&drawNumber=" +
     drawNumber;
+    */
 
-  /*
   const url10 =
     "http://127.0.0.1:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
     lottoName;
@@ -255,7 +257,6 @@ const App = () => {
     lottoName +
     "&drawNumber=" +
     drawNumber;
-    */
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -559,4 +560,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Dashboard;

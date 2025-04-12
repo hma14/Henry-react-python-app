@@ -5,6 +5,7 @@ import os
 import joblib
 import json
 import pandas as pd
+import requests
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS   # Import the CORS module
 from config import Config
@@ -34,44 +35,69 @@ app = Flask(__name__)
 
 app.config.from_object(Config)
 
-PLOT_FOLDER = "static/plots"
+PLOT_FOLDER = 'static/plots'
 
 # frontend url: http://ai.lottotry.com
-# CORS(app, resources={r"/api/*": {"origins": "http://ai.lottotry.com"}})
+# CORS(app, resources={r'/api/*': {'origins': 'http://ai.lottotry.com'}})
 
 # Load configuration based on environment variable
-config_mode = os.getenv("FLASK_ENV", "development")
-if config_mode == "production":
-    app.config.from_object("config_prod.Config")
+config_mode = os.getenv('FLASK_ENV', 'development')
+if config_mode == 'production':
+    app.config.from_object('config_prod.Config')
 else:
-    app.config.from_object("config_dev.Config")
+    app.config.from_object('config_dev.Config')
 CORS(app)
 
 
 db.init_app(app)
 
 lotto_table_map = {
-    1: "BC49",
-    2: "Lotto649",
-    3: "LottoMax",
-    4: "DailyGrand"
+    1: 'BC49',
+    2: 'Lotto649',
+    3: 'LottoMax',
+    4: 'DailyGrand'
 }
 
 def get_table_name(lotto_id):
     lotto_table_map = {
-        1: "BC49",
-        2: "Lotto649",
-        3: "LottoMax"
+        1: 'BC49',
+        2: 'Lotto649',
+        3: 'LottoMax'
     }
-    return lotto_table_map.get(lotto_id, "Unknown")
+    return lotto_table_map.get(lotto_id, 'Unknown')
+
+NET_API_URL = 'https://localhost:5006/' #later change to: http://api.lottotry.com
+
+@app.route('/api/signup', methods=['POST'])
+def signup():
+    response = requests.post(f'{NET_API_URL}/api/auth/signup', json=request.json)
+    return response.content, response.status_code
+    
+    
+@app.route('/api/login', methods=['POST'])
+def login():
+    response = requests.post(f'{NET_API_URL}/api/auth/signup', json=request.json)
+    return response.content, response.status_code
 
 
-@app.route("/api/predict_next_draw_lgbm", methods=["GET"])
+@app.route('/api/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def proxy(path):
+    headers = {'Authorization': request.headers.get('Authorization')}
+    response = requests.request(
+        method=request.method,
+        url=f'{NET_API_URL}/api/{path}',
+        headers=headers,
+        json=request.json or None
+    )
+    return response.content, response.status_code
+
+
+@app.route('/api/predict_next_draw_lgbm', methods=['GET'])
 def ai_predict_next_draw_lgbm():
     
     # Load the preprocessed data
-    lotto_id = int(request.args.get("lotto_name", 1))
-    to_draw_number = int(request.args.get("drawNumber", 1))
+    lotto_id = int(request.args.get('lotto_name', 1))
+    to_draw_number = int(request.args.get('drawNumber', 1))
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
     
@@ -79,15 +105,15 @@ def ai_predict_next_draw_lgbm():
     
     img_base64 = plot(X_new, num_range, width=10, height=3)
     
-    return jsonify({"image": img_base64, "numbers": top_hit_numbers.tolist() })     
+    return jsonify({'image': img_base64, 'numbers': top_hit_numbers.tolist() })     
 
     
 
 
-@app.route("/api/train_multi_models", methods=["GET"])
+@app.route('/api/train_multi_models', methods=['GET'])
 def train_multi_models():
-    lotto_id = int(request.args.get("lotto_name", 1))
-    to_draw_number = int(request.args.get("drawNumber", 1)) 
+    lotto_id = int(request.args.get('lotto_name', 1))
+    to_draw_number = int(request.args.get('drawNumber', 1)) 
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
 
@@ -133,16 +159,16 @@ def train_multi_models():
     
     images = [img_base64_pipeline, img_base64_lstm, img_base64_lgbm]
     
-    model_names = ["Pipeline", "LSTM", "LightGBM"]
+    model_names = ['Pipeline', 'LSTM', 'LightGBM']
     
-    return jsonify({"numbers": top_hit_numbers, "images": images, "metrics": metrics, "feature_importance": feature_importance_json, "missed_numbers":  missed_numbers, "model_names": model_names})     
+    return jsonify({'numbers': top_hit_numbers, 'images': images, 'metrics': metrics, 'feature_importance': feature_importance_json, 'missed_numbers':  missed_numbers, 'model_names': model_names})     
     
     
 
-@app.route("/api/train_lottery_model", methods=["GET"])
+@app.route('/api/train_lottery_model', methods=['GET'])
 def train_lottery_model():
-    lotto_id = int(request.args.get("lotto_name", 1))
-    to_draw_number = int(request.args.get("drawNumber", 1)) 
+    lotto_id = int(request.args.get('lotto_name', 1))
+    to_draw_number = int(request.args.get('drawNumber', 1)) 
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
 
@@ -164,11 +190,11 @@ def train_lottery_model():
     
     img_base64 = plot(X_new,num_range, width=10, height=3)
     
-    return jsonify({"numbers": top_hit_numbers.tolist(), "image": img_base64, "metrics": metrics, "feature_importance": feature_importance_json })     
+    return jsonify({'numbers': top_hit_numbers.tolist(), 'image': img_base64, 'metrics': metrics, 'feature_importance': feature_importance_json })     
 
 
 
-@app.route("/api/train_scikit_learn_model", methods=["GET"])
+@app.route('/api/train_scikit_learn_model', methods=['GET'])
 def scikit_learn_training_model():
     # Load the preprocessed data
 
@@ -194,18 +220,18 @@ def scikit_learn_training_model():
     
     # Convert DataFrame to JSON
     response = {
-        "numbers": df["Number"].tolist(),
-        "probabilities": df["Probability"].tolist()
+        'numbers': df['Number'].tolist(),
+        'probabilities': df['Probability'].tolist()
     }
     
     return jsonify(response)
 
-@app.route("/api/lstm_predict_next_draw", methods=["GET"])
+@app.route('/api/lstm_predict_next_draw', methods=['GET'])
 def train_LSTM_model():
-    lotto_id = int(request.args.get("lotto_name", 1))
+    lotto_id = int(request.args.get('lotto_name', 1))
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
-    to_draw_number = int(request.args.get("drawNumber", 1))
+    to_draw_number = int(request.args.get('drawNumber', 1))
         
     X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
         
@@ -221,19 +247,19 @@ def train_LSTM_model():
     # save the result to Plot image
     img_base64 = plot(X_new, num_range, width=10, height=3)
     
-     # Send the base64 image as JSON
-    return jsonify({"numbers": numbers.tolist(), "image": img_base64})
+    # Send the base64 image as JSON
+    return jsonify({'numbers': numbers.tolist(), 'image': img_base64})
         
 
 
-@app.route("/api/lotto/allNumbers", methods=["GET"])
+@app.route('/api/lotto/allNumbers', methods=['GET'])
 def get_data_4():
-    lotto_name = int(request.args.get("lotto_name", 1))
+    lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
 
-    page_size = int(request.args.get("page_size", 10))
-    page_number = int(request.args.get("page_number", 1))
-    drawNumber = int(request.args.get("drawNumber", 1))
+    page_size = int(request.args.get('page_size', 10))
+    page_number = int(request.args.get('page_number', 1))
+    drawNumber = int(request.args.get('drawNumber', 1))
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -245,20 +271,20 @@ def get_data_4():
     if lotto_data is not None:
         return lotto_data
     else:
-        return "Error on calling get_data_4 (allNumbers)"
+        return 'Error on calling get_data_4 (allNumbers)'
 
 
-@app.route("/api/lotto/predict", methods=["GET"])
+@app.route('/api/lotto/predict', methods=['GET'])
 def get_data_5():
-    lotto_name = int(request.args.get("lotto_name", 1))
+    lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
-    drawNumber = int(request.args.get("drawNumber", 1))
+    drawNumber = int(request.args.get('drawNumber', 1))
     page_size = 1
     start_index = 0
     return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
 
-@app.route("/api/openai", methods=["GET"])
+@app.route('/api/openai', methods=['GET'])
 def get_from_openai():
     # below will call openai web api
     # response_string = get_openai_response()
@@ -268,12 +294,12 @@ def get_from_openai():
     return get_string_response()
 
 
-@app.route("/api/lotto/potential_draws", methods=["POST"])
+@app.route('/api/lotto/potential_draws', methods=['POST'])
 def potential_draws():
-    lotto_name = int(request.args.get("lotto_name", 1))
+    lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
-    page_size = int(request.args.get("page_size", 10))
-    drawNumber = int(request.args.get("drawNumber"))
+    page_size = int(request.args.get('page_size', 10))
+    drawNumber = int(request.args.get('drawNumber'))
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -286,33 +312,33 @@ def potential_draws():
     )
 
     # Decode the byte string to a regular string
-    json_str = result.data.decode("utf-8")
+    json_str = result.data.decode('utf-8')
 
     # Parse the JSON string
     parsed_data = json.loads(json_str)
 
     # Access the 'data' key, which contains an array
-    numbers = parsed_data["data"]
-    columns = int(request.args.get("columns"))
+    numbers = parsed_data['data']
+    columns = int(request.args.get('columns'))
 
     potential_draws = PotentialDraws(numbers, columns, page_size)
 
     data = potential_draws.next_potential_draws()
     for da in data:
         for d in da:
-            d["NumberOfAppearing"] = 1
+            d['NumberOfAppearing'] = 1
 
     return [arr for arr in data if arr]
 
 
-@app.route("/api/lotto/lottoDraws", methods=["GET"])
+@app.route('/api/lotto/lottoDraws', methods=['GET'])
 def get_data_7():
-    lotto_name = int(request.args.get("lotto_name", 1))
+    lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
-    page_size = int(request.args.get("page_size", 10))
-    page_number = int(request.args.get("page_number", 1))
-    drawNumber = int(request.args.get("drawNumber"))
-    print(f"drawNumber = {drawNumber}")
+    page_size = int(request.args.get('page_size', 10))
+    page_number = int(request.args.get('page_number', 1))
+    drawNumber = int(request.args.get('drawNumber'))
+    print(f'drawNumber = {drawNumber}')
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
 
@@ -321,14 +347,14 @@ def get_data_7():
     return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
 
-@app.route("/api/lotto/numberDraws", methods=["GET"])
+@app.route('/api/lotto/numberDraws', methods=['GET'])
 def get_data_8():
-    lotto_name = int(request.args.get("lotto_name", 1))
+    lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
-    page_size = int(request.args.get("page_size", 10))
-    page_number = int(request.args.get("page_number", 1))
-    drawNumber = int(request.args.get("drawNumber"))
-    print(f"drawNumber = {drawNumber}")
+    page_size = int(request.args.get('page_size', 10))
+    page_number = int(request.args.get('page_number', 1))
+    drawNumber = int(request.args.get('drawNumber'))
+    print(f'drawNumber = {drawNumber}')
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
 
@@ -347,12 +373,12 @@ def get_lotto_number_range(lotto_name):
         return 7  # for DailyGrand_GrandNumber
 
 
-@app.route("/api/lotto/getCurrentDrawNumber", methods=["GET"])
+@app.route('/api/lotto/getCurrentDrawNumber', methods=['GET'])
 def get_current_draw_number():
-    lotto_name = int(request.args.get("lotto_name", 1))
+    lotto_name = int(request.args.get('lotto_name', 1))
     da = get_target_draw_number(lotto_name)
 
-    return jsonify({"drawNumber": da})
+    return jsonify({'drawNumber': da})
 
 
 def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
@@ -369,7 +395,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
             .all()
         )
     ):
-        return jsonify({"message": "No data found"})
+        return jsonify({'message': 'No data found'})
 
     numbers_dict = {}
     drawNumber_dict = {}
@@ -380,14 +406,14 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
             numbers_dict[number.LottoType.DrawNumber] = []
         numbers_dict[number.LottoType.DrawNumber].append(
             {
-                "Value": number.Value,
-                "Distance": number.Distance,
-                "IsHit": number.IsHit,
-                "NumberOfDrawsWhenHit": number.NumberOfDrawsWhenHit,  # The line ` "IsBonusNumber":
-                "IsBonusNumber": number.IsBonusNumber,
-                "TotalHits": number.TotalHits,
-                "Probability": number.Probability,
-                "NumberOfAppearing": 0,
+                'Value': number.Value,
+                'Distance': number.Distance,
+                'IsHit': number.IsHit,
+                'NumberOfDrawsWhenHit': number.NumberOfDrawsWhenHit,  # The line ` 'IsBonusNumber':
+                'IsBonusNumber': number.IsBonusNumber,
+                'TotalHits': number.TotalHits,
+                'Probability': number.Probability,
+                'NumberOfAppearing': 0,
             }
         )
         if len(numbers_dict[number.LottoType.DrawNumber]) == number_range:
@@ -407,25 +433,25 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
             break
         result_list.append(
             {
-                "DrawNumber": value_,
-                "DrawDate": drawDate_dict[key].strftime("%Y-%m-%d"),
-                "Numbers": numbers_dict[key],
+                'DrawNumber': value_,
+                'DrawDate': drawDate_dict[key].strftime('%Y-%m-%d'),
+                'Numbers': numbers_dict[key],
             }
         )
 
-    sorted_list = sorted(result_list, key=lambda x: x["DrawNumber"], reverse=True)
+    sorted_list = sorted(result_list, key=lambda x: x['DrawNumber'], reverse=True)
     sorted_result_list = [
         {
-            "DrawNumber": entry["DrawNumber"],
-            "DrawDate": entry["DrawDate"],
-            "Numbers": sorted(
-                entry["Numbers"], key=lambda x: x["Value"], reverse=False
+            'DrawNumber': entry['DrawNumber'],
+            'DrawDate': entry['DrawDate'],
+            'Numbers': sorted(
+                entry['Numbers'], key=lambda x: x['Value'], reverse=False
             ),
         }
         for entry in sorted_list
     ]
 
-    return jsonify({"data": sorted_result_list})
+    return jsonify({'data': sorted_result_list})
 
 
 def get_target_draw_number(lotto_name):
@@ -443,7 +469,7 @@ def get_target_draw_number(lotto_name):
     return last_draw.DrawNumber
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
-    #app.run(debug=False, host="ep.lottotry.com", port=5001)
-    #app.run(debug=True, host="0.0.0.0", port=5001)
+    #app.run(debug=False, host='ep.lottotry.com', port=5001)
+    #app.run(debug=True, host='0.0.0.0', port=5001)
