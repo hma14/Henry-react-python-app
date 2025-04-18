@@ -295,3 +295,20 @@ thead {
 .dropdown-width {
   width: 300px;
 }
+.button-width {
+  width: 100px;
+}
+
+.error {
+  color: red;
+  font-style: italic;
+  text-align: left;
+  font-weight: 100;
+}
+
+.general-error {
+  color: red;
+  font-style: italic;
+  text-align: left;
+  font-weight: 500;
+}

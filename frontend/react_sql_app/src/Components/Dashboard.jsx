@@ -1,3 +1,4 @@
+import { Navigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import ApiNumbers from "./ApiNumbers";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,7 +16,10 @@ import LottoPlot from "./LottoPlot";
 import LottoPlot_LSBM from "./LottoPlot_LSBM";
 import LottoPlot_LSTM from "./LottoPlot_LSTM";
 import LottoPlot_Multi_Models from "./LottoPlot_Multi_Models";
+import { grey, lime, blue, lightBlue, red } from "@mui/material/colors";
 import {
+  AppBar,
+  Toolbar,
   Container,
   Grid2 as Grid,
   Typography,
@@ -29,6 +33,7 @@ import {
   SelectChangeEvent,
   Stack,
   TextField,
+  Button,
 } from "@mui/material";
 //import { Stack } from "react-bootstrap";
 
@@ -96,6 +101,7 @@ const Dashboard = () => {
   const [pageSize, setPageSize] = useState(10);
   const [drawNumber, setDrawNumber] = useState(1);
   const [error, setError] = useState(null);
+  const [redirect, setRedirect] = useState(false);
 
   /*
 
@@ -361,6 +367,19 @@ const Dashboard = () => {
       ? selectedAiOption
       : selectedStatsOption;
 
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.clear();
+    //return <Navigate to="/login" replace />;
+    setRedirect(true);
+  };
+
+  if (redirect) {
+    //return <Navigate to="/login" replace />;
+    window.location.href = "/dashboard";
+  }
+
   return (
     <Styles>
       {
@@ -483,9 +502,9 @@ const Dashboard = () => {
 
                     <li className="nav-item">
                       <div className="margin-left mt-1 row  dropdown-width">
-                        <div class="col-md-6 mt-1">
+                        <div className="col-md-6 mt-1">
                           <label
-                            for="textInput"
+                            htmlFor="textInput"
                             className="bg-info text-white ps-3 fw-bold"
                           >
                             Current Draw
@@ -519,6 +538,24 @@ const Dashboard = () => {
                 </>
               )}
             </Stack>
+            <Box
+              sx={{
+                ml: "auto",
+                mr: "10px",
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: grey[100],
+                  color: red["A700"],
+                  fontWeight: 700,
+                }}
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </Box>
           </nav>
           <>
             {(() => {
