@@ -91,15 +91,17 @@ const Login = ({ endpoint }) => {
           className="flex flex-col flex-nowrap items-center mb-4"
           sx={{ padding: "5px" }}
         >
-          <Avatar
-            //src="%PUBLIC_URL%/LottoTryLogo.png"
-            src="./LottoTryLogo.png"
-            alt="LottoTry"
-            sx={{ width: 60, height: 60, marginRight: 2 }}
-          />
-          <Typography variant="h3" component="h1" align="center" gutterBottom>
-            Login
-          </Typography>
+          <div className="flex">
+            <Avatar
+              //src="%PUBLIC_URL%/LottoTryLogo.png"
+              src="./LottoTryLogo.png"
+              alt="LottoTry"
+              sx={{ width: 60, height: 60, marginRight: 2 }}
+            />
+            <Typography variant="h3" component="h1" align="center" gutterBottom>
+              Login
+            </Typography>
+          </div>
           <Box component="div" onSubmit={handleSubmit} className="mt-4 w-full">
             <TextField
               label="Username"

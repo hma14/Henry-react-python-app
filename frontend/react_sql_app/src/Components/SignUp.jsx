@@ -149,21 +149,23 @@ const SignUp = ({ endpoint }) => {
             flexWrap: "nowrap",
           }}
         >
-          <Avatar
-            //src="%PUBLIC_URL%/LottoTryLogo.png"
-            src="./LottoTryLogo.png"
-            alt="LottoTry"
-            sx={{ width: 60, height: 60, marginRight: 2 }}
-          />
-          <Typography
-            sx={{ display: "inline" }}
-            variant="h3"
-            component="h3"
-            align="center"
-            gutterBottom
-          >
-            Sign Up
-          </Typography>
+          <div className="flex">
+            <Avatar
+              //src="%PUBLIC_URL%/LottoTryLogo.png"
+              src="./LottoTryLogo.png"
+              alt="LottoTry"
+              sx={{ width: 60, height: 60, marginRight: 2 }}
+            />
+            <Typography
+              sx={{ display: "inline" }}
+              variant="h3"
+              component="h3"
+              align="center"
+              gutterBottom
+            >
+              Sign Up
+            </Typography>
+          </div>
           <Box component="div" onSubmit={handleSubmit} className="mt-4 w-full">
             <TextField
               label="Username"
