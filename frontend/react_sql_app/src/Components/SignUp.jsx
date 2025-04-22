@@ -1,21 +1,71 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+
+import {
+  Container,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Link,
+  Paper,
+  Alert,
+  Avatar,
+  Select,
+  InputLabel,
+  MenuItem,
+  FormControl,
+} from "@mui/material";
 
 const SignUp = ({ endpoint }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("Member");
   const [redirect, setRedirect] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const [errors, setErrors] = useState({
+    username: "",
     email: "",
     password: "",
     general: "",
   });
 
+  // Email validation regex
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    // Validate email on change
+    if (newEmail && !validateEmail(newEmail)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({ username: "", email: "", password: "", role: "", general: "" }); // Clear previous errors
+    setErrors({
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "",
+      general: "",
+    }); // Clear previous errors
+
+    // Check email validity and password match before submission
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    console.log("Signup submitted", { email, password });
 
     // Basic validation
     if (!username) {
@@ -28,6 +78,13 @@ const SignUp = ({ endpoint }) => {
     }
     if (!password) {
       setErrors((prev) => ({ ...prev, password: "Password is required" }));
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Passwords do not match",
+      }));
       return;
     }
     if (!role) {
@@ -77,77 +134,128 @@ const SignUp = ({ endpoint }) => {
   }
 
   return (
-    <div
-      style={{ maxWidth: "400px", margin: "50px auto", textAlign: "center" }}
+    <Container
+      maxWidth="sm"
+      className="min-h-screen flex items-center justify-center"
+      sx={{ mt: "10px" }}
     >
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-            style={{ width: "100%", padding: "8px" }}
-            className={errors.username ? "input-error" : ""}
-          />
-          {errors.username && <p className="error">{errors.username}</p>}
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            style={{ width: "100%", padding: "8px" }}
-            className={errors.email ? "input-error" : ""}
-          />
-          {errors.email && <p className="error">{errors.email}</p>}
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            style={{ width: "100%", padding: "8px" }}
-            className={errors.password ? "input-error" : ""}
-          />
-          {errors.password && <p className="error">{errors.password}</p>}
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            style={{ width: "100%", padding: "8px" }}
-            className={errors.role ? "input-error" : ""}
-          >
-            <option value="Member">Member</option>
-            <option value="Admin">Admin</option>
-          </select>
-          {errors.role && <p className="error">{errors.role}</p>}
-        </div>
-
-        {errors.general && (
-          <p className="error general-error">{errors.general}</p>
-        )}
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            background: "#007bff",
-            color: "white",
-            border: "none",
+      <Paper elevation={3} className="p-8 w-full max-w-md">
+        <Box
+          className="flex flex-col items-center mb-4"
+          sx={{
+            padding: "5px",
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "nowrap",
           }}
         >
-          Sign Up
-        </button>
-      </form>
-      <p style={{ marginTop: "10px" }}>
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
-    </div>
+          <Avatar
+            //src="%PUBLIC_URL%/LottoTryLogo.png"
+            src="./LottoTryLogo.png"
+            alt="LottoTry"
+            sx={{ width: 60, height: 60, marginRight: 2 }}
+          />
+          <Typography
+            sx={{ display: "inline" }}
+            variant="h3"
+            component="h3"
+            align="center"
+            gutterBottom
+          >
+            Sign Up
+          </Typography>
+          <Box component="div" onSubmit={handleSubmit} className="mt-4 w-full">
+            <TextField
+              label="Username"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            {errors.username && (
+              <Alert severity="warning">{errors.username}</Alert>
+            )}
+            <TextField
+              label="Email"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={email}
+              onChange={handleEmailChange}
+              required
+              error={!!emailError}
+              helperText={emailError}
+            />
+            {errors.email && <Alert severity="warning">{errors.email}</Alert>}
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {errors.password && (
+              <Alert severity="warning">{errors.password}</Alert>
+            )}
+            <TextField
+              label="Confirm Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+            {errors.confirmPassword && (
+              <Alert severity="warning">{errors.confirmPassword}</Alert>
+            )}
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-helper-label">Role</InputLabel>
+              <Select
+                labelId="demo-simple-select-helper-label"
+                id="demo-simple-select-helper"
+                value={role}
+                label="Role"
+                fullWidth
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={1}>Member</MenuItem>
+                <MenuItem value={2}>Admin</MenuItem>
+              </Select>
+              {errors.role && <Alert severity="warning">{errors.role}</Alert>}
+            </FormControl>
+
+            {errors.general && <Alert severity="error">{errors.general}</Alert>}
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              className="mt-4 py-3"
+              onClick={handleSubmit}
+            >
+              Sign Up
+            </Button>
+            <Typography className="mt-4 text-center">
+              Already have an account?{"  "}
+              <Link href="/login" underline="hover">
+                Log in
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

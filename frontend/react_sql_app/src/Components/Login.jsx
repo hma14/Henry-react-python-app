@@ -1,5 +1,19 @@
 import { useState, useEffect } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import "../index.css";
+import "../App.css";
+
+import {
+  Container,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Link,
+  Paper,
+  Alert,
+  Avatar,
+} from "@mui/material";
 
 const Login = ({ endpoint }) => {
   const [username, setUsername] = useState("");
@@ -67,51 +81,73 @@ const Login = ({ endpoint }) => {
   }
 
   return (
-    <div
-      style={{ maxWidth: "400px", margin: "50px auto", textAlign: "center" }}
+    <Container
+      maxWidth="sm"
+      className="min-h-screen flex items-center justify-center"
+      sx={{ mt: "10px" }}
     >
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-            style={{ width: "100%", padding: "8px" }}
-          />
-          {errors.username && <p className="error">{errors.username}</p>}
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            style={{ width: "100%", padding: "8px" }}
-          />
-          {errors.password && <p className="error">{errors.password}</p>}
-        </div>
-        {errors.general && (
-          <p className="error general-error">{errors.general}</p>
-        )}
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            background: "#007bff",
-            color: "white",
-            border: "none",
-          }}
+      <Paper elevation={3} className="p-8 w-full max-w-md">
+        <Box
+          className="flex flex-col flex-nowrap items-center mb-4"
+          sx={{ padding: "5px" }}
         >
-          Login
-        </button>
-      </form>
-      <p style={{ marginTop: "10px" }}>
-        Don't have an account? <Link to="/signup">Sign up</Link>
-      </p>
-    </div>
+          <Avatar
+            //src="%PUBLIC_URL%/LottoTryLogo.png"
+            src="./LottoTryLogo.png"
+            alt="LottoTry"
+            sx={{ width: 60, height: 60, marginRight: 2 }}
+          />
+          <Typography variant="h3" component="h1" align="center" gutterBottom>
+            Login
+          </Typography>
+          <Box component="div" onSubmit={handleSubmit} className="mt-4 w-full">
+            <TextField
+              label="Username"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            {errors.username && (
+              <Alert severity="warning">{errors.username}</Alert>
+            )}
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {errors.password && (
+              <Alert severity="warning">{errors.password}</Alert>
+            )}
+            {errors.general && <Alert severity="error">{errors.general}</Alert>}
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              className="mt-4 py-3"
+              onClick={handleSubmit}
+            >
+              Login
+            </Button>
+            <Typography className="mt-4 text-center">
+              Don't have an account?{" "}
+              <Link href="/signup" underline="hover">
+                Sign Up
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 
