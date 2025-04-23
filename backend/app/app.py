@@ -326,7 +326,7 @@ def potential_draws():
     data = potential_draws.next_potential_draws()
     for da in data:
         for d in da:
-            d['NumberOfAppearing'] = 1
+            d['NumberOfAppearing'] += 1
 
     return [arr for arr in data if arr]
 
@@ -413,7 +413,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
                 'IsBonusNumber': number.IsBonusNumber,
                 'TotalHits': number.TotalHits,
                 'Probability': number.Probability,
-                'NumberOfAppearing': 0,
+                'NumberOfAppearing': number.NumberOfAppearing,
             }
         )
         if len(numbers_dict[number.LottoType.DrawNumber]) == number_range:
