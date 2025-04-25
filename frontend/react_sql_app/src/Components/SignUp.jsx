@@ -16,8 +16,10 @@ import {
   MenuItem,
   FormControl,
 } from "@mui/material";
+import SpinningLogo from "./SpinningLogo";
+import api from "./Api";
 
-const SignUp = ({ endpoint }) => {
+const SignUp = ({ onSuccess }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,6 +33,9 @@ const SignUp = ({ endpoint }) => {
     password: "",
     general: "",
   });
+
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Email validation regex
   const validateEmail = (email) => {
@@ -51,6 +56,8 @@ const SignUp = ({ endpoint }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     setErrors({
       username: "",
       email: "",
@@ -101,37 +108,20 @@ const SignUp = ({ endpoint }) => {
 
     try {
       //console.log("SignUp: Sending to", endpoint, "with data:", data);
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        setRedirect(true);
+      const response = await api.register(data);
+      if (response.success) {
+        setMessage("Please check your email for confirmation link");
       } else {
-        const errorData = await response.json(); // <-- Await this!
-        const errorMessage = errorData.message || JSON.stringify(errorData);
-
         setErrors((prev) => ({
           ...prev,
-          general: errorMessage,
+          general: response.message,
         }));
       }
     } catch (error) {
       setErrors((prev) => ({ ...prev, general: error.message }));
     }
+    setIsLoading(false);
   };
-
-  if (redirect) {
-    return (
-      <Navigate
-        to="/login"
-        state={{ successMessage: "Account created! Please log in." }}
-        replace
-      />
-    );
-  }
 
   return (
     <Container
@@ -141,28 +131,14 @@ const SignUp = ({ endpoint }) => {
     >
       <Paper elevation={3} className="p-8 w-full max-w-md">
         <Box
-          className="flex flex-col items-center mb-4"
+          className="flex flex-col flex-nowrap items-center mb-4"
           sx={{
             padding: "5px",
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "nowrap",
           }}
         >
           <div className="flex">
-            <Avatar
-              //src="%PUBLIC_URL%/LottoTryLogo.png"
-              src="./LottoTryLogo.png"
-              alt="LottoTry"
-              sx={{ width: 60, height: 60, marginRight: 2 }}
-            />
-            <Typography
-              sx={{ display: "inline" }}
-              variant="h3"
-              component="h3"
-              align="center"
-              gutterBottom
-            >
+            <SpinningLogo />
+            <Typography variant="h3" component="h3" align="center" gutterBottom>
               Sign Up
             </Typography>
           </div>
@@ -217,21 +193,20 @@ const SignUp = ({ endpoint }) => {
             {errors.confirmPassword && (
               <Alert severity="warning">{errors.confirmPassword}</Alert>
             )}
-            <FormControl fullWidth>
+            <FormControl fullWidth margin="normal">
               <InputLabel id="demo-simple-select-helper-label">Role</InputLabel>
               <Select
                 labelId="demo-simple-select-helper-label"
                 id="demo-simple-select-helper"
                 value={role}
                 label="Role"
-                fullWidth
                 onChange={(e) => setRole(e.target.value)}
               >
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                <MenuItem value={1}>Member</MenuItem>
-                <MenuItem value={2}>Admin</MenuItem>
+                <MenuItem value={"Member"}>Member</MenuItem>
+                <MenuItem value={"Admin"}>Admin</MenuItem>
               </Select>
               {errors.role && <Alert severity="warning">{errors.role}</Alert>}
             </FormControl>
@@ -243,16 +218,34 @@ const SignUp = ({ endpoint }) => {
               variant="contained"
               color="primary"
               fullWidth
-              className="mt-4 py-3"
               onClick={handleSubmit}
+              disabled={isLoading}
+              className="mt-4 py-3 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
             >
-              Sign Up
+              {isLoading ? "Registering..." : "Sign Up"}
             </Button>
+            {message && (
+              <Typography
+                variant="subtitle2"
+                component="p"
+                className="text-center text-sm"
+              >
+                {message}
+              </Typography>
+            )}
+
             <Typography className="mt-4 text-center">
               Already have an account?{"  "}
-              <Link href="/login" underline="hover">
-                Log in
-              </Link>
+              <a
+                href="/login"
+                className="text-blue-500"
+                onClick={() => onSuccess()}
+              >
+                Login
+              </a>
+              {/* <Link href="/login" underline="hover">
+                Login
+              </Link> */}
             </Typography>
           </Box>
         </Box>

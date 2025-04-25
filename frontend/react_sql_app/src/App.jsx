@@ -7,10 +7,13 @@ import {
 import SignUp from "./Components/SignUp";
 import Login from "./Components/Login";
 import Dashboard from "./Components/Dashboard";
+import EmailConfirmation from "./Components/EmailConfirmation";
 import { useEffect, useState } from "react";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [page, setPage] = useState("signup");
+
   const urlSignUp = "https://localhost:5006/api/auth/signup";
   const urlLogin = "https://localhost:5006/api/auth/login";
 
@@ -50,7 +53,17 @@ const App = () => {
               isAuthenticated ? (
                 <Navigate to="/dashboard" replace />
               ) : (
-                <SignUp endpoint={urlSignUp} />
+                <SignUp onSuccess={() => setPage("login")} />
+              )
+            }
+          />
+          <Route
+            path="/emailConfirmation"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <EmailConfirmation onSuccess={() => setPage("login")} />
               )
             }
           />

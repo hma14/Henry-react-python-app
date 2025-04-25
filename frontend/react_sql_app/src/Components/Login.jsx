@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import "../index.css";
 import "../App.css";
@@ -14,6 +14,9 @@ import {
   Alert,
   Avatar,
 } from "@mui/material";
+import SpinningLogo from "./SpinningLogo";
+import api from "./Api";
+import Dashboard from "./Dashboard";
 
 const Login = ({ endpoint }) => {
   const [username, setUsername] = useState("");
@@ -25,7 +28,13 @@ const Login = ({ endpoint }) => {
     general: "",
   });
   const navigate = useNavigate();
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const navigateRef = useRef();
 
+  /*   useEffect(() => {
+    navigateRef.current = navigate;
+  }, [navigate]);
+ */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({ username: "", password: "" });
@@ -44,25 +53,24 @@ const Login = ({ endpoint }) => {
         username,
         password,
       });
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      const responseData = await response.json();
-      console.log("Login: Response:", responseData);
-      if (response.ok) {
-        localStorage.setItem("accessToken", responseData.accessToken);
-        localStorage.setItem("refreshToken", responseData.refreshToken);
+      const response = await api.login(username, password);
+
+      if (response.success) {
+        localStorage.setItem("accessToken", response.accessToken);
+        localStorage.setItem("refreshToken", response.refreshToken);
         console.log("Login: Tokens stored, redirecting");
-        setTimeout(() => {
-          console.log("Login: Triggering redirect to /dashboard");
-          setRedirect(true);
-          //return <Navigate to="/dashboard" replace />;
-        }, 0);
+
+        //setRedirect(true);
+
+        /* setTimeout(() => setRedirect(true), 1000);
+        //return redirect ? <Navigate to="/dashboard" replace /> : null;
+        return redirect ? navigate("/dashboard") : null; */
+
+        window.location.href = "/dashboard";
+
+        //setTimeout(() => navigateRef.current("/dashboard"), 1000);
       } else {
-        const errorMessage =
-          responseData.message || JSON.stringify(responseData);
+        const errorMessage = response.message || JSON.stringify(response);
 
         setErrors((prev) => ({
           ...prev,
@@ -72,13 +80,8 @@ const Login = ({ endpoint }) => {
     } catch (error) {
       setErrors((prev) => ({ ...prev, general: error.message }));
     }
+    //return submitSuccess ? <Navigate to="/dashboard" replace /> : null;
   };
-  if (redirect) {
-    //return <Navigate to="/dashboard" />;
-
-    window.location.href = "/dashboard";
-    //navigate("/dashboard");
-  }
 
   return (
     <Container
@@ -92,12 +95,7 @@ const Login = ({ endpoint }) => {
           sx={{ padding: "5px" }}
         >
           <div className="flex">
-            <Avatar
-              //src="%PUBLIC_URL%/LottoTryLogo.png"
-              src="./LottoTryLogo.png"
-              alt="LottoTry"
-              sx={{ width: 60, height: 60, marginRight: 2 }}
-            />
+            <SpinningLogo />
             <Typography variant="h3" component="h1" align="center" gutterBottom>
               Login
             </Typography>
