@@ -70,6 +70,7 @@ const SignUp = ({ onSuccess }) => {
     // Check email validity and password match before submission
     if (!validateEmail(email)) {
       setEmailError("Please enter a valid email address");
+      setIsLoading(false);
       return;
     }
     console.log("Signup submitted", { email, password });
@@ -77,14 +78,17 @@ const SignUp = ({ onSuccess }) => {
     // Basic validation
     if (!username) {
       setErrors((prev) => ({ ...prev, username: "UserName is required" }));
+      setIsLoading(false);
       return;
     }
     if (!email) {
       setErrors((prev) => ({ ...prev, email: "Email is required" }));
+      setIsLoading(false);
       return;
     }
     if (!password) {
       setErrors((prev) => ({ ...prev, password: "Password is required" }));
+      setIsLoading(false);
       return;
     }
     if (password !== confirmPassword) {
@@ -92,10 +96,12 @@ const SignUp = ({ onSuccess }) => {
         ...prev,
         confirmPassword: "Passwords do not match",
       }));
+      setIsLoading(false);
       return;
     }
     if (!role) {
       setErrors((prev) => ({ ...prev, role: "Role is required" }));
+      setIsLoading(false);
       return;
     }
 
