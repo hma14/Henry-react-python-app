@@ -18,7 +18,7 @@ import SpinningLogo from "./SpinningLogo";
 import api from "./Api";
 import Dashboard from "./Dashboard";
 
-const Login = ({ endpoint }) => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
@@ -49,7 +49,7 @@ const Login = ({ endpoint }) => {
     }
 
     try {
-      console.log("Login: Sending to", endpoint, "with data:", {
+      console.log("Login: Sending to", "with data:", {
         username,
         password,
       });

@@ -115,12 +115,12 @@ const SignUp = ({ onSuccess }) => {
     try {
       //console.log("SignUp: Sending to", endpoint, "with data:", data);
       const response = await api.register(data);
-      if (response.Succeeded) {
+      if (response.success) {
         setMessage("Please check your email for confirmation link");
       } else {
         setErrors((prev) => ({
           ...prev,
-          general: response.Message,
+          general: response.message,
         }));
       }
     } catch (error) {
