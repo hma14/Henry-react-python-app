@@ -9,16 +9,19 @@ const api = {
     //.catch((error) => console.error("Error:", error));
   },
 
-  async login(username, password) {
+  async login(email, password) {
     return fetch(`${AUTH_URL}login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     }).then((res) => res.json());
   },
 
   async confirmEmail(token) {
-    return fetch(`${AUTH_URL}confirm?token=${token}`, {
+    const encodedToken = encodeURIComponent(token); // Encode token
+    console.log(encodedToken);
+
+    return fetch(`${AUTH_URL}confirm?token=${encodedToken}`, {
       method: "GET",
     }).then((res) => res.json());
   },

@@ -7,7 +7,8 @@ function EmailConfirmation({ onSuccess }) {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
-
+    console.log(window.location.search);
+    console.log(token);
     if (token) {
       api
         .confirmEmail(token)

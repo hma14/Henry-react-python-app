@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import "../index.css";
 import "../App.css";
 
@@ -16,31 +20,21 @@ import {
 } from "@mui/material";
 import SpinningLogo from "./SpinningLogo";
 import api from "./Api";
-import Dashboard from "./Dashboard";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [redirect, setRedirect] = useState(false);
   const [errors, setErrors] = useState({
-    username: "",
+    email: "",
     password: "",
     general: "",
   });
-  const navigate = useNavigate();
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const navigateRef = useRef();
-
-  /*   useEffect(() => {
-    navigateRef.current = navigate;
-  }, [navigate]);
- */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({ username: "", password: "" });
+    setErrors({ email: "", password: "" });
 
-    if (!username) {
-      setErrors((prev) => ({ ...prev, username: "UserName is required" }));
+    if (!email) {
+      setErrors((prev) => ({ ...prev, email: "UserName is required" }));
       return;
     }
     if (!password) {
@@ -50,25 +44,17 @@ const Login = () => {
 
     try {
       console.log("Login: Sending to", "with data:", {
-        username,
+        email: email,
         password,
       });
-      const response = await api.login(username, password);
+      const response = await api.login(email, password);
 
       if (response.success) {
         localStorage.setItem("accessToken", response.accessToken);
         localStorage.setItem("refreshToken", response.refreshToken);
         console.log("Login: Tokens stored, redirecting");
 
-        //setRedirect(true);
-
-        /* setTimeout(() => setRedirect(true), 1000);
-        //return redirect ? <Navigate to="/dashboard" replace /> : null;
-        return redirect ? navigate("/dashboard") : null; */
-
         window.location.href = "/dashboard";
-
-        //setTimeout(() => navigateRef.current("/dashboard"), 1000);
       } else {
         const errorMessage = response.message || JSON.stringify(response);
 
@@ -80,7 +66,6 @@ const Login = () => {
     } catch (error) {
       setErrors((prev) => ({ ...prev, general: error.message }));
     }
-    //return submitSuccess ? <Navigate to="/dashboard" replace /> : null;
   };
 
   return (
@@ -102,17 +87,15 @@ const Login = () => {
           </div>
           <Box component="div" onSubmit={handleSubmit} className="mt-4 w-full">
             <TextField
-              label="Username"
+              label="email"
               variant="outlined"
               fullWidth
               margin="normal"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
-            {errors.username && (
-              <Alert severity="warning">{errors.username}</Alert>
-            )}
+            {errors.email && <Alert severity="warning">{errors.email}</Alert>}
             <TextField
               label="Password"
               type="password"

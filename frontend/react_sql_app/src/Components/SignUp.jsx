@@ -15,9 +15,11 @@ import {
   InputLabel,
   MenuItem,
   FormControl,
+  colors,
 } from "@mui/material";
 import SpinningLogo from "./SpinningLogo";
 import api from "./Api";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const SignUp = ({ onSuccess }) => {
   const [username, setUsername] = useState("");
@@ -228,7 +230,7 @@ const SignUp = ({ onSuccess }) => {
               disabled={isLoading}
               className="mt-4 py-3 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
             >
-              {isLoading ? "Registering..." : "Sign Up"}
+              {isLoading ? <CircularProgress /> : "Sign Up"}
             </Button>
             {message && (
               <Typography
@@ -236,22 +238,15 @@ const SignUp = ({ onSuccess }) => {
                 component="p"
                 className="text-center text-sm"
               >
-                {message}
+                <p style={{ color: "green", fontsize: "bold" }}>{message}</p>
               </Typography>
             )}
 
             <Typography className="mt-4 text-center">
               Already have an account?{"  "}
-              <a
-                href="/login"
-                className="text-blue-500"
-                onClick={() => onSuccess()}
-              >
+              <Link href="/login" underline="hover">
                 Login
-              </a>
-              {/* <Link href="/login" underline="hover">
-                Login
-              </Link> */}
+              </Link>
             </Typography>
           </Box>
         </Box>
