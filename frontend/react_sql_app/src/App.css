@@ -331,6 +331,10 @@ thead {
   animation: spin 1s linear infinite; /* Continuous spin animation */
 }
 
+.wider-td {
+  width: 160px;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
