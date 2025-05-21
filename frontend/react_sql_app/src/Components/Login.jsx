@@ -20,10 +20,12 @@ import {
 } from "@mui/material";
 import SpinningLogo from "./SpinningLogo";
 import api from "./Api";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -31,14 +33,17 @@ const Login = () => {
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     setErrors({ email: "", password: "" });
 
     if (!email) {
       setErrors((prev) => ({ ...prev, email: "UserName is required" }));
+      setIsLoading(false);
       return;
     }
     if (!password) {
       setErrors((prev) => ({ ...prev, password: "Password is required" }));
+      setIsLoading(false);
       return;
     }
 
@@ -62,9 +67,11 @@ const Login = () => {
           ...prev,
           general: errorMessage,
         }));
+        setIsLoading(false);
       }
     } catch (error) {
       setErrors((prev) => ({ ...prev, general: error.message }));
+      setIsLoading(false);
     }
   };
 
@@ -118,8 +125,9 @@ const Login = () => {
               fullWidth
               className="mt-4 py-3"
               onClick={handleSubmit}
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? <CircularProgress /> : "Login"}
             </Button>
             <Typography className="mt-4 text-center">
               Don't have an account?{" "}
