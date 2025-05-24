@@ -23,6 +23,7 @@ import api from "./Api";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +61,7 @@ const Login = () => {
         console.log("Login: Tokens stored, redirecting");
 
         window.location.href = "/dashboard";
+        //navigate("/dashboard");
       } else {
         const errorMessage = response.message || JSON.stringify(response);
 
