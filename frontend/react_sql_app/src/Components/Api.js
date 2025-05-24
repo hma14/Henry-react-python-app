@@ -1,5 +1,5 @@
-//const AUTH_URL = "https://localhost:5006/api/auth/";
-const AUTH_URL = "http://api.lottotry.com/api/auth/";
+const AUTH_URL = "https://localhost:5006/api/auth/";
+//const AUTH_URL = "http://api.lottotry.com/api/auth/";
 const api = {
   async register(data) {
     return fetch(`${AUTH_URL}signup`, {
