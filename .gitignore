@@ -32,7 +32,6 @@ backend/app/venv/
 evn/
 venv/
 .venv/
-frontend/react_sql_app/build/
 
 
 # Ignore Python cache files
