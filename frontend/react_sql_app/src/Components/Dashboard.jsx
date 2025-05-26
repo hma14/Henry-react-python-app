@@ -123,15 +123,7 @@ const Dashboard = () => {
     lottoColumns +
     "&drawNumber=" +
     drawNumber;
-  const url9 =
-    "http://ep.lottotry.com:5001/api/lotto/potential_draws?lotto_name=" +
-    lottoName +
-    "&columns=" +
-    potentialColumns +
-    "&page_size=" +
-    pageSize +
-    "&drawNumber=" +
-    drawNumber;
+
   const url7 =
     "http://ep.lottotry.com:5001/api/lotto/lottoDraws?lotto_name=" +
     lottoName +
@@ -148,6 +140,16 @@ const Dashboard = () => {
     lottoName +
     "&page_number=" +
     page +
+    "&page_size=" +
+    pageSize +
+    "&drawNumber=" +
+    drawNumber;
+
+  const url9 =
+    "http://ep.lottotry.com:5001/api/lotto/potential_draws?lotto_name=" +
+    lottoName +
+    "&columns=" +
+    potentialColumns +
     "&page_size=" +
     pageSize +
     "&drawNumber=" +
@@ -183,6 +185,8 @@ const Dashboard = () => {
     drawNumber;
 
   /*
+
+
   const url10 =
     "http://127.0.0.1:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
     lottoName;
@@ -203,15 +207,7 @@ const Dashboard = () => {
     lottoColumns +
     "&drawNumber=" +
     drawNumber;
-  const url9 =
-    "http://127.0.0.1:5001/api/lotto/potential_draws?lotto_name=" +
-    lottoName +
-    "&columns=" +
-    potentialColumns +
-    "&page_size=" +
-    pageSize +
-    "&drawNumber=" +
-    drawNumber;
+
   const url7 =
     "http://127.0.0.1:5001/api/lotto/lottoDraws?lotto_name=" +
     lottoName +
@@ -232,7 +228,15 @@ const Dashboard = () => {
     pageSize +
     "&drawNumber=" +
     drawNumber;
-
+  const url9 =
+    "http://127.0.0.1:5001/api/lotto/potential_draws?lotto_name=" +
+    lottoName +
+    "&columns=" +
+    potentialColumns +
+    "&page_size=" +
+    pageSize +
+    "&drawNumber=" +
+    drawNumber;
   const url20 =
     "http://127.0.0.1:5001/api/preprocess_dataset?lotto_name=" +
     lottoName +
@@ -262,7 +266,7 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
 
-        */
+    */
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {

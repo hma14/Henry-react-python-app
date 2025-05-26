@@ -1,4 +1,5 @@
 import random
+import logging
 
 
 class PotentialDraws:
@@ -22,6 +23,15 @@ class PotentialDraws:
         self.rows = rows
         self.remaining = []
         self.hitting = []
+        
+        logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s: %(message)s',
+        handlers=[
+            logging.FileHandler('app.log'),  # Save logs to a file
+            logging.StreamHandler()  # Also output to console (optional)
+        ]
+    )
 
     def next_potential_draws(self):
         results = [[]]
@@ -50,6 +60,8 @@ class PotentialDraws:
         ))
 
         #print(f"no_empty_array_results = {no_empty_array_results}")
+        
+        logging.debug(f"no_empty_array_results: {no_empty_array_results}")
         return no_empty_array_results
 
     ##### Libs #####

@@ -25,6 +25,7 @@ from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pip
 from utils.database import Database
 from ai_prediction.plot import plot
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
+import logging
 
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -33,6 +34,14 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 app = Flask(__name__)
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s: %(message)s',
+    handlers=[
+        logging.FileHandler('app.log'),  # Save logs to a file
+        logging.StreamHandler()  # Also output to console (optional)
+    ]
+)
 app.config.from_object(Config)
 
 PLOT_FOLDER = 'static/plots'
@@ -66,7 +75,8 @@ def get_table_name(lotto_id):
     }
     return lotto_table_map.get(lotto_id, 'Unknown')
 
-NET_API_URL = 'https://localhost:5006/' #later change to: http://api.lottotry.com
+#NET_API_URL = 'https://localhost:5006/' #later change to: http://api.lottotry.com
+NET_API_URL = 'https://api.lottotry.com/' 
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -324,10 +334,12 @@ def potential_draws():
     potential_draws = PotentialDraws(numbers, columns, page_size)
 
     data = potential_draws.next_potential_draws()
+    logging.debug(f"Data received: {data}")
     for da in data:
         for d in da:
-            d['NumberOfAppearing'] += 1
+            d['numberOfAppearing'] += 1
 
+    logging.debug(f"Final data: {data}")
     return [arr for arr in data if arr]
 
 
@@ -354,7 +366,7 @@ def get_data_8():
     page_size = int(request.args.get('page_size', 10))
     page_number = int(request.args.get('page_number', 1))
     drawNumber = int(request.args.get('drawNumber'))
-    print(f'drawNumber = {drawNumber}')
+    #print(f'drawNumber = {drawNumber}')
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
 

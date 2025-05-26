@@ -65,3 +65,6 @@ backend/app/preprocess_data/saved_training_data/*.csv
 backend/app/preprocess_data/__pycache__
 
 backend/app/ai_preprocess_data/saved_training_data/feature_engineering_query_dev.sql
+
+backend/app/app.log
+app.log
