@@ -337,7 +337,7 @@ def potential_draws():
     logging.debug(f"Data received: {data}")
     for da in data:
         for d in da:
-            d['numberOfAppearing'] += 1
+            d['NumberOfAppearing'] += 1
 
     logging.debug(f"Final data: {data}")
     return [arr for arr in data if arr]
