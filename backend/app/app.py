@@ -27,6 +27,9 @@ from ai_prediction.plot import plot
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 import logging
 
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
+
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 #print(sys.path)
@@ -56,6 +59,8 @@ if config_mode == 'production':
 else:
     app.config.from_object('config_dev.Config')
 CORS(app)
+
+#CORS(app, resources={r'/api/*': {'origins': 'http://ai.lottotry.com'}})
 
 
 db.init_app(app)

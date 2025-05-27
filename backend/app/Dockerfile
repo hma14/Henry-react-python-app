@@ -26,5 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose the port your app runs on
 EXPOSE 5001
 
+ENV FLASK_ENV=production
+
 # Command to run the app
 CMD ["python", "app.py"]
