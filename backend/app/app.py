@@ -334,12 +334,12 @@ def potential_draws():
     potential_draws = PotentialDraws(numbers, columns, page_size)
 
     data = potential_draws.next_potential_draws()
-    logging.debug(f"Data received: {data}")
+    #logging.debug(f"Data received: {data}")
     for da in data:
         for d in da:
-            d['numberOfAppearing'] += 1
+            d['NumberOfAppearing'] += 1
 
-    logging.debug(f"Final data: {data}")
+    #logging.debug(f"Final data: {data}")
     return [arr for arr in data if arr]
 
 

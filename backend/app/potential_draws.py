@@ -61,7 +61,7 @@ class PotentialDraws:
 
         #print(f"no_empty_array_results = {no_empty_array_results}")
         
-        logging.debug(f"no_empty_array_results: {no_empty_array_results}")
+        #logging.debug(f"no_empty_array_results: {no_empty_array_results}")
         return no_empty_array_results
 
     ##### Libs #####
