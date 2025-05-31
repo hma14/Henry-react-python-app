@@ -36,16 +36,20 @@ class PotentialDraws:
     def next_potential_draws(self):
         results = [[]]
         self.remaining = self.numbers
+        re = []
         for _ in range(self.rows):
             flip_coin = random.randint(1, 2)
             flip_coin2 = random.randint(1, 2)                
             if flip_coin2 == 1:
-                results.append(self.get_numbers_based_on_total_hits())
+                re = self.get_numbers_based_on_total_hits()
             elif flip_coin == 2:
-                results.append(self.next_potential_draws_1())
+                re = self.next_potential_draws_1()             
             else:
-                results.append(self.next_potential_draws_2())
-
+                re = self.next_potential_draws_2()
+            if (len(re) > self.columns):
+                re.pop()
+            results.append(re)
+            
         no_empty_array_results = [arr for arr in results if arr]
         for arr in no_empty_array_results:
             for a in arr:
