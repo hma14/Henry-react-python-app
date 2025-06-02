@@ -73,7 +73,12 @@ const App = () => {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
+          }
+        />
         <Route
           path="/"
           element={
@@ -92,15 +97,13 @@ const App = () => {
         />
         <Route
           path="/login"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
-          }
+          element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
         />
         <Route
           path="/signup"
           element={
             isAuthenticated ? (
-              <Navigate to="/dashboard" replace />
+              <Navigate to="/" replace />
             ) : (
               <SignUp onSuccess={() => setPage("login")} />
             )
@@ -108,7 +111,7 @@ const App = () => {
         />
         <Route path="/confirm" element={<Navigate to="/login" replace />} />
         <Route
-          path="/dashboard"
+          path="/"
           element={
             isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
           }
