@@ -381,7 +381,7 @@ const Dashboard = () => {
 
   if (redirect) {
     //return <Navigate to="/login" replace />;
-    window.location.href = "/dashboard";
+    window.location.href = "/";
   }
 
   return (

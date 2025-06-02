@@ -60,8 +60,7 @@ const Login = () => {
         localStorage.setItem("refreshToken", response.refreshToken);
         console.log("Login: Tokens stored, redirecting");
 
-        window.location.href = "/dashboard";
-        //navigate("/dashboard");
+        window.location.href = "/";
       } else {
         const errorMessage = response.message || JSON.stringify(response);
 
