@@ -267,19 +267,7 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
 
-<<<<<<< HEAD
     */
-=======
-  const ur26 =
-    "http://127.0.0.1:5001/api/lotto/potential_numbers?lotto_name=" +
-    lottoName +
-    "&columns=" +
-    potentialColumns +
-    "&page_size=" +
-    pageSize +
-    "&drawNumber=" +
-    drawNumber;
->>>>>>> origin/dev
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
