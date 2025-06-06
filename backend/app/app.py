@@ -343,6 +343,46 @@ def potential_draws():
     return [arr for arr in data if arr]
 
 
+@app.route('/api/lotto/potential_numbers', methods=['POST'])
+def potential_numbers():
+    lotto_name = int(request.args.get('lotto_name', 1))
+    number_range = get_lotto_number_range(lotto_name)
+    page_size = int(request.args.get('page_size', 10))
+    drawNumber = int(request.args.get('drawNumber'))
+
+    if drawNumber == 1:
+        drawNumber = get_target_draw_number(lotto_name)
+
+    total_page_size = 200
+    start_index = 0
+
+    result = retrieve_data(
+        lotto_name, total_page_size, number_range, start_index, drawNumber
+    )
+
+    # Decode the byte string to a regular string
+    json_str = result.data.decode('utf-8')
+
+    # Parse the JSON string
+    parsed_data = json.loads(json_str)
+
+    # Access the 'data' key, which contains an array
+    numbers = parsed_data['data']
+    columns = int(request.args.get('columns'))
+
+    potential_draws = PotentialDraws(numbers, columns, page_size)
+
+    data = potential_draws.collect_potential_numbers()
+    #logging.debug(f"Data received: {data}")
+    """     for da in data:
+            for d in da:
+                d['NumberOfAppearing'] += 1
+
+    """    
+    #logging.debug(f"Final data: {data}")
+    return [arr for arr in data if arr]
+
+
 @app.route('/api/lotto/lottoDraws', methods=['GET'])
 def get_data_7():
     lotto_name = int(request.args.get('lotto_name', 1))

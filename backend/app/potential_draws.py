@@ -7,8 +7,9 @@ class PotentialDraws:
     PAST_DRAWS = 8
     HOTS_COLD = 25
     TWO_HOTS_GAP = 5
-    COLD_DISTANCE = 11
+    COLD_DISTANCE = 15
     FREQUENT_HITS = 3
+    LESS_FREQUENT_HITS = 7
     PREVIOUS_DISTANCE = 6
 
     TWO_COLD_COLD_DISTANCE = 10
@@ -32,6 +33,89 @@ class PotentialDraws:
             logging.StreamHandler()  # Also output to console (optional)
         ]
     )
+        
+    # new logic
+    def is_a_potential_number(self, number):
+        
+        data = self.data
+        current_draw = data[0]
+        first_hit = False
+        second_hit = False
+        third_hit = False
+        
+        for draw_count, da in enumerate(data, start=1):
+            numbers = da["Numbers"]
+            num = [x for x in numbers if x["Value"] == number["Value"]][0]
+            if num["IsHit"] and da["DrawNumber"] == current_draw["DrawNumber"]:
+                return False                
+            
+            #1. last two hits are connected and the distance is less than 7 and greater than 3
+            if (num["IsHit"]  
+                and num["NumberOfDrawsWhenHit"] == 1  
+                and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
+                return True
+                
+            # 2. in last hit the NumberOfDrawsWhenHit < 5 and the hit prior to last hit, 
+            # the NumberOfDrawsWhenHit > 15 and current distance is around 5.
+            if (num["IsHit"]  
+                and first_hit == False):
+                first_hit = True     
+                continue                        
+            if (num["IsHit"]  
+                and num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE  
+                and first_hit 
+                and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
+                return True
+                
+            # 3. the last 3 hits their  1 < NumberOfDrawsWhenHit < 5 
+            # and current distance is also < 5  
+            if (num["IsHit"]  
+                and self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP  
+                and first_hit
+                and second_hit == False):
+                    second_hit = True
+                    continue
+            if (num["IsHit"]  
+                and self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP  
+                and first_hit
+                and second_hit
+                and not third_hit
+                and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
+                    return True            
+            
+            # 4. in last hit the NumberOfDrawsWhenHit > 15 and current distance > 15
+            if (num["IsHit"]  
+                and num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE
+                and number["Distance"] > self.COLD_DISTANCE):
+                return True
+                
+            # 5. in last 2 hits, NumberOfDrawsWhenHit values are close and current 
+            # distance close to this NumberOfDrawsWhenHit value
+            if (num["IsHit"]  
+                and self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP   
+                and first_hit 
+                and self.FREQUENT_HITS < number["Distance"] < self.TWO_HOTS_GAP):
+                return True
+            # 6. in last hit the NumberOfDrawsWhenHit > 15 and current distance > 5
+            if (num["IsHit"]  
+                and num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE
+                and number["Distance"] > self.FREQUENT_GAP):
+                return True
+            # 7. in last hit the NumberOfDrawsWhenHit > 15 and current distance < 7
+            if (num["IsHit"]  
+                and num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE
+                and number["Distance"] < self.LESS_FREQUENT_HITS):
+                return True
+    
+        
+    def collect_potential_numbers(self):
+        numbers = self.data[0]["Numbers"]
+        potential_numbers = [x for x in numbers if self.is_a_potential_number(x)]
+        missing_numbers = [x for x in numbers if x not in potential_numbers]
+        
+        return potential_numbers, missing_numbers
+
+        
 
     def next_potential_draws(self):
         results = [[]]
@@ -249,10 +333,11 @@ class PotentialDraws:
         low = []
         middle = []
         high = []
-        one_third = int(len(arr) / 3 + 1)
-        two_third = int((len(arr) * 2) / 3 + 1)
+        arr_len = len(arr)
+        one_third = int(arr_len / 3 + 1)
+        two_third = int(arr_len * 2 / 3 + 1)
 
-        for i in range(len(arr)):
+        for i in range(arr_len):
             if arr[i]["Distance"] == 0:
                 continue
             if i < one_third:
@@ -293,7 +378,7 @@ class PotentialDraws:
                 number_of_hits += 1
                 distance_from_previous_hit = 0
             else:
-                distance_from_previous_hit += 1
+                distance_from_previous_hit += 1 
 
 
 

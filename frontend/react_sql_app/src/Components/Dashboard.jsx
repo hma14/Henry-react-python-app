@@ -7,6 +7,7 @@ import axios from "axios";
 import "../App.css";
 import LottoTryLogo from "../images/LottoTryLogo.png";
 import PredictDraws from "./PredictDraws";
+import PotentialNumbers from "./PotentialNumbers";
 import LottoDraws from "./LottoDraws";
 import NumberDrawsInDistance from "./NumberDrawsInDistance";
 import ApiOpenAI from "./ApiOpenAI";
@@ -73,7 +74,7 @@ const Styles = styled.div`
       }
       border: 2px inset grey;
       margin: 1px;
-      1text-align: center;
+      text-align: center;
     }
   }
 `;
@@ -265,6 +266,16 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
 
+  const ur26 =
+    "http://127.0.0.1:5001/api/lotto/potential_numbers?lotto_name=" +
+    lottoName +
+    "&columns=" +
+    potentialColumns +
+    "&page_size=" +
+    pageSize +
+    "&drawNumber=" +
+    drawNumber;
+
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
       try {
@@ -347,6 +358,7 @@ const Dashboard = () => {
     lottoDraws: "Lotto Draw History",
     numberDraws: "Hit Numbers in Number Category",
     predictDraws: "Predict Next Draw",
+    potentialNumbers: "Get Potential Hit Numbers for Next Draw",
     openai_saying: "OpenAI Says",
   };
 
@@ -587,6 +599,17 @@ const Dashboard = () => {
                       drawNumber={drawNumber}
                     />
                   );
+                case "potentialNumbers":
+                  return (
+                    <PotentialNumbers
+                      endpoint={url5}
+                      endpoint2={ur26}
+                      columns={potentialColumns}
+                      rows={pageSize}
+                      drawNumber={drawNumber}
+                    />
+                  );
+
                 default:
                   return <ApiNumbers endpoint={url4} sortType={sortType} />;
               }

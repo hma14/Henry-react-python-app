@@ -5,7 +5,7 @@ import { Table } from "react-bootstrap";
 import "../App.css";
 import classNames from "classnames";
 
-const PredictDraws = (props) => {
+const PotentialNumbers = (props) => {
   const { endpoint, endpoint2, columns, rows, drawNumber } = props;
 
   const [numbers, setNumbers] = useState();
@@ -29,12 +29,10 @@ const PredictDraws = (props) => {
     try {
       const result = await processNextPotentialDraws();
       const data = result[0];
-      const hit = data.pop();
-      const miss = data.pop();
-
-      setHitting(hit);
-      setMissing(miss);
-      setPredicts(data);
+      const missing = data.pop();
+      const hits = data.pop();
+      setMissing(missing);
+      setPredicts(hits);
     } catch (error) {
       console.error("Error updating predicts:", error);
     }
@@ -216,8 +214,7 @@ const PredictDraws = (props) => {
     return (
       <thead className="table-danger text-center">
         <tr>
-          <th className="text-warning bg-primary">#</th>
-          {Array.from(Array(columns).keys()).map((no) => (
+          {Array.from(Array(predicts.length).keys()).map((no) => (
             <th key={no} className="text-warning bg-success fst-italic">
               {no + 1}
             </th>
@@ -299,6 +296,7 @@ const PredictDraws = (props) => {
           )}
         >
           {number.Value}
+          <br />
         </span>{" "}
         {n >= 2 ? <br /> : null}
         <span
@@ -324,11 +322,6 @@ const PredictDraws = (props) => {
         >
           ({number.Probability})
         </span>
-        {n !== 3 ? (
-          <span className="my-color-2 fst-italic fs-6">
-            [{number.NumberOfAppearing - 1}]
-          </span>
-        ) : null}
       </td>
     );
   };
@@ -369,50 +362,22 @@ const PredictDraws = (props) => {
           {getHeader()}
         </Table>
       )}
-      <div className="row-container">
-        <h4 className="text-success fst-italic">Potential next draws</h4>
-        <h4 className="text-primary">
-          Current Draw:{" "}
-          <span className="fst-italic fw-bold text-danger">{drawNumber}</span>
+      <div className="container">
+        <h4 className="text-primary text-center">
+          Potential Numbers (Current Draw:{" "}
+          <span className="fst-italic fw-bold text-danger">{drawNumber}</span>)
         </h4>
-        <button
-          type="button"
-          onClick={() => fetchData()}
-          className="btn btn-success fw-bold mb-2 three-d-button"
-        >
-          Generate Potential Draws
-        </button>
       </div>
       {predicts && predicts.length > 0 && (
-        <Table bordered hover responsive className="table-light mb-2" size="lg">
+        <Table bordered responsive className="table-light mb-2" size="lg">
           {getHeader_2()}
           <tbody className="fw-bold align-middle">
-            {predicts.map((row, index) => (
-              <tr key={index}>
-                <td className="bg-color3 text-primary fs-5 fst-italic">
-                  {index + 1}
-                </td>
-                {row.map((number) => getTD(number))}
-              </tr>
-            ))}
+            <tr>{predicts.map((da, index) => getTD(da))}</tr>
           </tbody>
-          {getHeader_2()}
         </Table>
       )}
 
-      <h4 className="text-success fst-italic mt-4">Numbers were hit above</h4>
-      {hitting && hitting.length > 0 && (
-        <div className="table-container">
-          <Table bordered className="mt-2" size="lg">
-            {getHeader_3(hitting)}
-            <tbody className="fw-bold align-middle">
-              <tr>{hitting.map((number) => getTD(number, 2))}</tr>
-            </tbody>
-          </Table>
-        </div>
-      )}
-
-      <h4 className="text-success fst-italic mt-4">
+      <h4 className="text-success fst-italic mt-4 text-center">
         Numbers were NOT hit above
       </h4>
       {missing && missing.length > 0 && (
@@ -425,17 +390,8 @@ const PredictDraws = (props) => {
           </Table>
         </div>
       )}
-      <div className="d-flex justify-content-end">
-        <button
-          type="button"
-          onClick={() => fetchData()}
-          className="btn btn-success fw-bold mb-2 three-d-button"
-        >
-          Generate Potential Draws
-        </button>
-      </div>
     </div>
   );
 };
 
-export default PredictDraws;
+export default PotentialNumbers;
