@@ -185,6 +185,17 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
 
+  const url26 =
+    "http://ep.lottotry.com:5001/api/lotto/potential_numbers?lotto_name=" +
+    lottoName +
+    "&columns=" +
+    potentialColumns +
+    "&page_size=" +
+    pageSize +
+    "&drawNumber=" +
+    drawNumber;
+
+
   /*
 
 
@@ -264,6 +275,16 @@ const Dashboard = () => {
   const url25 =
     "http://127.0.0.1:5001/api/lstm_predict_next_draw?lotto_name=" +
     lottoName +
+    "&drawNumber=" +
+    drawNumber;
+
+  const url26 =
+    "http://127.0.0.1:5001/api/lotto/potential_numbers?lotto_name=" +
+    lottoName +
+    "&columns=" +
+    potentialColumns +
+    "&page_size=" +
+    pageSize +
     "&drawNumber=" +
     drawNumber;
 
@@ -596,7 +617,7 @@ const Dashboard = () => {
                   return (
                     <PotentialNumbers
                       endpoint={url5}
-                      endpoint2={ur26}
+                      endpoint2={url26}
                       columns={potentialColumns}
                       rows={pageSize}
                       drawNumber={drawNumber}
