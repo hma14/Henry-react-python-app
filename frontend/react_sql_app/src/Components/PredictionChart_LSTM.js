@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
+import CircularProgress from "@mui/material/CircularProgress";
+import "../App.css";
 
 const LSTMTrainingResult = (props) => {
   const { endpoint } = props;
@@ -46,7 +48,9 @@ const LSTMTrainingResult = (props) => {
       {predictions.length > 0 ? (
         <PredictionChart predictions={predictions} />
       ) : (
-        <p>Loading predictions...</p>
+        <div className="loader-container">
+          <CircularProgress />
+        </div>
       )}
     </div>
   );

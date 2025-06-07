@@ -17,6 +17,7 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const LSTMTrainingResult = (props) => {
   const { endpoint } = props;
@@ -69,7 +70,9 @@ const LSTMTrainingResult = (props) => {
                 fontStyle: "italic",
               }}
             >
-              <span>Loading...</span>
+              <div className="loader-container">
+                <CircularProgress />
+              </div>
             </Box>
           )}
         </div>

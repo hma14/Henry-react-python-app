@@ -14,6 +14,9 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 
+import CircularProgress from "@mui/material/CircularProgress";
+import "../App.css";
+
 const LottoPlot = (props) => {
   const { endpoint } = props;
   const [image, setImage] = useState("");
@@ -127,7 +130,9 @@ const LottoPlot = (props) => {
               fontStyle: "italic",
             }}
           >
-            <span>Loading...</span>
+            <div className="loader-container">
+              <CircularProgress />
+            </div>
           </Box>
         )}
       </React.Fragment>
