@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import "../App.css";
 import classNames from "classnames";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const PotentialNumbers = (props) => {
   const { endpoint, endpoint2, columns, rows, drawNumber } = props;
@@ -12,6 +13,7 @@ const PotentialNumbers = (props) => {
   const [predicts, setPredicts] = useState([]);
   const [hitting, setHitting] = useState([]);
   const [missing, setMissing] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
     const processNextPotentialDraws = async () => {
@@ -368,15 +370,19 @@ const PotentialNumbers = (props) => {
           <span className="fst-italic fw-bold text-danger">{drawNumber}</span>)
         </h4>
       </div>
-      {predicts && predicts.length > 0 && (
+
+      {Array.isArray(predicts) && predicts.length > 0 ? (
         <Table bordered responsive className="table-light mb-2" size="lg">
           {getHeader_2()}
           <tbody className="fw-bold align-middle">
             <tr>{predicts.map((da, index) => getTD(da))}</tr>
           </tbody>
         </Table>
+      ) : (
+        <div className="loader-container">
+          <CircularProgress />
+        </div>
       )}
-
       <h4 className="text-success fst-italic mt-4 text-center">
         Numbers were NOT hit above
       </h4>

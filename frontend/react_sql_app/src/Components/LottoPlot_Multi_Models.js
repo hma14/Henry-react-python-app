@@ -13,6 +13,8 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import "../App.css";
 
 const LottoPlot_Multi_Models = (props) => {
   const { endpoint } = props;
@@ -180,7 +182,9 @@ const LottoPlot_Multi_Models = (props) => {
               fontStyle: "italic",
             }}
           >
-            <span>Loading...</span>
+            <div className="loader-container">
+              <CircularProgress />
+            </div>
           </Box>
         )}
       </React.Fragment>

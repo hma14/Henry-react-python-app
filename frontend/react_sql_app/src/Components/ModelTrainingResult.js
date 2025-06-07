@@ -4,6 +4,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
 import { Table } from "react-bootstrap";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ModelTrainingResult = (props) => {
   const { endpoint } = props;
@@ -44,7 +45,9 @@ const ModelTrainingResult = (props) => {
           </tbody>
         </Table>
       ) : (
-        <p>Loading...</p>
+        <div className="loader-container">
+          <CircularProgress />
+        </div>
       )}
     </div>
   );

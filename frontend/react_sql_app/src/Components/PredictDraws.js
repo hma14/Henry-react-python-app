@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import "../App.css";
 import classNames from "classnames";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const PredictDraws = (props) => {
   const { endpoint, endpoint2, columns, rows, drawNumber } = props;
@@ -383,7 +384,7 @@ const PredictDraws = (props) => {
           Generate Potential Draws
         </button>
       </div>
-      {predicts && predicts.length > 0 && (
+      {Array.isArray(predicts) && predicts.length > 0 ? (
         <Table bordered hover responsive className="table-light mb-2" size="lg">
           {getHeader_2()}
           <tbody className="fw-bold align-middle">
@@ -398,8 +399,11 @@ const PredictDraws = (props) => {
           </tbody>
           {getHeader_2()}
         </Table>
+      ) : (
+        <div className="loader-container">
+          <CircularProgress />
+        </div>
       )}
-
       <h4 className="text-success fst-italic mt-4">Numbers were hit above</h4>
       {hitting && hitting.length > 0 && (
         <div className="table-container">
