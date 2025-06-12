@@ -13,8 +13,10 @@ const PredictDraws = (props) => {
   const [predicts, setPredicts] = useState([]);
   const [hitting, setHitting] = useState([]);
   const [missing, setMissing] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
+    setIsLoading(true);
     const processNextPotentialDraws = async () => {
       try {
         const promises = [await axios.post(endpoint2)];
@@ -36,6 +38,7 @@ const PredictDraws = (props) => {
       setHitting(hit);
       setMissing(miss);
       setPredicts(data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error updating predicts:", error);
     }
@@ -380,11 +383,13 @@ const PredictDraws = (props) => {
           type="button"
           onClick={() => fetchData()}
           className="btn btn-success fw-bold mb-2 three-d-button"
+          fullWidth
+          disabled={isLoading}
         >
           Generate Potential Draws
         </button>
       </div>
-      {Array.isArray(predicts) && predicts.length > 0 ? (
+      {Array.isArray(predicts) && predicts.length > 0 && !isLoading ? (
         <Table bordered hover responsive className="table-light mb-2" size="lg">
           {getHeader_2()}
           <tbody className="fw-bold align-middle">
@@ -405,7 +410,7 @@ const PredictDraws = (props) => {
         </div>
       )}
       <h4 className="text-success fst-italic mt-4">Numbers were hit above</h4>
-      {hitting && hitting.length > 0 && (
+      {hitting && hitting.length > 0 && !isLoading ? (
         <div className="table-container">
           <Table bordered className="mt-2" size="lg">
             {getHeader_3(hitting)}
@@ -414,12 +419,13 @@ const PredictDraws = (props) => {
             </tbody>
           </Table>
         </div>
+      ) : (
+        ""
       )}
-
       <h4 className="text-success fst-italic mt-4">
         Numbers were NOT hit above
       </h4>
-      {missing && missing.length > 0 && (
+      {missing && missing.length > 0 && !isLoading ? (
         <div className="table-container">
           <Table bordered className="mt-2 " size="lg">
             {getHeader_3(missing)}
@@ -428,12 +434,16 @@ const PredictDraws = (props) => {
             </tbody>
           </Table>
         </div>
+      ) : (
+        ""
       )}
       <div className="d-flex justify-content-end">
         <button
           type="button"
           onClick={() => fetchData()}
           className="btn btn-success fw-bold mb-2 three-d-button"
+          fullWidth
+          disabled={isLoading}
         >
           Generate Potential Draws
         </button>

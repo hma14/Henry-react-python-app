@@ -153,6 +153,12 @@ class PotentialDraws:
         return no_empty_array_results
 
     ##### Libs #####
+    
+    def append_prediction(self, source_list,prediction_list, loop):
+        for _ in range(loop):
+            index = random.randint(0, len(source_list) - 1)
+            prediction_list.append(source_list[index])
+
 
     def next_potential_draws_1(self):
         pred = []
@@ -160,8 +166,7 @@ class PotentialDraws:
         # take 1 from last hits
         lastHits = self.getLastHitNumbers()
         # print(f"lastHits = {lastHits}")
-        index = random.randint(0, len(lastHits) - 1)
-        pred = [lastHits[index]]
+        self.append_prediction(lastHits, pred, 1)
 
         flip_coin = random.randint(1, 2)
 
@@ -174,93 +179,73 @@ class PotentialDraws:
         high = arr[2]
 
         # take 1 from low
-        index = random.randint(0, len(low) - 1)
-        pred.append(low[index])
+        self.append_prediction(low, pred, 1)
 
         # take 1 from middle
-        index = random.randint(0, len(middle) - 1)
-        pred.append(middle[index])
+        self.append_prediction(middle, pred, 1)
 
         if flip_coin == 1:
             # add 2 from DistanceNumbers
-            index = random.randint(0, len(low) - 1)
-            pred.append(low[index])
-            index = random.randint(0, len(high) - 1)
-            pred.append(high[index])
+            self.append_prediction(low, pred, 1) 
+            self.append_prediction(high, pred, 1) 
         else:
             # take 2 from TotalHitsNumbers
-            index = random.randint(0, len(high) - 1)
-            pred.append(high[index])
-            index = random.randint(0, len(middle) - 1)
-            pred.append(middle[index])
+            self.append_prediction(high, pred, 1) 
+            self.append_prediction(middle, pred, 1) 
 
         pred = self.remove_duplicates(pred)
 
         # take 1 from Two_Hots_1_Cold_Numbers
         hots_cold = self.get_hots_cold_numbers()
         if hots_cold != []:
-            index = random.randint(0, len(hots_cold) - 1)
-            pred.append(hots_cold[index])
+            self.append_prediction(hots_cold, pred, 1)
         else:
             semi_cold_numbers = self.get_semi_cold_numbers()
             if semi_cold_numbers != []:
-                index = random.randint(0, len(semi_cold_numbers) - 1)
-                pred.append(semi_cold_numbers[index])
+                self.append_prediction(semi_cold_numbers, pred, 1)
 
         pred = self.remove_duplicates(pred)
         while len(pred) < self.columns:
             if len(hots_cold) > 1:
-                index = random.randint(0, len(hots_cold) - 1)
-                pred.append(hots_cold[index])
+                self.append_prediction(hots_cold, pred, 1)
             else:
                 frequent = self.get_frequent_numbers()
-                index = random.randint(0, len(frequent) - 1)
-                pred.append(frequent[index])
+                self.append_prediction(frequent, pred, 1)
 
             pred = self.remove_duplicates(pred)
         pred.sort(key=lambda x: x["Value"], reverse=False)
         return pred
+
+            
 
     def next_potential_draws_2(self):
         pred = []
 
         # take 1 from last hits
         cold_numbers = self.getLastHitNumbers()
-        index = random.randint(0, len(cold_numbers) - 1)
-        pred = [cold_numbers[index]]
+        self.append_prediction(cold_numbers, pred, 1)       
 
         # frequent numbers
         frequent = self.get_frequent_numbers()
 
         # take 3 from frequent
         if len(frequent) > 3:
-            index = random.randint(0, len(frequent) - 1)
-            pred.append(frequent[index])
-
-            index = random.randint(0, len(frequent) - 1)
-            pred.append(frequent[index])
-
-            index = random.randint(0, len(frequent) - 1)
-            pred.append(frequent[index])
-        
+            self.append_prediction(frequent, pred, 3)
+                    
         hots_cold = self.get_hots_cold_numbers()
         if len(hots_cold) > 0:
-            index = random.randint(0, len(hots_cold) - 1)
-            pred.append(hots_cold[index])
+            self.append_prediction(hots_cold, pred, 1)
         else:
             cold_numbers = self.get_cold_numbers()
-            index = random.randint(0, len(cold_numbers) - 1)
-            pred.append(cold_numbers[index])
+            self.append_prediction(cold_numbers, pred, 1)
 
         # take 1 from two_cold
         semi_cold = self.get_semi_cold_numbers()
         if len(semi_cold) > 0:
-            index = random.randint(0, len(semi_cold) - 1)
-            pred.append(semi_cold[index])
+            self.append_prediction(semi_cold, pred, 1)
         else:
             cold_numbers = self.get_cold_numbers()
-            index = random.randint(0, len(cold_numbers) - 1)
-            pred.append(cold_numbers[index])
+            self.append_prediction(cold_numbers, pred, 1)
 
         pred = self.remove_duplicates(pred)
         while len(pred) < self.columns:
@@ -359,7 +344,6 @@ class PotentialDraws:
     def get_frequent(self, number):
         data = self.data
         distance_from_previous_hit = 0
-        current_draw = data[0]
         number_of_hits = 0
         for draw_count, da in enumerate(data, start=1):
             numbers = da["Numbers"]
@@ -367,7 +351,7 @@ class PotentialDraws:
             if (
                 num["Distance"] < self.FREQUENT_GAP
                 and number_of_hits >= self.FREQUENT_HITS
-                and draw_count < self.HOTS_COLD
+                and draw_count < self.TWO_COLD_COLD_DISTANCE
                 and distance_from_previous_hit < self.FREQUENT_GAP
             ):
                 return True
@@ -532,65 +516,47 @@ class PotentialDraws:
             # check if previous hot in lowest hits range
             if self.is_hot_in_lowest_hits_range(True) == True:
                 # now focus on middle ranges
-                index = random.randint(0, len(two_fifth_array) - 1)
-                array.append(two_fifth_array[index])
-                index = random.randint(0, len(three_fifth_array) - 1)
-                array.append(three_fifth_array[index])
-                index = random.randint(0, len(four_fifth_array) - 1)
-                array.append(four_fifth_array[index])
+                self.append_prediction(two_fifth_array, array, 1)
+                self.append_prediction(three_fifth_array, array, 1)
+                self.append_prediction(four_fifth_array, array, 1)
+                
             else:
                 # now focus on 2 lowest and 1 middle ranges 1 highest
                 # lowest
-                index = random.randint(0, len(lowest_hits_array) - 1)
-                array.append(lowest_hits_array[index])
-                index = random.randint(0, len(lowest_hits_array) - 1)
-                array.append(lowest_hits_array[index])
+                self.append_prediction(lowest_hits_array, array, 2)             
 
             # middle
-            index = random.randint(0, len(four_fifth_array) - 1)
-            array.append(four_fifth_array[index])
+            self.append_prediction(four_fifth_array, array, 1)
         elif self.is_hot_in_lowest_hits_range(True) == True:
                 # now focus on highest and middle ranges
                 # 2 highest
-                index = random.randint(0, len(highest_hits_array) - 1)
-                array.append(highest_hits_array[index])
-                index = random.randint(0, len(highest_hits_array) - 1)
-                array.append(highest_hits_array[index])
-
+                self.append_prediction(highest_hits_array, array, 2)
+                
                 # 1 middle
-                index = random.randint(0, len(two_fifth_array) - 1)
-                array.append(two_fifth_array[index])
+                self.append_prediction(two_fifth_array, array, 1)
         else:
             # now focus on lowest and highest
             # 1 highest
-            index = random.randint(0, len(highest_hits_array) - 1)
-            array.append(highest_hits_array[index])
+            self.append_prediction(highest_hits_array, array, 1)
 
             # 2 lowest
-            index = random.randint(0, len(lowest_hits_array) - 1)
-            array.append(lowest_hits_array[index])
-            index = random.randint(0, len(lowest_hits_array) - 1)
-            array.append(lowest_hits_array[index])
+            self.append_prediction(lowest_hits_array, array, 2)  
 
         # 1 cold
         colds = self.get_cold_numbers()
-        index = random.randint(0, len(colds) - 1)
-        array.append(colds[index])
+        self.append_prediction(colds, array, 1)  
 
         # 1 semi cold
         semi_cold = self.get_semi_cold_numbers()
-        index = random.randint(0, len(semi_cold) - 1)
-        array.append(semi_cold[index])
+        self.append_prediction(semi_cold, array, 1)
 
         # 1 hots_cold
         hots_cold = self.get_hots_cold_numbers()
-        index = random.randint(0, len(hots_cold) - 1)
-        array.append(hots_cold[index])
+        self.append_prediction(hots_cold, array, 1)
 
         pred = self.remove_duplicates(array)
         while len(pred) < self.columns:
-            index = random.randint(0, len(highest_hits_array) - 1)
-            pred.append(highest_hits_array[index])
+            self.append_prediction(highest_hits_array, pred, 1)
             pred = self.remove_duplicates(pred)
 
         pred.sort(key=lambda x: x["Value"], reverse=False)
