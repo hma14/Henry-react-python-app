@@ -344,7 +344,6 @@ class PotentialDraws:
     def get_frequent(self, number):
         data = self.data
         distance_from_previous_hit = 0
-        current_draw = data[0]
         number_of_hits = 0
         for draw_count, da in enumerate(data, start=1):
             numbers = da["Numbers"]
@@ -352,7 +351,7 @@ class PotentialDraws:
             if (
                 num["Distance"] < self.FREQUENT_GAP
                 and number_of_hits >= self.FREQUENT_HITS
-                and draw_count < self.HOTS_COLD
+                and draw_count < self.TWO_COLD_COLD_DISTANCE
                 and distance_from_previous_hit < self.FREQUENT_GAP
             ):
                 return True
