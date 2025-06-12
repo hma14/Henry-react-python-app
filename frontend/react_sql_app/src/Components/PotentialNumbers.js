@@ -383,7 +383,7 @@ const PotentialNumbers = (props) => {
           <CircularProgress />
         </div>
       )}
-      <h4 className="text-success fst-italic mt-4 text-center">
+      <h4 className="text-danger fst-italic mt-4 text-center">
         Numbers were NOT hit above
       </h4>
       {missing && missing.length > 0 && (

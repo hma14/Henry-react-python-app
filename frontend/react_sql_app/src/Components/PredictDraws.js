@@ -374,7 +374,9 @@ const PredictDraws = (props) => {
         </Table>
       )}
       <div className="row-container">
-        <h4 className="text-success fst-italic">Potential next draws</h4>
+        <h2 className="text-success fst-italic text-center">
+          Potential next draws
+        </h2>
         <h4 className="text-primary">
           Current Draw:{" "}
           <span className="fst-italic fw-bold text-danger">{drawNumber}</span>
@@ -382,7 +384,7 @@ const PredictDraws = (props) => {
         <button
           type="button"
           onClick={() => fetchData()}
-          className="btn btn-success fw-bold mb-2 three-d-button"
+          className="btn btn-info text-white fw-bold mb-2 three-d-button"
           fullWidth
           disabled={isLoading}
         >
@@ -409,7 +411,9 @@ const PredictDraws = (props) => {
           <CircularProgress />
         </div>
       )}
-      <h4 className="text-success fst-italic mt-4">Numbers were hit above</h4>
+      <h4 className="text-success fst-italic mt-4 text-center">
+        Numbers were hit above
+      </h4>
       {hitting && hitting.length > 0 && !isLoading ? (
         <div className="table-container">
           <Table bordered className="mt-2" size="lg">
@@ -422,7 +426,7 @@ const PredictDraws = (props) => {
       ) : (
         ""
       )}
-      <h4 className="text-success fst-italic mt-4">
+      <h4 className="text-danger fst-italic mt-4 text-center">
         Numbers were NOT hit above
       </h4>
       {missing && missing.length > 0 && !isLoading ? (
@@ -441,7 +445,7 @@ const PredictDraws = (props) => {
         <button
           type="button"
           onClick={() => fetchData()}
-          className="btn btn-success fw-bold mb-2 three-d-button"
+          className="btn btn-info text-white fw-bold mb-2 three-d-button"
           fullWidth
           disabled={isLoading}
         >
