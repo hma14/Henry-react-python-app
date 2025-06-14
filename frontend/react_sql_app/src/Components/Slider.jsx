@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { debounce } from "lodash";
 import "./Slider.css";
 
-const NET_API_URL = "https://localhost:5006/api/";
-//const NET_API_URL = "http://api.lottotry.com/api/";
+//const NET_API_URL = "https://localhost:5001/api/";
+const NET_API_URL = "http://ep.lottotry.com:5001/api/";
 
 function Slider({ value, setValue }) {
   // Debounced function to send value to backend
