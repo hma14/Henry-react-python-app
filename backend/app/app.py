@@ -49,6 +49,9 @@ app.config.from_object(Config)
 
 PLOT_FOLDER = 'static/plots'
 
+# Store the latest slider value
+latest_slider_value = 25
+
 # frontend url: http://ai.lottotry.com
 # CORS(app, resources={r'/api/*': {'origins': 'http://ai.lottotry.com'}})
 
@@ -80,18 +83,18 @@ def get_table_name(lotto_id):
     }
     return lotto_table_map.get(lotto_id, 'Unknown')
 
-#NET_API_URL = 'https://localhost:5006/' #later change to: http://api.lottotry.com
-NET_API_URL = 'https://api.lottotry.com/' 
+#NET_API_URL = 'https://localhost:5006/api/' #later change to: http://api.lottotry.com
+NET_API_URL = 'https://api.lottotry.com/api/' 
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    response = requests.post(f'{NET_API_URL}/api/auth/signup', json=request.json)
+    response = requests.post(f'{NET_API_URL}auth/signup', json=request.json)
     return response.content, response.status_code
     
     
 @app.route('/api/login', methods=['POST'])
 def login():
-    response = requests.post(f'{NET_API_URL}/api/auth/signup', json=request.json)
+    response = requests.post(f'{NET_API_URL}auth/signup', json=request.json)
     return response.content, response.status_code
 
 
@@ -100,12 +103,32 @@ def proxy(path):
     headers = {'Authorization': request.headers.get('Authorization')}
     response = requests.request(
         method=request.method,
-        url=f'{NET_API_URL}/api/{path}',
+        url=f'{NET_API_URL}{path}',
         headers=headers,
         json=request.json or None
     )
     return response.content, response.status_code
 
+
+@app.route('/api/slider', methods=['POST'])
+def receive_slider_value():
+    data = request.get_json()
+    slider_value = data.get('sliderValue')
+    if slider_value is None:
+        return jsonify({'error': 'No slider value provided'}), 400
+    
+    # Process the slider value (e.g., print it or store it)
+    latest_slider_value = slider_value
+    print(f'Received slider value: {slider_value}')
+    
+    # Return a response to the frontend
+    return jsonify({'message': slider_value})
+
+@app.route('/api/slider', methods=['GET'])
+def get_slider_value():
+    if latest_slider_value is None:
+        return jsonify({'error': 'No slider value available'}), 404
+    return jsonify({'sliderValue': latest_slider_value})
 
 @app.route('/api/predict_next_draw_lgbm', methods=['GET'])
 def ai_predict_next_draw_lgbm():
@@ -354,6 +377,7 @@ def potential_numbers():
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get('page_size', 10))
     drawNumber = int(request.args.get('drawNumber'))
+    target_rows = int(request.args.get('targetRows'))
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -375,7 +399,7 @@ def potential_numbers():
     numbers = parsed_data['data']
     columns = int(request.args.get('columns'))
 
-    potential_draws = PotentialDraws(numbers, columns, page_size)
+    potential_draws = PotentialDraws(numbers, columns, page_size, target_rows)
 
     data = potential_draws.collect_potential_numbers()
     #logging.debug(f"Data received: {data}")

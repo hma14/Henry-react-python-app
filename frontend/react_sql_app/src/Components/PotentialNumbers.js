@@ -3,43 +3,51 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import "../App.css";
+import "../styles.css";
 import classNames from "classnames";
 import CircularProgress from "@mui/material/CircularProgress";
+import Slider from "./Slider";
 
 const PotentialNumbers = (props) => {
   const { endpoint, endpoint2, columns, rows, drawNumber } = props;
 
   const [numbers, setNumbers] = useState();
   const [predicts, setPredicts] = useState([]);
-  const [hitting, setHitting] = useState([]);
+  const [sliderValue, setSliderValue] = useState(15); // Initial slider value
   const [missing, setMissing] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    const processNextPotentialDraws = async () => {
+  const fetchData = useCallback(
+    async (sliderVal) => {
+      setIsLoading(true);
+      const processNextPotentialDraws = async () => {
+        try {
+          const endpoint3 = endpoint2 + sliderVal;
+          const promises = [await axios.post(endpoint3)];
+          const responses = await Promise.all(promises);
+
+          // Extract data from each response
+          return responses.map((response) => response.data);
+        } catch (error) {
+          console.error("Error processing next prediction:", error);
+        }
+      };
+
       try {
-        const promises = [await axios.post(endpoint2)];
-        const responses = await Promise.all(promises);
-
-        // Extract data from each response
-        return responses.map((response) => response.data);
+        const result = await processNextPotentialDraws();
+        const data = result[0];
+        const missing = data.pop();
+        const hits = data.pop();
+        setMissing(missing);
+        setPredicts(hits);
+        setIsLoading(false);
       } catch (error) {
-        console.error("Error processing next prediction:", error);
+        console.error("Error updating predicts:", error);
       }
-    };
-
-    try {
-      const result = await processNextPotentialDraws();
-      const data = result[0];
-      const missing = data.pop();
-      const hits = data.pop();
-      setMissing(missing);
-      setPredicts(hits);
-    } catch (error) {
-      console.error("Error updating predicts:", error);
-    }
-    console.log("Fetching data...");
-  }, [endpoint2]);
+      console.log("Fetching data...");
+    },
+    [endpoint2]
+  );
 
   const getNumbers = useCallback(async () => {
     try {
@@ -51,9 +59,9 @@ const PotentialNumbers = (props) => {
   }, [endpoint]);
 
   useEffect(() => {
-    fetchData();
+    fetchData(sliderValue);
     getNumbers();
-  }, [fetchData, getNumbers, columns, endpoint, endpoint2, rows]);
+  }, [fetchData, columns, endpoint, endpoint2, rows, sliderValue]);
 
   /*
     const getPredicts = (cols) => {
@@ -298,9 +306,8 @@ const PotentialNumbers = (props) => {
           )}
         >
           {number.Value}
-          <br />
         </span>{" "}
-        {n >= 2 ? <br /> : null}
+        <br />
         <span
           className={classNames(
             "txt-color",
@@ -310,11 +317,11 @@ const PotentialNumbers = (props) => {
         >
           ({number.Distance})
         </span>{" "}
-        {n >= 2 ? <br /> : null}
+        <br />
         <span className="text-primary fst-italic fs-6">
           ({number.TotalHits})
         </span>{" "}
-        {n >= 2 ? <br /> : null}
+        <br />
         <span
           className={classNames(
             "txt-color",
@@ -371,7 +378,7 @@ const PotentialNumbers = (props) => {
         </h4>
       </div>
 
-      {Array.isArray(predicts) && predicts.length > 0 ? (
+      {Array.isArray(predicts) && predicts.length > 0 && !isLoading ? (
         <Table bordered responsive className="table-light mb-2" size="lg">
           {getHeader_2()}
           <tbody className="fw-bold align-middle">
@@ -396,6 +403,9 @@ const PotentialNumbers = (props) => {
           </Table>
         </div>
       )}
+      <div className="adjust-container">
+        <Slider value={sliderValue} setValue={setSliderValue} />
+      </div>
     </div>
   );
 };
