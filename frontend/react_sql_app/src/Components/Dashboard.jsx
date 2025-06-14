@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import styled from "styled-components";
 import axios from "axios";
 import "../App.css";
+import "../styles.css";
 import LottoTryLogo from "../images/LottoTryLogo.png";
 import PredictDraws from "./PredictDraws";
 import PotentialNumbers from "./PotentialNumbers";
@@ -274,7 +275,8 @@ const Dashboard = () => {
     "&page_size=" +
     pageSize +
     "&drawNumber=" +
-    drawNumber;
+    drawNumber +
+    "&targetRows=";
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {

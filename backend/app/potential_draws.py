@@ -1,5 +1,6 @@
 import random
 import logging
+import requests
 
 
 class PotentialDraws:
@@ -11,12 +12,12 @@ class PotentialDraws:
     FREQUENT_HITS = 3
     LESS_FREQUENT_HITS = 7
     PREVIOUS_DISTANCE = 6
-
+    #TARGET_ROWS = 30  # adjust value here
     TWO_COLD_COLD_DISTANCE = 10
     MAX_ALLOWED_ROWS = 50
     HITS_MIN_DISTANCE = 1
 
-    def __init__(self, data, columns, rows):
+    def __init__(self, data, columns, rows, target_rows):
         self.data = data
         self.numbers = data[0]["Numbers"]
         self.prev_draw_numbers = data[1]["Numbers"]
@@ -24,6 +25,7 @@ class PotentialDraws:
         self.rows = rows
         self.remaining = []
         self.hitting = []
+        self.target_rows = target_rows
         
         logging.basicConfig(
         level=logging.DEBUG,
@@ -33,6 +35,16 @@ class PotentialDraws:
             logging.StreamHandler()  # Also output to console (optional)
         ]
     )
+        
+    def get_slider_value(self):
+        try:
+            response = requests.get('http://127.0.0.1:5001/api/slider')
+            response.raise_for_status()  # Raise an error for bad status codes
+            data = response.json()
+            return data.get('sliderValue')
+        except requests.RequestException as e:
+            print(f"Error fetching slider value: {e}")
+            return None
         
     # new logic
     def is_a_potential_number(self, number):
@@ -47,12 +59,16 @@ class PotentialDraws:
             numbers = da["Numbers"]
             num = [x for x in numbers if x["Value"] == number["Value"]][0]
             if num["IsHit"] and da["DrawNumber"] == current_draw["DrawNumber"]:
-                return False                
+                return False    
+            
+            if draw_count > self.target_rows:      
+                return False     
             
             #1. last two hits are connected and the distance is less than 7 and greater than 3
             if (num["IsHit"]  
                 and num["NumberOfDrawsWhenHit"] == 1  
-                and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
+                and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS
+                and draw_count < self.target_rows):
                 return True
                 
             # 2. in last hit the NumberOfDrawsWhenHit < 5 and the hit prior to last hit, 
