@@ -194,7 +194,8 @@ const Dashboard = () => {
     "&page_size=" +
     pageSize +
     "&drawNumber=" +
-    drawNumber;
+    drawNumber +
+    "&targetRows=";
 
 
   /*
