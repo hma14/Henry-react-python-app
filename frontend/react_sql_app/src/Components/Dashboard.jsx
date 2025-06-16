@@ -184,7 +184,8 @@ const Dashboard = () => {
     "http://ep.lottotry.com:5001/api/lstm_predict_next_draw?lotto_name=" +
     lottoName +
     "&drawNumber=" +
-    drawNumber;
+    drawNumber +
+    "&targetRows=";
 
   const url26 =
     "http://ep.lottotry.com:5001/api/lotto/potential_numbers?lotto_name=" +

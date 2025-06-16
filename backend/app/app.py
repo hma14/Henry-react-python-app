@@ -49,8 +49,7 @@ app.config.from_object(Config)
 
 PLOT_FOLDER = 'static/plots'
 
-# Store the latest slider value
-latest_slider_value = 25
+
 
 # frontend url: http://ai.lottotry.com
 # CORS(app, resources={r'/api/*': {'origins': 'http://ai.lottotry.com'}})
@@ -110,25 +109,6 @@ def proxy(path):
     return response.content, response.status_code
 
 
-@app.route('/api/slider', methods=['POST'])
-def receive_slider_value():
-    data = request.get_json()
-    slider_value = data.get('sliderValue')
-    if slider_value is None:
-        return jsonify({'error': 'No slider value provided'}), 400
-    
-    # Process the slider value (e.g., print it or store it)
-    latest_slider_value = slider_value
-    print(f'Received slider value: {slider_value}')
-    
-    # Return a response to the frontend
-    return jsonify({'message': slider_value})
-
-@app.route('/api/slider', methods=['GET'])
-def get_slider_value():
-    if latest_slider_value is None:
-        return jsonify({'error': 'No slider value available'}), 404
-    return jsonify({'sliderValue': latest_slider_value})
 
 @app.route('/api/predict_next_draw_lgbm', methods=['GET'])
 def ai_predict_next_draw_lgbm():

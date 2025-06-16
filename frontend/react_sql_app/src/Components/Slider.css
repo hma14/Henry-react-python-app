@@ -31,12 +31,13 @@
 }
 
 .slider-label label {
-  color: #4b5563;
+  color: #e2430e;
+  font-weight: bolder;
 }
 
 .slider-input {
   width: 100%;
-  height: 0.5rem;
+  height: 1rem;
   background-color: #e5e7eb;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -46,11 +47,40 @@
 .slider-range {
   display: flex;
   justify-content: space-between;
-  color: #6b7280;
-  font-size: 0.875rem;
+  color: #0fce42;
+  font-size: 1.5rem;
   margin-top: 0.5rem;
+}
+
+.slider-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.slider-tooltip {
+  display: none;
+  position: absolute;
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  top: -30px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.slider-input:hover + .slider-tooltip {
+  display: block; /* Optional: Fallback for when JavaScript is disabled */
 }
 
 .adjust-container {
   justify-content: space-between;
+}
+
+.slider-value {
+  color: #0fce42;
+  font-size: 1.5rem;
+  font-style: italic;
 }
