@@ -5,6 +5,7 @@ import { Table } from "react-bootstrap";
 import "../App.css";
 import classNames from "classnames";
 import CircularProgress from "@mui/material/CircularProgress";
+import Slider from "./Slider";
 
 const PredictDraws = (props) => {
   const { endpoint, endpoint2, columns, rows, drawNumber } = props;
@@ -441,6 +442,7 @@ const PredictDraws = (props) => {
       ) : (
         ""
       )}
+
       <div className="d-flex justify-content-end">
         <button
           type="button"
