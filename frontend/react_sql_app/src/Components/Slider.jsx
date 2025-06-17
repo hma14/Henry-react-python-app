@@ -16,37 +16,58 @@ function Slider({ value, setValue }) {
     const slider = sliderRef.current;
     const tooltip = tooltipRef.current;
 
-    const handleMouseMove = (event) => {
+    const updateTooltip = (clientX) => {
       const rect = slider.getBoundingClientRect();
       const minVal = parseFloat(slider.min) || 5;
       const maxVal = parseFloat(slider.max) || 50;
       const stepVal = parseFloat(slider.step) || 1;
-      const mouseX = event.clientX - rect.left;
-      const percent = Math.min(Math.max(mouseX / rect.width, 0), 1); // Clamp to 0-1
+      const mouseX = clientX - rect.left;
+      const percent = Math.min(Math.max(mouseX / rect.width, 0), 1);
       let value = minVal + percent * (maxVal - minVal);
-      value = Math.round(value / stepVal) * stepVal; // Round to nearest step
-      value = Math.max(minVal, Math.min(maxVal, value)); // Clamp to min/max
-      tooltip.textContent = value; // Integer, no decimal places
+      value = Math.round(value / stepVal) * stepVal;
+      value = Math.max(minVal, Math.min(maxVal, value));
+      tooltip.textContent = value;
       tooltip.style.left = `${mouseX}px`;
       tooltip.style.display = "block";
+    };
+
+    const handleMouseMove = (event) => {
+      updateTooltip(event.clientX);
+    };
+
+    const handleTouchMove = (event) => {
+      event.preventDefault(); // Prevent scrolling
+      const touch = event.touches[0];
+      updateTooltip(touch.clientX);
     };
 
     const handleMouseOut = () => {
       tooltip.style.display = "none";
     };
 
-    const handleMouseOver = () => {
-      tooltip.style.display = "block";
-    };
-
     slider.addEventListener("mousemove", handleMouseMove);
+    slider.addEventListener("touchmove", handleTouchMove, { passive: false }); // Non-passive for preventDefault
     slider.addEventListener("mouseout", handleMouseOut);
-    slider.addEventListener("mouseover", handleMouseOver);
+    slider.addEventListener("touchend", handleMouseOut); // Hide tooltip on touch end
+    slider.addEventListener("mouseover", () => {
+      tooltip.style.display = "block";
+    });
+    slider.addEventListener(
+      "touchstart",
+      (event) => {
+        event.preventDefault(); // Prevent default touch behavior (e.g., zooming)
+        tooltip.style.display = "block";
+      },
+      { passive: false }
+    );
 
     return () => {
       slider.removeEventListener("mousemove", handleMouseMove);
+      slider.removeEventListener("touchmove", handleTouchMove);
       slider.removeEventListener("mouseout", handleMouseOut);
-      slider.removeEventListener("mouseover", handleMouseOver);
+      slider.removeEventListener("touchend", handleMouseOut);
+      slider.removeEventListener("mouseover", () => {});
+      slider.removeEventListener("touchstart", () => {});
     };
   }, []);
 

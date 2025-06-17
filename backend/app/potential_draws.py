@@ -36,15 +36,6 @@ class PotentialDraws:
         ]
     )
         
-    def get_slider_value(self):
-        try:
-            response = requests.get('http://127.0.0.1:5001/api/slider')
-            response.raise_for_status()  # Raise an error for bad status codes
-            data = response.json()
-            return data.get('sliderValue')
-        except requests.RequestException as e:
-            print(f"Error fetching slider value: {e}")
-            return None
         
     # new logic
     def is_a_potential_number(self, number):
