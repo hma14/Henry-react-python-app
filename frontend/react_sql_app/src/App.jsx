@@ -11,8 +11,10 @@ import Dashboard from "./Components/Dashboard";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ClipLoader } from "react-spinners";
+import { useLocation } from 'react-router-dom';
 
 const App = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [page, setPage] = useState("signup");
@@ -26,6 +28,15 @@ const App = () => {
       navigate("/login");
     }, 1000); // 1-second delay to show the animation
   };
+
+  useEffect(() => {
+    // Ensure gtag is available
+    if (window.gtag) {
+      window.gtag('config', 'G-H3ZWVFEQW3', {
+        page_path: location.pathname + location.search,
+      });
+    }
+  }, [location]);
 
   useEffect(() => {
     const checkAuth = () => {
