@@ -18,6 +18,9 @@ from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
 from potential_draws import PotentialDraws
 from pathlib import Path
 from ai_preprocess_data.data_preprocess import preprocess_data
+
+from ai_preprocess_data.gen_lotto_draws import *
+
 from ai_model_training.scikit_learn_training import train_scikit_learn_model
 from ai_model_training.train_ai_model_lstm import training_LSTM_model 
 from ai_prediction.ai_predict_next_draw import predict_next_draw
@@ -26,6 +29,7 @@ from utils.database import Database
 from ai_prediction.plot import plot
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 import logging
+
 
 from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env file
@@ -440,6 +444,31 @@ def get_current_draw_number():
     da = get_target_draw_number(lotto_name)
 
     return jsonify({'drawNumber': da})
+
+
+# testing
+
+@app.route('/api/printout', methods=['GET'])
+def printout():
+    lotto_id = int(request.args.get('lotto_name', 1))
+    to_draw_number = int(request.args.get('drawNumber', 1)) 
+    
+    #num_range = get_lotto_number_range(lotto_name=lotto_id)
+    #table_name = get_table_name(lotto_id)
+
+    
+    hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
+    
+    generated_draws = generate_multiple_draws(hot, cold, neutral)
+    
+    hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
+    
+    #ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws)
+    ai_generated_draws = "temporary unavailable"
+    
+    return [hot, cold, neutral, generated_draws, ai_generated_draws]
+
+
 
 
 def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):

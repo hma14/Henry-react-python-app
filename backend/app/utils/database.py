@@ -4,10 +4,21 @@ import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 
+def get_db_connection_string():
+    cwd_dir = Path(__file__).resolve()
+    root_dir = cwd_dir
+
+    while root_dir.name not in ("ai.lottotry.com", "") and root_dir.parent != root_dir:
+        root_dir = root_dir.parent
+
+    load_dotenv(dotenv_path=root_dir / '.env')
+    
+    return f'DRIVER={os.getenv("DB_TYPE")};SERVER={os.getenv("DB_SERVER")};DATABASE={os.getenv("DB_NAME")};UID={os.getenv("DB_UID")};PWD={os.getenv("DB_PWD")}'
+
 class Database:
     def __init__(self, table_name):
         """Initialize database connection by loading environment variables."""
-        self._load_env()
+        #self._load_env()
         self.connection = self._connect()
         self.table_name = table_name
         
@@ -26,17 +37,14 @@ class Database:
 
         load_dotenv(dotenv_path=root_dir / '.env')
 
-        self.DB_UID = os.getenv("DB_UID")
-        self.DB_PWD = os.getenv("DB_PWD")
-        self.DB_SERVER = os.getenv("DB_SERVER")
-        self.DB_NAME = os.getenv("DB_NAME")
-        self.DB_TYPE = os.getenv("DB_TYPE")
 
     def _connect(self):
+        
+        self._load_env()
         """Establish and return a database connection."""
         try:
             return pyodbc.connect(
-                f'DRIVER={self.DB_TYPE};SERVER={self.DB_SERVER};DATABASE={self.DB_NAME};UID={self.DB_UID};PWD={self.DB_PWD}'
+                get_db_connection_string()
             )
         except Exception as e:
             print(f"Database connection error: {e}")

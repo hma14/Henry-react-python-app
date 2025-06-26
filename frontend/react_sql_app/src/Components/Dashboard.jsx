@@ -19,6 +19,7 @@ import LottoPlot_LSBM from "./LottoPlot_LSBM";
 import LottoPlot_LSTM from "./LottoPlot_LSTM";
 import LottoPlot_Multi_Models from "./LottoPlot_Multi_Models";
 import { grey, lime, blue, lightBlue, red } from "@mui/material/colors";
+import Printout from "./Printout";
 import {
   AppBar,
   Toolbar,
@@ -105,6 +106,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [redirect, setRedirect] = useState(false);
 
+  /*
   const url10 =
     "http://ep.lottotry.com:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
     lottoName;
@@ -184,8 +186,8 @@ const Dashboard = () => {
     "http://ep.lottotry.com:5001/api/lstm_predict_next_draw?lotto_name=" +
     lottoName +
     "&drawNumber=" +
-    drawNumber +
-    "&targetRows=";
+    drawNumber;
+
 
   const url26 =
     "http://ep.lottotry.com:5001/api/lotto/potential_numbers?lotto_name=" +
@@ -199,8 +201,7 @@ const Dashboard = () => {
     "&targetRows=";
 
 
-  /*
-
+  */
 
   const url10 =
     "http://127.0.0.1:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
@@ -291,8 +292,11 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber +
     "&targetRows=";
-
-    */
+  const url27 =
+    "http://127.0.0.1:5001/api/printout?lotto_name=" +
+    lottoName +
+    "&drawNumber=" +
+    drawNumber;
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -377,7 +381,8 @@ const Dashboard = () => {
     numberDraws: "Hit Numbers in Number Category",
     predictDraws: "Predict Next Draw",
     potentialNumbers: "Get Potential Hit Numbers for Next Draw",
-    openai_saying: "OpenAI Says",
+    printout: "Print out data",
+    //openai_saying: "OpenAI Says",
   };
 
   const aiTrainingOptionLabels = {
@@ -627,7 +632,8 @@ const Dashboard = () => {
                       drawNumber={drawNumber}
                     />
                   );
-
+                case "printout":
+                  return <Printout endpoint={url27} />;
                 default:
                   return <ApiNumbers endpoint={url4} sortType={sortType} />;
               }

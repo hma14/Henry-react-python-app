@@ -3,7 +3,7 @@
 WITH  OrderedTable1 AS (
     SELECT *,
         ROW_NUMBER() OVER (ORDER BY DrawNumber) AS Seq
-    FROM {TABLE_NAME}
+    FROM [dbo].[LottoMax]
 ),
 UnpivotedTable1 AS (
     SELECT DrawNumber, 
@@ -38,20 +38,20 @@ Table2 AS (
 		from [dbo].[LottoTypes] as lt 
 		inner join [dbo].[Numbers] as nu 
 			on lt.Id = nu.LottoTypeId
-		where lt.LottoName = ?
+		where lt.LottoName = 3
 	) temp
-	where temp.DrawNumber > ? and temp.DrawNumber <= ? --3439
+	where temp.DrawNumber > 0 and temp.DrawNumber <= 1140 --3439
 ),
 Table3 AS (
 	SELECT DrawNumber,
         (CASE WHEN Number1 % 2 = 0 THEN 1 ELSE 0 END +
-		CASE WHEN Number2 % 2 = 0 THEN 1 ELSE 0 END +
-		CASE WHEN Number3 % 2 = 0 THEN 1 ELSE 0 END +
-		CASE WHEN Number4 % 2 = 0 THEN 1 ELSE 0 END +
-		CASE WHEN Number5 % 2 = 0 THEN 1 ELSE 0 END +
-		CASE WHEN Number6 % 2 = 0 THEN 1 ELSE 0 END +
-		CASE WHEN Bonus % 2 = 0 THEN 1 ELSE 0 END) AS EvenCount
-    FROM {TABLE_NAME}
+         CASE WHEN Number2 % 2 = 0 THEN 1 ELSE 0 END +
+         CASE WHEN Number3 % 2 = 0 THEN 1 ELSE 0 END +
+         CASE WHEN Number4 % 2 = 0 THEN 1 ELSE 0 END +
+         CASE WHEN Number5 % 2 = 0 THEN 1 ELSE 0 END +
+         CASE WHEN Number6 % 2 = 0 THEN 1 ELSE 0 END +
+         CASE WHEN Bonus % 2 = 0 THEN 1 ELSE 0 END) AS EvenCount
+    FROM [dbo].[LottoMax]
 )  
 
 SELECT 
