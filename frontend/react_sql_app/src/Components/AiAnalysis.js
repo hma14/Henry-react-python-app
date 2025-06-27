@@ -11,6 +11,7 @@ import {
   CssBaseline,
   Paper,
   Box,
+  Checkbox,
   FormControl,
   InputLabel,
   MenuItem,
@@ -20,7 +21,7 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import classNames from "classnames";
 
-const Printout = (props) => {
+const AiAnalysis = (props) => {
   const { endpoint } = props;
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
@@ -30,6 +31,7 @@ const Printout = (props) => {
   const [combos, setCombos] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [analyze, setAnalyze] = useState(false);
 
   // Function to parse arrays from response string
   const parseCombos = (text) => {
@@ -54,41 +56,47 @@ const Printout = (props) => {
     return "bg-gray-100";
   };
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    axios
-      .get(endpoint)
-      .then((response) => {
-        const [
-          hotData,
-          coldData,
-          neutralData,
-          generatedDrawsData,
-          aiGeneratedDrawsData,
-        ] = response.data;
+  const fetchData = useCallback(
+    async (analyze) => {
+      setIsLoading(true);
+      const endpoint2 = endpoint + analyze;
+      axios
+        .get(endpoint2)
+        .then((response) => {
+          const [
+            hotData,
+            coldData,
+            neutralData,
+            generatedDrawsData,
+            aiGeneratedDrawsData,
+          ] = response.data;
 
-        setHot(hotData);
-        setCold(coldData);
-        setNeutral(neutralData);
-        setGeneratedDraws(generatedDrawsData);
-        setAiGeneratedDraws(aiGeneratedDrawsData);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [endpoint]);
+          setHot(hotData);
+          setCold(coldData);
+          setNeutral(neutralData);
+          setGeneratedDraws(generatedDrawsData);
+          setAiGeneratedDraws(aiGeneratedDrawsData);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    [endpoint]
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [endpoint]);
+    fetchData(analyze);
+  }, [endpoint, analyze]);
 
   return (
     <div>
       <React.Fragment>
         <CssBaseline />
         <div className="card">
-          <h1 className="text-info center">Print Out</h1>
+          <h1 className="text-info text-center">
+            Number Categories and Generated Draws
+          </h1>
           {hot && hot.length > 0 ? (
             <>
               <div className="table-container">
@@ -205,7 +213,7 @@ const Printout = (props) => {
               <div className="d-flex justify-content-end">
                 <button
                   type="button"
-                  onClick={() => fetchData()}
+                  onClick={() => fetchData(analyze)}
                   className="btn btn-info text-white fw-bold mb-2 three-d-button"
                   fullWidth
                   disabled={isLoading}
@@ -213,18 +221,39 @@ const Printout = (props) => {
                   Generate Potential Draws
                 </button>
               </div>
-              <h3 className="text-secondary">AI Analyze & Feedback</h3>
-              <Box
-                sx={{
-                  //color: "green",
-                  //fontWeight: "bold",
-                  fontSize: "18px",
-                  //textAlign: "center",
-                  //fontStyle: "italic",
-                }}
-              >
-                <pre>{aiGeneratedDraws}</pre>
-              </Box>
+              <div className="mb-4">
+                <Checkbox
+                  checked={analyze}
+                  onChange={(e) => setAnalyze(e.target.checked)}
+                  inputProps={{ "aria-label": "Request AI Analyze" }}
+                  size="large"
+                />
+                <span className="my-label">Request AI Analysis</span>
+              </div>
+              {analyze && aiGeneratedDraws && !isLoading ? (
+                <div>
+                  <h1 className="text-info mb-4 text-center">
+                    AI Analyze & Feedback
+                  </h1>
+                  <Box
+                    sx={{
+                      color: "green",
+                      fontWeight: "bold",
+                      fontSize: "22px",
+                      //textAlign: "center",
+                      //fontStyle: "italic",
+                    }}
+                  >
+                    <pre className="ml-4">{aiGeneratedDraws}</pre>
+                  </Box>{" "}
+                </div>
+              ) : analyze ? (
+                <div className="loader-container-2">
+                  <CircularProgress />
+                </div>
+              ) : (
+                ""
+              )}
             </>
           ) : (
             <Box
@@ -246,4 +275,4 @@ const Printout = (props) => {
     </div>
   );
 };
-export default Printout;
+export default AiAnalysis;

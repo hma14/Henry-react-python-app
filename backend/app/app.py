@@ -448,14 +448,12 @@ def get_current_draw_number():
 
 # testing
 
-@app.route('/api/printout', methods=['GET'])
-def printout():
+@app.route('/api/AiAnalysis', methods=['GET'])
+def ai_analysis():
     lotto_id = int(request.args.get('lotto_name', 1))
     to_draw_number = int(request.args.get('drawNumber', 1)) 
+    analyze = request.args.get('analyze', 'false').lower() == 'true'
     
-    #num_range = get_lotto_number_range(lotto_name=lotto_id)
-    #table_name = get_table_name(lotto_id)
-
     
     hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
     
@@ -463,9 +461,10 @@ def printout():
     
     hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
     
-    #ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws)
-    ai_generated_draws = "temporary unavailable"
-    
+    ai_generated_draws = None
+    if analyze:
+        ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws)
+        
     return [hot, cold, neutral, generated_draws, ai_generated_draws]
 
 

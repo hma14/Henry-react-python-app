@@ -350,3 +350,15 @@ thead {
   align-items: center;
   height: 100vh;
 }
+.loader-container-2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.my-label {
+  font-size: large;
+  font-weight: 600;
+  font-style: italic;
+  color: #e96191;
+}

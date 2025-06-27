@@ -19,7 +19,7 @@ import LottoPlot_LSBM from "./LottoPlot_LSBM";
 import LottoPlot_LSTM from "./LottoPlot_LSTM";
 import LottoPlot_Multi_Models from "./LottoPlot_Multi_Models";
 import { grey, lime, blue, lightBlue, red } from "@mui/material/colors";
-import Printout from "./Printout";
+import AiAnalysis from "./AiAnalysis";
 import {
   AppBar,
   Toolbar,
@@ -293,10 +293,11 @@ const Dashboard = () => {
     drawNumber +
     "&targetRows=";
   const url27 =
-    "http://127.0.0.1:5001/api/printout?lotto_name=" +
+    "http://127.0.0.1:5001/api/AiAnalysis?lotto_name=" +
     lottoName +
     "&drawNumber=" +
-    drawNumber;
+    drawNumber +
+    "&analyze=";
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -381,7 +382,7 @@ const Dashboard = () => {
     numberDraws: "Hit Numbers in Number Category",
     predictDraws: "Predict Next Draw",
     potentialNumbers: "Get Potential Hit Numbers for Next Draw",
-    printout: "Print out data",
+    AiAnalysis: "Gen Draws & AI Analysis",
     //openai_saying: "OpenAI Says",
   };
 
@@ -632,8 +633,8 @@ const Dashboard = () => {
                       drawNumber={drawNumber}
                     />
                   );
-                case "printout":
-                  return <Printout endpoint={url27} />;
+                case "AiAnalysis":
+                  return <AiAnalysis endpoint={url27} />;
                 default:
                   return <ApiNumbers endpoint={url4} sortType={sortType} />;
               }
