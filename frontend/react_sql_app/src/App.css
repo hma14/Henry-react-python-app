@@ -295,6 +295,10 @@ thead {
 .dropdown-width {
   width: 300px;
 }
+
+.dropdown-width-2 {
+  width: 200px;
+}
 .button-width {
   width: 100px;
 }
@@ -360,5 +364,4 @@ thead {
   font-size: large;
   font-weight: 600;
   font-style: italic;
-  color: #e96191;
 }

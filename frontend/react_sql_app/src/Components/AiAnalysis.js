@@ -32,6 +32,9 @@ const AiAnalysis = (props) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [analyze, setAnalyze] = useState(false);
+  const [numberDraws, setNumberDraws] = useState(5);
+
+  const numbers = Array.from({ length: 10 }, (_, index) => index + 1);
 
   // Function to parse arrays from response string
   const parseCombos = (text) => {
@@ -57,9 +60,9 @@ const AiAnalysis = (props) => {
   };
 
   const fetchData = useCallback(
-    async (analyze) => {
+    async (analyze, numberDraws) => {
       setIsLoading(true);
-      const endpoint2 = endpoint + analyze;
+      const endpoint2 = endpoint + analyze + "&count=" + numberDraws;
       axios
         .get(endpoint2)
         .then((response) => {
@@ -86,8 +89,8 @@ const AiAnalysis = (props) => {
   );
 
   useEffect(() => {
-    fetchData(analyze);
-  }, [endpoint, analyze]);
+    fetchData(analyze, numberDraws);
+  }, [endpoint, analyze, numberDraws]);
 
   return (
     <div>
@@ -210,25 +213,44 @@ const AiAnalysis = (props) => {
                   </tbody>
                 </Table>
               </div>
-              <div className="d-flex justify-content-end">
+              <div className="mb-4 flex justify-end items-center space-x-4 mr-4">
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-info">
+                    Select Number of Draws
+                  </label>
+                  <select
+                    labelId="select-number-draws-label"
+                    value={numberDraws}
+                    id="select-number-draws"
+                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder, mb-4"
+                    onChange={(e) => setNumberDraws(e.target.value)}
+                  >
+                    {numbers.map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => fetchData(analyze)}
-                  className="btn btn-info text-white fw-bold mb-2 three-d-button"
+                  onClick={() => fetchData(analyze, numberDraws)}
+                  className="btn btn-info text-white fw-bold mb-2 three-d-button mt-2"
                   fullWidth
                   disabled={isLoading}
                 >
                   Generate Potential Draws
                 </button>
               </div>
-              <div className="mb-4">
+              <div className="mb-4 flex justify-end mr-4">
                 <Checkbox
                   checked={analyze}
                   onChange={(e) => setAnalyze(e.target.checked)}
                   inputProps={{ "aria-label": "Request AI Analyze" }}
                   size="large"
                 />
-                <span className="my-label">Request AI Analysis</span>
+                <span className="my-label text-info">Request AI Analysis</span>
               </div>
               {analyze && aiGeneratedDraws && !isLoading ? (
                 <div>
