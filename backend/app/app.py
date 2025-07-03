@@ -459,9 +459,7 @@ def ai_analysis():
     hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
     
     generated_draws = generate_multiple_draws(lotto_id, hot, cold, neutral, count)
-    
-    hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
-    
+        
     ai_generated_draws = None
     if analyze:
         ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws)

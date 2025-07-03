@@ -8,11 +8,11 @@ from utils.database import *
 import math
 
 lotto_hit_numbers = { 
-                     1: 6, 
-                     2: 6, 
-                     3: 7,
-                     4: 5,
-                     }
+    1: 6, 
+    2: 6, 
+    3: 7,
+    4: 5,
+}
 
 def get_lotto_data(lotto_name: int, draw_number: int):
     connection_string = get_db_connection_string()

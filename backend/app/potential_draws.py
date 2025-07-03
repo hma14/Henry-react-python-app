@@ -8,14 +8,16 @@ class PotentialDraws:
     PAST_DRAWS = 8
     HOTS_COLD = 25
     TWO_HOTS_GAP = 5
-    COLD_DISTANCE = 15
-    FREQUENT_HITS = 3
+    COLD_DISTANCE = 10
+    FREQUENT_HITS = 2
     LESS_FREQUENT_HITS = 7
     PREVIOUS_DISTANCE = 6
     #TARGET_ROWS = 30  # adjust value here
     TWO_COLD_COLD_DISTANCE = 10
     MAX_ALLOWED_ROWS = 50
     HITS_MIN_DISTANCE = 1
+    COLD_BEGIN = 15
+    COLD_END = 25
 
     def __init__(self, data, columns, rows, target_rows = 15):
         self.data = data
@@ -36,7 +38,9 @@ class PotentialDraws:
         ]
     )
         
-        
+    def is_in_range(self, value, center, delta):
+        return center - delta  <= value <= center + delta
+
     # new logic
     def is_a_potential_number(self, number):
         
@@ -49,62 +53,50 @@ class PotentialDraws:
             numbers = da["Numbers"]
             num = [x for x in numbers if x["Value"] == number["Value"]][0]
             
-            """             
-            if num["IsHit"] and da["DrawNumber"] == current_draw["DrawNumber"]:
-                return False    
-            """            
             if draw_count > self.target_rows:      
                 break    
+            if (self.COLD_BEGIN <= num["Distance"] <= self.COLD_END):
+                return True  
+            if not num["IsHit"]:
+                continue
                         
             #1. last two hits are connected and the distance is less than 7 and greater than 3
-            if num["IsHit"]:  
-                if (num["NumberOfDrawsWhenHit"] == 1  
-                    and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
+            if (num["NumberOfDrawsWhenHit"] == 1  
+                and self.FREQUENT_HITS < number["Distance"] < self.TWO_COLD_COLD_DISTANCE):
+                return True                       
+            #2. in last hit the NumberOfDrawsWhenHit < 5 and the hit prior to last hit, 
+            #the NumberOfDrawsWhenHit > 15 and current distance is around 5.
+            if not first_hit:             
+                first_hit = True               
+                if (num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE):
+                    return True                 
+                if (number["Distance"] > 0
+                    and self.is_in_range(num["NumberOfDrawsWhenHit"], number["Distance"], 2)):
                     return True
+                continue                        
+            
+            #3. the last 3 hits their  1 < NumberOfDrawsWhenHit < 5 
+            #and current distance is also < 5  
+            if (self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP  
+                and not second_hit):
+                    second_hit = True
+                    continue
+            if (self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP  
+                and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
+                    return True            
+            
+            # 4. in last hit the NumberOfDrawsWhenHit > 15 and (current distance > 15
+            # or current distance < 7)
+            if (num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE
+                and (number["Distance"] > self.COLD_DISTANCE 
+                or self.HITS_MIN_DISTANCE < number["Distance"] < self.LESS_FREQUENT_HITS)):
+                return True
                 
-            # 2. in last hit the NumberOfDrawsWhenHit < 5 and the hit prior to last hit, 
-            # the NumberOfDrawsWhenHit > 15 and current distance is around 5.
-                if ( first_hit == False):
-                    first_hit = True     
-                    continue                        
-                if (num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE  
-                    and first_hit 
-                    and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
-                    return True
-                    
-                # 3. the last 3 hits their  1 < NumberOfDrawsWhenHit < 5 
-                # and current distance is also < 5  
-                if (self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP  
-                    and first_hit
-                    and second_hit == False):
-                        second_hit = True
-                        continue
-                if (self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP  
-                    and first_hit
-                    and second_hit
-                    and self.FREQUENT_HITS < number["Distance"] < self.LESS_FREQUENT_HITS):
-                        return True            
-                
-                # 4. in last hit the NumberOfDrawsWhenHit > 15 and current distance > 15
-                if (num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE
-                    and number["Distance"] > self.COLD_DISTANCE):
-                    return True
-                    
-                # 5. in last 2 hits, NumberOfDrawsWhenHit values are close and current 
-                # distance close to this NumberOfDrawsWhenHit value
-                if (self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP   
-                    and first_hit 
-                    and self.FREQUENT_HITS < number["Distance"] < self.TWO_HOTS_GAP):
-                    return True
-                # 6. in last hit the NumberOfDrawsWhenHit > 15 and current distance > 5
-                if (num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE
-                    and number["Distance"] > self.FREQUENT_GAP):
-                    return True
-                # 7. in last hit the NumberOfDrawsWhenHit > 15 and current distance < 7
-                if (num["NumberOfDrawsWhenHit"] > self.COLD_DISTANCE
-                    and number["Distance"] < self.LESS_FREQUENT_HITS):
-                    return True
-  
+            # 5. in last 2 hits, NumberOfDrawsWhenHit values are close and current 
+            # distance close to this NumberOfDrawsWhenHit value
+            if (self.FREQUENT_HITS < num["NumberOfDrawsWhenHit"] < self.TWO_HOTS_GAP   
+                and self.FREQUENT_HITS < number["Distance"] < self.TWO_HOTS_GAP):
+                return True
     
         
     def collect_potential_numbers(self):
