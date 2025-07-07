@@ -365,3 +365,10 @@ thead {
   font-weight: 600;
   font-style: italic;
 }
+
+.sticky-header {
+  position: "sticky";
+  top: 0;
+  background: "#fff";
+  zindex: 1;
+}

@@ -524,12 +524,14 @@ const Dashboard = () => {
                           value={pageSize}
                           onChange={(e) => setPageSize(e.target.value)}
                         >
-                          {[5, 10, 20, 30, 40, 50, 100].map((pageSize) => (
-                            <option key={pageSize} value={pageSize}>
-                              {" "}
-                              {pageSize}
-                            </option>
-                          ))}
+                          {[5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500].map(
+                            (pageSize) => (
+                              <option key={pageSize} value={pageSize}>
+                                {" "}
+                                {pageSize}
+                              </option>
+                            )
+                          )}
                         </select>
                         <span className="bg-info text-white ps-2 fw-bolder">
                           draws / per page
