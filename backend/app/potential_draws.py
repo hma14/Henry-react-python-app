@@ -16,7 +16,7 @@ class PotentialDraws:
     TWO_COLD_COLD_DISTANCE = 10
     MAX_ALLOWED_ROWS = 50
     HITS_MIN_DISTANCE = 1
-    COLD_BEGIN = 15
+    COLD_BEGIN = 12
     COLD_END = 25
 
     def __init__(self, data, columns, rows, target_rows = 15):
