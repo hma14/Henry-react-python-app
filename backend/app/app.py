@@ -453,14 +453,13 @@ def ai_analysis():
     lotto_id = int(request.args.get('lotto_name', 1))
     to_draw_number = int(request.args.get('drawNumber', 1)) 
     analyze = request.args.get('analyze', 'false').lower() == 'true'
+    count = int(request.args.get('count', 1))
     
     
     hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
     
-    generated_draws = generate_multiple_draws(hot, cold, neutral)
-    
-    hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
-    
+    generated_draws = generate_multiple_draws(lotto_id, hot, cold, neutral, count)
+        
     ai_generated_draws = None
     if analyze:
         ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws)

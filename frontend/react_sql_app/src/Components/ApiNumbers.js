@@ -16,7 +16,6 @@ const ApiNumbers = (props) => {
       .get(endpoint)
       .then((response) => {
         setData(response.data.data);
-        console.log(response.data.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -138,6 +137,7 @@ const ApiNumbers = (props) => {
     return (
       <thead className="table-danger text-center">
         <tr>
+          <th className="text-light bg-info">#</th>
           <th className="text-light bg-info">Draws</th>
           <th className="text-light bg-info">Date</th>
           {data.slice(0, 1).map((row) =>
@@ -230,7 +230,9 @@ const ApiNumbers = (props) => {
           )
           {/* {number.isNextPotentialHit !== null && number.isNextPotentialHit === true ? (<><br />(<span className='text-danger fst-italic'>{number.isNextPotentialHit === true ? "PH" : ""}</span>)</>) : ""} */}
         </td>
-      );
+      ); /* The `}` closing curly brace in the code snippet you provided is closing the `ApiNumbers`
+      functional component in JavaScript. This brace marks the end of the component's definition
+      and encapsulates all the JSX elements and logic within the component. */
     }
   };
 
@@ -240,8 +242,9 @@ const ApiNumbers = (props) => {
         <Table responsive className="table-default mb-4" size="sm" hover="true">
           {getHeader()}
           <tbody className="fw-bold">
-            {data.map((draw) => (
+            {data.map((draw, index) => (
               <tr key={draw.DrawNumber}>
+                <td className="text-danger bg-color9 fs-9">{index + 1}</td>
                 <td className="text-warning bg-primary fs-7">
                   {draw.DrawNumber}
                 </td>

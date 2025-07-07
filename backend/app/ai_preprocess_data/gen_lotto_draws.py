@@ -5,8 +5,14 @@ from collections import defaultdict
 import random
 from dotenv import load_dotenv
 from utils.database import *
+import math
 
-
+lotto_hit_numbers = { 
+    1: 6, 
+    2: 6, 
+    3: 7,
+    4: 5,
+}
 
 def get_lotto_data(lotto_name: int, draw_number: int):
     connection_string = get_db_connection_string()
@@ -62,20 +68,24 @@ def get_lotto_data(lotto_name: int, draw_number: int):
         
         
         
-def generate_draw(hot, cold, neutral):
+def generate_draw(lotto_id, hot, cold, neutral):
     combo = set()
-    while len(combo) < 6:
-        if len(combo) < 3:
+    number_hits = lotto_hit_numbers[lotto_id]
+    hot_range = math.floor(number_hits / 2)
+    neutral_range = hot_range + 2
+    
+    while len(combo) < number_hits:
+        if len(combo) < hot_range:
             combo.add(random.choice(hot))
-        elif len(combo) < 5:
+        elif len(combo) < neutral_range:
             combo.add(random.choice(neutral))
         else:
             combo.add(random.choice(cold))
     return sorted(combo)
 
 
-def generate_multiple_draws(hot, cold, neutral, count=5):
-    return [generate_draw(hot, cold, neutral) for _ in range(count)]
+def generate_multiple_draws(lotto_id, hot, cold, neutral, count):
+    return [generate_draw(lotto_id, hot, cold, neutral) for _ in range(count)]
 
 
 # === AI Enhancement ===
@@ -105,7 +115,7 @@ def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws):
             {"role": "user", "content": prompt}
         ],
         temperature=1.0,
-        max_tokens=500
+        max_tokens=50
     )
 
     return response.choices[0].message.content
