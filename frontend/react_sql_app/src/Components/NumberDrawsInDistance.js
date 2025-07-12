@@ -43,6 +43,7 @@ function NumberDrawsInDistance(props) {
     return (
       <thead className="table-danger text-center">
         <tr>
+          <th className="text-light bg-info">#</th>
           <th className="text-light bg-info">Draws</th>
           <th className="text-light bg-info">Date</th>
           {columns &&
@@ -65,15 +66,16 @@ function NumberDrawsInDistance(props) {
   return (
     <div>
       {lottoData && lottoData.length > 0 && (
-        <Table responsive className="table-primary mb-4" size="sm" hover="true">
+        <Table striped bordered hover className="table-secondary mb-4">
           {getHeader()}
           <tbody className="fw-bold">
             {newList &&
               newList.length > 0 &&
-              newList.map((row) => (
+              newList.map((row, index) => (
                 <tr key={row[0]}>
-                  <td className="text-warning bg-primary">{row[0]}</td>
-                  <td className="text-warning bg-success">{row[1]}</td>
+                  <td className="text-secondary bg-info">{index + 1}</td>
+                  <td className="text-secondary bg-info">{row[0]}</td>
+                  <td className="text-secondary bg-info">{row[1]}</td>
                   {row.slice(2, cols + 1).map((no) =>
                     no > 0 ? (
                       <td className="text-danger bg-warning wider-td" key={no}>
@@ -84,11 +86,11 @@ function NumberDrawsInDistance(props) {
                     )
                   )}
                   {row[cols + 1] < 4 ? (
-                    <td className="text-light bg-success text-center">
+                    <td className="text-danger bg-color11 text-center">
                       {row[cols + 1]}
                     </td>
                   ) : (
-                    <td className="text-warning bg-success text-center">
+                    <td className="text-secondary bg-info text-center">
                       {row[cols + 1]}
                     </td>
                   )}
