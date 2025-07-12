@@ -24,6 +24,7 @@ function LottoDraws(props) {
     return (
       <thead className="table-danger text-center">
         <tr>
+          <th className="text-light bg-info">#</th>
           <th className="text-light bg-info">Draws</th>
           <th className="text-light bg-info">Date</th>
           {lottoData.slice(0, 1).map((row) =>
@@ -55,14 +56,15 @@ function LottoDraws(props) {
   return (
     <div>
       {lottoData && (
-        <Table striped bordered hover className="table-primary mb-4">
+        <Table striped bordered hover className="table-secondary mb-4">
           {console.log(columns)}
           {getHeader()}
           <tbody className="fw-bold">
-            {lottoData.map((row) => (
+            {lottoData.map((row, index) => (
               <tr key={row.DrawNumber}>
-                <td className="text-light bg-primary">{row.DrawNumber}</td>
-                <td className="text-light bg-success">{row.DrawDate}</td>
+                <td className="text-secondary bg-info">{index + 1}</td>
+                <td className="text-secondary bg-info">{row.DrawNumber}</td>
+                <td className="text-secondary bg-info">{row.DrawDate}</td>
                 {row.Numbers.sort(
                   (a, b) =>
                     b.IsBonusNumber === true &&

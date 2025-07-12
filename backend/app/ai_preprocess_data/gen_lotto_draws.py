@@ -115,7 +115,7 @@ def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws):
             {"role": "user", "content": prompt}
         ],
         temperature=1.0,
-        max_tokens=50
+        max_tokens=500
     )
 
     return response.choices[0].message.content
