@@ -199,7 +199,7 @@ thead {
 }
 
 .bg-color17 {
-  background-color: rgb(238, 185, 116) !important;
+  background-color: rgb(26, 228, 171) !important;
 }
 
 .bg-color18 {
@@ -215,15 +215,15 @@ thead {
 }
 
 .bg-color21 {
-  background-color: rgb(238, 185, 116) !important;
+  background-color: rgb(214, 238, 116) !important;
 }
 
 .bg-color22 {
-  background-color: rgb(239, 248, 214) !important;
+  background-color: rgb(93, 231, 88) !important;
 }
 
 .bg-color23 {
-  background-color: rgb(235, 198, 238) !important;
+  background-color: rgb(191, 243, 152) !important;
 }
 
 .bg-color24 {
@@ -232,6 +232,9 @@ thead {
 
 .bg-color25 {
   background-color: rgb(181, 233, 157) !important;
+}
+.bg-color26 {
+  background-color: rgb(234, 243, 71) !important;
 }
 
 .sticky {

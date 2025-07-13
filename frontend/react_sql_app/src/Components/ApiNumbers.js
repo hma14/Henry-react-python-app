@@ -82,8 +82,14 @@ const ApiNumbers = (props) => {
           return "bg-color24 text-success fw-bold";
         case 25:
           return "bg-color25 text-success fw-bold";
+
         default:
-          return "bg-color1 text-success fw-bold";
+          break;
+      }
+      if (number.Distance > 25 && number.Distance < 30) {
+        return "bg-color26 text-success fw-bold";
+      } else if (number.Distance >= 30) {
+        return "bg-color1 text-success fw-bold";
       }
     } else {
       if (number.IsNextPotentialHit === true) {
