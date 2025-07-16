@@ -20,9 +20,10 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import classNames from "classnames";
+import { getBgColors } from "./ApiNumbers";
 
 const AiAnalysis = (props) => {
-  const { endpoint } = props;
+  const { endpoint, sortType } = props;
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
   const [neutral, setNeutral] = useState([]);
@@ -43,9 +44,33 @@ const AiAnalysis = (props) => {
     return matches.map((match) => JSON.parse(match));
   };
 
-  const hotSet = new Set(hot);
-  const neutralSet = new Set(neutral);
-  const coldSet = new Set(cold);
+  const initializeSet = (objectList) => {
+    const set = new Set();
+
+    objectList.forEach((obj) => {
+      const value = Number(obj.Value);
+      if (!isNaN(value) && Number.isInteger(value)) {
+        set.add(value);
+      }
+    });
+    /* 
+    for (const obj of objectList) {
+      const value = Number(obj.Value); // Convert to number
+      if (!isNaN(value) && Number.isInteger(value)) {
+        set.add(value);
+      }
+    } 
+    */
+    if (set.size === 0 && objectList.length > 0) {
+      console.warn("No valid integer Values found in the objects");
+    }
+    return set;
+  };
+
+  const hotSet = initializeSet(hot);
+  const neutralSet = initializeSet(neutral);
+  const coldSet = initializeSet(cold);
+
   const getCellColor = (number) => {
     if (hotSet.has(number)) {
       return "text-danger";
@@ -121,7 +146,47 @@ const AiAnalysis = (props) => {
                     <tr>
                       {hot.map((d) => (
                         <td className="bg-color1 text-center text-danger fs-5 fw-bold px-2">
-                          {d}
+                          {d.Value}
+                          <br />
+                          <span className={"fst-italic text-info fs-7"}>
+                            {d.Distance}
+                          </span>
+                          <br />
+                          <span className="my-color-4 fst-italic fs-7">
+                            {d.TotalHits}
+                          </span>
+                          <br />
+                          <span
+                            className={classNames(
+                              "txt-color",
+                              {
+                                "text-danger fst-italic fs-7":
+                                  d.NumberofDrawsWhenHit > 10,
+                              },
+                              {
+                                "text-success fst-italic fs-7":
+                                  d.NumberofDrawsWhenHit <= 10,
+                              }
+                            )}
+                          >
+                            {d.NumberofDrawsWhenHit !== 0 &&
+                              d.NumberofDrawsWhenHit}
+                          </span>
+                          <br />
+                          <span
+                            className={classNames(
+                              "txt-color",
+                              {
+                                "red-indigo fst-italic fs-7": d.Probability > 0,
+                              },
+                              {
+                                "my-color-1 fst-italic fs-7":
+                                  d.Probability === 0,
+                              }
+                            )}
+                          >
+                            {d.Probability}
+                          </span>
                         </td>
                       ))}
                     </tr>
@@ -145,7 +210,27 @@ const AiAnalysis = (props) => {
                     <tr>
                       {neutral.map((d) => (
                         <td className="bg-color1 text-center text-success fs-5 fw-bold px-2">
-                          {d}
+                          {d.Value}{" "}
+                          <span className={"fst-italic text-info fs-7"}>
+                            ( {d.Distance} )
+                          </span>
+                          <span className="my-color-4 fst-italic fs-7">
+                            ( {d.TotalHits} )
+                          </span>
+                          <span
+                            className={classNames(
+                              "txt-color",
+                              {
+                                "red-indigo fst-italic fs-7": d.Probability > 0,
+                              },
+                              {
+                                "my-color-1 fst-italic fs-7":
+                                  d.Probability === 0,
+                              }
+                            )}
+                          >
+                            ( {d.Probability} )
+                          </span>
                         </td>
                       ))}
                     </tr>
@@ -153,7 +238,7 @@ const AiAnalysis = (props) => {
                 </Table>
                 <h3 className="text-info">Cold Numbers</h3>
                 <Table>
-                  <thead className="table-danger text-center">
+                  <thead className="table-danger">
                     <tr>
                       {Array.from(Array(cold.length).keys()).map((no) => (
                         <th
@@ -168,8 +253,29 @@ const AiAnalysis = (props) => {
                   <tbody>
                     <tr>
                       {cold.map((d) => (
-                        <td className="bg-color1 text-center text-info fs-5 fw-bold px-2">
-                          {d}
+                        <td className="bg-color1 text-info fs-5 fw-bold px-2">
+                          {d.Value}
+                          <br />
+                          <span className={"fst-italic text-info fs-7"}>
+                            ({d.Distance} )
+                          </span>
+                          <span className="my-color-4 fst-italic fs-7">
+                            ( {d.TotalHits} )
+                          </span>
+                          <span
+                            className={classNames(
+                              "txt-color",
+                              {
+                                "red-indigo fst-italic fs-7": d.Probability > 0,
+                              },
+                              {
+                                "my-color-1 fst-italic fs-7":
+                                  d.Probability === 0,
+                              }
+                            )}
+                          >
+                            ( {d.Probability} )
+                          </span>
                         </td>
                       ))}
                     </tr>
@@ -181,6 +287,7 @@ const AiAnalysis = (props) => {
                 <Table>
                   <thead className="table-danger text-center">
                     <tr>
+                      <th className="text-light bg-info">#</th>
                       {Array.from(Array(generatedDraws[0].length).keys()).map(
                         (no) => (
                           <th
@@ -196,15 +303,56 @@ const AiAnalysis = (props) => {
                   <tbody>
                     {generatedDraws.map((row, index) => (
                       <tr key={index}>
-                        {row.map((number) => (
+                        <td className="text-light bg-info text-center fw-bold fs-9">
+                          {index + 1}
+                        </td>
+                        {row.map((d) => (
                           <td className="bg-color1 text-center text-success fs-5 fw-bold px-2">
                             <span
-                              key={number}
+                              key={d.Value}
                               className={`inline-block px-2 py-1 m-1 rounded ${getCellColor(
-                                number
+                                d.Value
                               )}`}
                             >
-                              {number}
+                              {d.Value}
+                            </span>
+                            <span className={"fst-italic text-info fs-7"}>
+                              ( {d.Distance} )
+                            </span>
+                            <span className="my-color-4 fst-italic fs-7">
+                              ( {d.TotalHits} )
+                            </span>
+                            {d.NumberofDrawsWhenHit !== 0 && (
+                              <span
+                                className={classNames(
+                                  "txt-color",
+                                  {
+                                    "text-danger fst-italic fs-7":
+                                      d.NumberofDrawsWhenHit > 10,
+                                  },
+                                  {
+                                    "text-success fst-italic fs-7":
+                                      d.NumberofDrawsWhenHit <= 10,
+                                  }
+                                )}
+                              >
+                                ({d.NumberofDrawsWhenHit})
+                              </span>
+                            )}
+                            <span
+                              className={classNames(
+                                "txt-color",
+                                {
+                                  "red-indigo fst-italic fs-7":
+                                    d.Probability > 0,
+                                },
+                                {
+                                  "my-color-1 fst-italic fs-7":
+                                    d.Probability === 0,
+                                }
+                              )}
+                            >
+                              ( {d.Probability} )
                             </span>
                           </td>
                         ))}
@@ -232,7 +380,6 @@ const AiAnalysis = (props) => {
                     ))}
                   </select>
                 </div>
-
                 <button
                   type="button"
                   onClick={() => fetchData(analyze, numberDraws)}

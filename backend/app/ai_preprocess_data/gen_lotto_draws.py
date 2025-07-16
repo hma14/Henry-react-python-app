@@ -25,7 +25,7 @@ def get_lotto_data(lotto_name: int, draw_number: int):
     FROM [dbo].[LottoTypes] t 
     INNER JOIN [dbo].[Numbers] n ON t.Id = n.LottoTypeId 
     WHERE t.LottoName = ? AND t.DrawNumber = ?
-    ORDER BY n.TotalHits DESC
+    ORDER BY n.Distance
     """
 
     # Connect to SQL Server
@@ -37,51 +37,62 @@ def get_lotto_data(lotto_name: int, draw_number: int):
         # Optional: convert result to list of dictionaries
         columns = [column[0] for column in cursor.description]
         records =  [dict(zip(columns, row)) for row in rows]
-        most_hits = int(records[0]["TotalHits"])
-        least_hits = int(records[-1]["TotalHits"])
         
-        step =  (most_hits - least_hits) / 3
-        
-        hot_hits = most_hits - step
-        cold_hits = least_hits + step
-        
+        far_distance = int(records[-1]["Distance"])
+        hot_distance = far_distance / 4
+        neutral_distance = far_distance / 2
         
         grouped = defaultdict(list)
         for row in records:
-            hits = row["TotalHits"]
+            distance = row["Distance"]
             num = row["Value"]
-            if hits >= hot_hits:
-                grouped["hot"].append(num)
-            elif cold_hits <= hits < hot_hits:
-                grouped["neutral"].append(num)
+            if distance <= hot_distance :
+                grouped["hot"].append(row)
+            elif hot_distance < distance <= neutral_distance:
+                grouped["neutral"].append(row)
             else:
-                grouped["cold"].append(num)
+                grouped["cold"].append(row)
 
         # Access:
         hot = grouped["hot"]
         neutral = grouped["neutral"]
         cold = grouped["cold"]
         
+        hot_list = sorted(hot, key=lambda x: x['Value'], reverse=False)
+        cold_list = sorted(cold, key=lambda x: x['Value'], reverse=False)
+        neutral_list = sorted(neutral, key=lambda x: x['Value'], reverse=False)
+        
+    return hot_list, cold_list, neutral_list
         
         
-    return sorted(hot), sorted(cold), sorted(neutral)
-        
-        
-        
-def generate_draw(lotto_id, hot, cold, neutral):
+def find_object_by_value(object_list, val):
+    for obj in object_list:
+        if obj["Value"] == val:
+            return obj
+
+def generate_draw_int(lotto_id, hot, cold, neutral):
     combo = set()
     number_hits = lotto_hit_numbers[lotto_id]
-    hot_range = math.floor(number_hits / 2)
-    neutral_range = hot_range + 2
+    hot_range = math.ceil(number_hits / 2)
     
     while len(combo) < number_hits:
-        if len(combo) < hot_range:
-            combo.add(random.choice(hot))
-        elif len(combo) < neutral_range:
-            combo.add(random.choice(neutral))
+        if len(combo) < hot_range - 1:
+            combo.add(random.choice(hot)["Value"])
+        elif len(combo) < (hot_range + 1):
+            combo.add(random.choice(neutral)["Value"])
         else:
-            combo.add(random.choice(cold))
+            combo.add(random.choice(cold)["Value"])
     return sorted(combo)
+        
+def generate_draw(lotto_id, hot, cold, neutral):
+    intList = generate_draw_int(lotto_id, hot, cold, neutral)
+    combo = []
+    
+    combo.extend(
+        find_object_by_value((hot + neutral + cold), val) for val in intList
+    )
+        
+    return sorted(combo, key=lambda x: x["Value"])
 
 
 def generate_multiple_draws(lotto_id, hot, cold, neutral, count):

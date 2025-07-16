@@ -7,6 +7,82 @@ import "../App.css";
 import "../App.scss";
 import classNames from "classnames";
 
+const types = {
+  number: "number",
+  distance: "Distance",
+  totalHits: "TotalHits",
+};
+
+export const getBgColors = (sortType, number) => {
+  if (sortType.toLowerCase() === types.distance.toLowerCase()) {
+    switch (number.Distance) {
+      case 1:
+        return "bg-color18 text-success fw-bold";
+      case 2:
+        return "bg-color2 text-success fw-bold";
+      case 3:
+        return "bg-color3 text-success fw-bold";
+      case 4:
+        return "bg-color1 text-success fw-bold";
+      case 5:
+        return "bg-color5 text-success fw-bold";
+      case 6:
+        return "bg-color6 text-success fw-bold";
+      case 7:
+        return "bg-color7 text-success fw-bold";
+      case 8:
+        return "bg-color8 text-success fw-bold";
+      case 9:
+        return "bg-color9 text-success fw-bold";
+      case 10:
+        return "bg-color10 text-success fw-bold";
+      case 11:
+        return "bg-color11 text-success fw-bold";
+      case 12:
+        return "bg-color12 text-success fw-bold";
+      case 13:
+        return "bg-color13 text-success fw-bold";
+      case 14:
+        return "bg-color14 text-success fw-bold";
+      case 15:
+        return "bg-color15 text-success fw-bold";
+      case 16:
+        return "bg-color16 text-success fw-bold";
+      case 17:
+        return "bg-color17 text-success fw-bold";
+      case 18:
+        return "bg-color18 text-success fw-bold";
+      case 19:
+        return "bg-color19 text-success fw-bold";
+      case 20:
+        return "bg-color20 text-success fw-bold";
+      case 21:
+        return "bg-color21 text-success fw-bold";
+      case 22:
+        return "bg-color22 text-success fw-bold";
+      case 23:
+        return "bg-color23 text-success fw-bold";
+      case 24:
+        return "bg-color24 text-success fw-bold";
+      case 25:
+        return "bg-color25 text-success fw-bold";
+
+      default:
+        break;
+    }
+    if (number.Distance > 25 && number.Distance < 30) {
+      return "bg-color26 text-success fw-bold";
+    } else if (number.Distance >= 30) {
+      return "bg-color1 text-success fw-bold";
+    }
+  } else {
+    if (number.IsNextPotentialHit === true) {
+      return "text-success bg-color-ph fw-bold";
+    }
+    return "text-success bg-light fw-bold";
+  }
+};
+
 const ApiNumbers = (props) => {
   const { endpoint, sortType } = props;
   const [data, setData] = useState([]);
@@ -22,82 +98,7 @@ const ApiNumbers = (props) => {
       });
   }, [endpoint]);
 
-  const types = {
-    number: "number",
-    distance: "Distance",
-    totalHits: "TotalHits",
-  };
   const sortProperty = types[sortType];
-
-  const getBgColors = (sortType, number) => {
-    if (sortType.toLowerCase() === types.distance.toLowerCase()) {
-      switch (number.Distance) {
-        case 1:
-          return "bg-color18 text-success fw-bold";
-        case 2:
-          return "bg-color2 text-success fw-bold";
-        case 3:
-          return "bg-color3 text-success fw-bold";
-        case 4:
-          return "bg-color1 text-success fw-bold";
-        case 5:
-          return "bg-color5 text-success fw-bold";
-        case 6:
-          return "bg-color6 text-success fw-bold";
-        case 7:
-          return "bg-color7 text-success fw-bold";
-        case 8:
-          return "bg-color8 text-success fw-bold";
-        case 9:
-          return "bg-color9 text-success fw-bold";
-        case 10:
-          return "bg-color10 text-success fw-bold";
-        case 11:
-          return "bg-color11 text-success fw-bold";
-        case 12:
-          return "bg-color12 text-success fw-bold";
-        case 13:
-          return "bg-color13 text-success fw-bold";
-        case 14:
-          return "bg-color14 text-success fw-bold";
-        case 15:
-          return "bg-color15 text-success fw-bold";
-        case 16:
-          return "bg-color16 text-success fw-bold";
-        case 17:
-          return "bg-color17 text-success fw-bold";
-        case 18:
-          return "bg-color18 text-success fw-bold";
-        case 19:
-          return "bg-color19 text-success fw-bold";
-        case 20:
-          return "bg-color20 text-success fw-bold";
-        case 21:
-          return "bg-color21 text-success fw-bold";
-        case 22:
-          return "bg-color22 text-success fw-bold";
-        case 23:
-          return "bg-color23 text-success fw-bold";
-        case 24:
-          return "bg-color24 text-success fw-bold";
-        case 25:
-          return "bg-color25 text-success fw-bold";
-
-        default:
-          break;
-      }
-      if (number.Distance > 25 && number.Distance < 30) {
-        return "bg-color26 text-success fw-bold";
-      } else if (number.Distance >= 30) {
-        return "bg-color1 text-success fw-bold";
-      }
-    } else {
-      if (number.IsNextPotentialHit === true) {
-        return "text-success bg-color-ph fw-bold";
-      }
-      return "text-success bg-light fw-bold";
-    }
-  };
 
   const headerBgColorMap = [
     {
