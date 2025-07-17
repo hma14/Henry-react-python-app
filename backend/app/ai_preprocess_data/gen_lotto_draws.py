@@ -39,13 +39,12 @@ def get_lotto_data(lotto_name: int, draw_number: int):
         records =  [dict(zip(columns, row)) for row in rows]
         
         far_distance = int(records[-1]["Distance"])
-        hot_distance = far_distance / 4
-        neutral_distance = far_distance / 2
+        hot_distance = far_distance / 5
+        neutral_distance = far_distance / 3
         
         grouped = defaultdict(list)
         for row in records:
             distance = row["Distance"]
-            num = row["Value"]
             if distance <= hot_distance :
                 grouped["hot"].append(row)
             elif hot_distance < distance <= neutral_distance:
@@ -77,13 +76,13 @@ def generate_draw_int(lotto_id, hot, cold, neutral):
     match number_hits:
         case 5: 
             hot_range = random.randint(2, 3)   
-            neutral_range = random.randint(hot_range, hot_range + 2)         
+            neutral_range = random.randint(hot_range + 1, hot_range + 2)         
         case 6: 
-            hot_range = random.randint(2, 4)
-            neutral_range = random.randint(hot_range, hot_range + 2)
+            hot_range = random.randint(2, 6)
+            neutral_range = random.randint(hot_range + 1, hot_range + 2)
         case 7: 
             hot_range = random.randint(2, 5)
-            neutral_range = random.randint(hot_range, hot_range + 2)
+            neutral_range = random.randint(neutral_range + 1, neutral_range + 2)
             
     
     while len(combo) < number_hits:
