@@ -73,12 +73,23 @@ def find_object_by_value(object_list, val):
 def generate_draw_int(lotto_id, hot, cold, neutral):
     combo = set()
     number_hits = lotto_hit_numbers[lotto_id]
-    hot_range = math.ceil(number_hits / 2)
+    
+    match number_hits:
+        case 5: 
+            hot_range = random.randint(2, 3)   
+            neutral_range = random.randint(hot_range, hot_range + 2)         
+        case 6: 
+            hot_range = random.randint(2, 4)
+            neutral_range = random.randint(hot_range, hot_range + 2)
+        case 7: 
+            hot_range = random.randint(2, 5)
+            neutral_range = random.randint(hot_range, hot_range + 2)
+            
     
     while len(combo) < number_hits:
-        if len(combo) < hot_range - 1:
+        if len(combo) < hot_range:
             combo.add(random.choice(hot)["Value"])
-        elif len(combo) < (hot_range + 1):
+        elif len(combo) < neutral_range:
             combo.add(random.choice(neutral)["Value"])
         else:
             combo.add(random.choice(cold)["Value"])
