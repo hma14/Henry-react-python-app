@@ -387,7 +387,7 @@ const AiAnalysis = (props) => {
                   <Slider
                     value={sliderMin}
                     setValue={setSliderMinValue}
-                    title="MIN HOT Range"
+                    title="Min HOT Range"
                     start={1}
                     end={3}
                   />
@@ -396,7 +396,7 @@ const AiAnalysis = (props) => {
                   <Slider
                     value={sliderMax}
                     setValue={setSliderMaxValue}
-                    title="MAX HOT Range"
+                    title="Max HOT Range"
                     start={4}
                     end={maxValue}
                   />

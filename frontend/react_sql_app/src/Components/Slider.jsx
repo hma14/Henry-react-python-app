@@ -73,7 +73,7 @@ function Slider({ value, setValue, title, start, end }) {
 
   return (
     <div className="slider-card">
-      <h2>{title}</h2>
+      <h3 className="text-info text-center fs-6 fw-bold">{title}</h3>
       <div className="slider-label">
         <label>
           Value: <span className="slider-value">{value}</span>
