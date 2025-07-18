@@ -375,3 +375,14 @@ thead {
   background: "#fff";
   zindex: 1;
 }
+
+.adjust-container {
+  display: flex;
+  flex-direction: row; /* Align sliders horizontally */
+  gap: 16px; /* Optional: adds spacing between sliders */
+  align-items: center; /* Optional: vertically centers sliders if they have different heights */
+}
+
+.slider {
+  width: 25%;
+}

@@ -69,21 +69,25 @@ def find_object_by_value(object_list, val):
         if obj["Value"] == val:
             return obj
 
-def generate_draw_int(lotto_id, hot, cold, neutral):
+def generate_draw_int(lotto_id, hot, cold, neutral, sliderMin, sliderMax):
     combo = set()
     number_hits = lotto_hit_numbers[lotto_id]
     
+    hot_range = random.randint(int(sliderMin), int(sliderMax))   
+    neutral_range = random.randint(hot_range, hot_range + 2) 
+    
+    """
     match number_hits:
         case 5: 
-            hot_range = random.randint(2, 3)   
+            hot_range = random.randint(sliderMin, sliderMax)   
             neutral_range = random.randint(hot_range + 1, hot_range + 2)         
         case 6: 
-            hot_range = random.randint(2, 6)
+            hot_range = random.randint(2, 4)
             neutral_range = random.randint(hot_range + 1, hot_range + 2)
         case 7: 
             hot_range = random.randint(2, 5)
-            neutral_range = random.randint(neutral_range + 1, neutral_range + 2)
-            
+            neutral_range = random.randint(hot_range + 1, neutral_range + 2)
+    """        
     
     while len(combo) < number_hits:
         if len(combo) < hot_range:
@@ -94,8 +98,8 @@ def generate_draw_int(lotto_id, hot, cold, neutral):
             combo.add(random.choice(cold)["Value"])
     return sorted(combo)
         
-def generate_draw(lotto_id, hot, cold, neutral):
-    intList = generate_draw_int(lotto_id, hot, cold, neutral)
+def generate_draw(lotto_id, hot, cold, neutral, sliderMin, sliderMax):
+    intList = generate_draw_int(lotto_id, hot, cold, neutral, sliderMin, sliderMax)
     combo = []
     
     combo.extend(
@@ -105,8 +109,8 @@ def generate_draw(lotto_id, hot, cold, neutral):
     return sorted(combo, key=lambda x: x["Value"])
 
 
-def generate_multiple_draws(lotto_id, hot, cold, neutral, count):
-    return [generate_draw(lotto_id, hot, cold, neutral) for _ in range(count)]
+def generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, sliderMax):
+    return [generate_draw(lotto_id, hot, cold, neutral, sliderMin, sliderMax) for _ in range(count)]
 
 
 # === AI Enhancement ===
