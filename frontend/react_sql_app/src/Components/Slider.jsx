@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { debounce } from "lodash";
 import "./Slider.css";
 
-function Slider({ value, setValue }) {
+function Slider({ value, setValue, title, start, end }) {
   const sliderRef = useRef(null);
   const tooltipRef = useRef(null);
 
@@ -72,33 +72,31 @@ function Slider({ value, setValue }) {
   }, []);
 
   return (
-    <div className="slider-container">
-      <div className="slider-card">
-        <h2>Adjust Target Rows</h2>
-        <div className="slider-label">
-          <label>
-            Value: <span className="slider-value">{value}</span>
-          </label>
-        </div>
-        <div className="slider-wrapper">
-          <input
-            type="range"
-            ref={sliderRef}
-            min="5"
-            max="50"
-            step="1"
-            value={value}
-            onChange={handleChange}
-            className="slider-input"
-          />
-          <span ref={tooltipRef} className="slider-tooltip">
-            {value}
-          </span>
-        </div>
-        <div className="slider-range">
-          <span>5</span>
-          <span>50</span>
-        </div>
+    <div className="slider-card">
+      <h3 className="text-info text-center fs-6 fw-bold">{title}</h3>
+      <div className="slider-label">
+        <label>
+          Value: <span className="slider-value">{value}</span>
+        </label>
+      </div>
+      <div className="slider-wrapper">
+        <input
+          type="range"
+          ref={sliderRef}
+          min={String(start)}
+          max={String(end)}
+          step="1"
+          value={value}
+          onChange={handleChange}
+          className="slider-input"
+        />
+        <span ref={tooltipRef} className="slider-tooltip">
+          {value}
+        </span>
+      </div>
+      <div className="slider-range">
+        <span>{start}</span>
+        <span>{end}</span>
       </div>
     </div>
   );

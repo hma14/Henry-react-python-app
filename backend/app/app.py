@@ -453,12 +453,14 @@ def ai_analysis():
     lotto_id = int(request.args.get('lotto_name', 1))
     to_draw_number = int(request.args.get('drawNumber', 1)) 
     analyze = request.args.get('analyze', 'false').lower() == 'true'
+    sliderMin = request.args.get('sliderMin', 1)
+    sliderMax = request.args.get('sliderMax', 4)
     count = int(request.args.get('count', 1))
     
     
     hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
     
-    generated_draws = generate_multiple_draws(lotto_id, hot, cold, neutral, count)
+    generated_draws = generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, sliderMax)
         
     ai_generated_draws = None
     if analyze:

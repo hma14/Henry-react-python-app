@@ -20,10 +20,10 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import classNames from "classnames";
-import { getBgColors } from "./ApiNumbers";
+import Slider from "./Slider";
 
 const AiAnalysis = (props) => {
-  const { endpoint, sortType } = props;
+  const { endpoint, sortType, lottoName } = props;
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
   const [neutral, setNeutral] = useState([]);
@@ -34,6 +34,9 @@ const AiAnalysis = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [analyze, setAnalyze] = useState(false);
   const [numberDraws, setNumberDraws] = useState(5);
+  const [sliderMin, setSliderMinValue] = useState(2);
+  const [sliderMax, setSliderMaxValue] = useState(4);
+  const [maxValue, setMaxValue] = useState(3);
 
   const numbers = Array.from({ length: 10 }, (_, index) => index + 1);
 
@@ -85,9 +88,17 @@ const AiAnalysis = (props) => {
   };
 
   const fetchData = useCallback(
-    async (analyze, numberDraws) => {
+    async (analyze, numberDraws, sliderMin, sliderMax) => {
       setIsLoading(true);
-      const endpoint2 = endpoint + analyze + "&count=" + numberDraws;
+      const endpoint2 =
+        endpoint +
+        analyze +
+        "&count=" +
+        numberDraws +
+        "&sliderMin=" +
+        sliderMin +
+        "&sliderMax=" +
+        sliderMax;
       axios
         .get(endpoint2)
         .then((response) => {
@@ -114,8 +125,18 @@ const AiAnalysis = (props) => {
   );
 
   useEffect(() => {
-    fetchData(analyze, numberDraws);
-  }, [endpoint, analyze, numberDraws]);
+    fetchData(analyze, numberDraws, sliderMin, sliderMax);
+  }, [endpoint, analyze, numberDraws, sliderMin, sliderMax]);
+
+  useEffect(() => {
+    if (lottoName === 1 || lottoName === 2) {
+      setMaxValue(6);
+    } else if (lottoName === 3) {
+      setMaxValue(7);
+    } else if (lottoName === 4) {
+      setMaxValue(5);
+    }
+  }, [lottoName]);
 
   return (
     <div>
@@ -362,6 +383,24 @@ const AiAnalysis = (props) => {
                 </Table>
               </div>
               <div className="mb-4 flex justify-end items-center space-x-4 mr-4">
+                <div className="slider">
+                  <Slider
+                    value={sliderMin}
+                    setValue={setSliderMinValue}
+                    title="Min HOT Range"
+                    start={1}
+                    end={3}
+                  />
+                </div>
+                <div className="slider">
+                  <Slider
+                    value={sliderMax}
+                    setValue={setSliderMaxValue}
+                    title="Max HOT Range"
+                    start={4}
+                    end={maxValue}
+                  />
+                </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-info">
                     Select Number of Draws
@@ -382,7 +421,9 @@ const AiAnalysis = (props) => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => fetchData(analyze, numberDraws)}
+                  onClick={() =>
+                    fetchData(analyze, numberDraws, sliderMin, sliderMax)
+                  }
                   className="btn btn-info text-white fw-bold mb-2 three-d-button mt-2"
                   fullWidth
                   disabled={isLoading}

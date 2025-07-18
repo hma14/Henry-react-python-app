@@ -642,7 +642,13 @@ const Dashboard = () => {
                     />
                   );
                 case "AiAnalysis":
-                  return <AiAnalysis endpoint={url27} sortType={sortType} />;
+                  return (
+                    <AiAnalysis
+                      endpoint={url27}
+                      sortType={sortType}
+                      lottoName={lottoName}
+                    />
+                  );
                 default:
                   return <ApiNumbers endpoint={url4} sortType={sortType} />;
               }
