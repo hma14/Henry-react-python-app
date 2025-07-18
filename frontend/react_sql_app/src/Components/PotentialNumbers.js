@@ -404,7 +404,13 @@ const PotentialNumbers = (props) => {
         </div>
       )}
       <div className="adjust-container">
-        <Slider value={sliderValue} setValue={setSliderValue} />
+        <Slider
+          value={sliderValue}
+          setValue={setSliderValue}
+          title="Adjust Target Rows"
+          start={1}
+          end={50}
+        />
       </div>
     </div>
   );
