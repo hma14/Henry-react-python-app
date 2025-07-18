@@ -20,7 +20,7 @@
   font-size: 1.5rem;
   font-weight: 600;
   text-align: center;
-  color: green;
+  color: #e2430e;
   margin-bottom: 1rem;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .slider-label label {
-  color: #e2430e;
+  color: green;
   font-weight: bolder;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .slider-value {
-  color: #0fce42;
-  font-size: 1.5rem;
+  color: #e2430e;
+  font-size: 1.2rem;
   font-style: italic;
 }
