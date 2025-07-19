@@ -461,6 +461,12 @@ def ai_analysis():
     hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
     
     generated_draws = generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, sliderMax)
+    
+    for da in generated_draws:
+        for d in da:
+            d['NumberOfAppearing'] += 1
+
+
         
     ai_generated_draws = None
     if analyze:

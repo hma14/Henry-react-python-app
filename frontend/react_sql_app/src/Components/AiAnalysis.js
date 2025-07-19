@@ -374,6 +374,9 @@ const AiAnalysis = (props) => {
                               )}
                             >
                               ( {d.Probability} )
+                            </span>{" "}
+                            <span className="my-color-5 fs-7">
+                              [{d.NumberOfAppearing - 1}]
                             </span>
                           </td>
                         ))}
