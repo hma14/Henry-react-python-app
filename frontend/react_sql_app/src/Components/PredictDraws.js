@@ -330,7 +330,8 @@ const PredictDraws = (props) => {
           ({number.Probability})
         </span>
         {n !== 3 ? (
-          <span className="my-color-2 fst-italic fs-6">
+          <span className="my-color-5 fs-7">
+            {" "}
             [{number.NumberOfAppearing - 1}]
           </span>
         ) : null}
