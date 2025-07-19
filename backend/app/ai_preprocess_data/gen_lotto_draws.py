@@ -21,7 +21,8 @@ def get_lotto_data(lotto_name: int, draw_number: int):
     SELECT 
         t.NumberRange, t.DrawNumber, 
         n.Value, n.Distance, n.IsHit, n.NumberofDrawsWhenHit, 
-        n.IsBonusNumber, n.TotalHits, n.Probability 
+        n.IsBonusNumber, n.TotalHits, n.Probability,
+        1 AS NumberOfAppearing 
     FROM [dbo].[LottoTypes] t 
     INNER JOIN [dbo].[Numbers] n ON t.Id = n.LottoTypeId 
     WHERE t.LottoName = ? AND t.DrawNumber = ?
@@ -37,6 +38,10 @@ def get_lotto_data(lotto_name: int, draw_number: int):
         # Optional: convert result to list of dictionaries
         columns = [column[0] for column in cursor.description]
         records =  [dict(zip(columns, row)) for row in rows]
+        
+        # or do below to add non db property(field)
+        #for record in records:
+        #    record['NumberOfAppearing'] = 1
         
         far_distance = int(records[-1]["Distance"])
         hot_distance = far_distance / 5
