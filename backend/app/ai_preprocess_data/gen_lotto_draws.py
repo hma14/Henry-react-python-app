@@ -97,7 +97,7 @@ def generate_draw_int(lotto_id, hot, cold, neutral, sliderMin, sliderMax):
     while len(combo) < number_hits:
         if len(combo) < hot_range:
             combo.add(random.choice(hot)["Value"])
-        elif len(combo) < neutral_range:
+        elif len(combo) <= neutral_range:
             combo.add(random.choice(neutral)["Value"])
         else:
             combo.add(random.choice(cold)["Value"])
