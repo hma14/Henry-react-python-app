@@ -20,6 +20,7 @@ import LottoPlot_LSTM from "./LottoPlot_LSTM";
 import LottoPlot_Multi_Models from "./LottoPlot_Multi_Models";
 import { grey, lime, blue, lightBlue, red } from "@mui/material/colors";
 import AiAnalysis from "./AiAnalysis";
+import HitNumberDistribution from "./HitNumberDistribution";
 import {
   AppBar,
   Toolbar,
@@ -207,6 +208,18 @@ const Dashboard = () => {
     drawNumber +
     "&analyze=";
 
+  const url28 =
+    "http://127.0.0.1:5001/api/lotto/pastDraws?lotto_name=" +
+    lottoName +
+    "&page_number=" +
+    page +
+    "&columns=" +
+    lottoColumns +
+    "&page_size=" +
+    pageSize +
+    "&drawNumber=" +
+    drawNumber;
+
 */
 
   const url10 =
@@ -305,6 +318,18 @@ const Dashboard = () => {
     drawNumber +
     "&analyze=";
 
+  const url28 =
+    "http://127.0.0.1:5001/api/lotto/pastDraws?lotto_name=" +
+    lottoName +
+    "&page_number=" +
+    page +
+    "&columns=" +
+    lottoColumns +
+    "&page_size=" +
+    pageSize +
+    "&drawNumber=" +
+    drawNumber;
+
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
       try {
@@ -337,7 +362,7 @@ const Dashboard = () => {
   const selectLotto = (value) => {
     setLottoName(lottoNameToInt[value]);
 
-    console.log();
+    //console.log();
     setSelectedOption(value);
     switch (value) {
       case "BC49":
@@ -389,6 +414,7 @@ const Dashboard = () => {
     predictDraws: "Predict Next Draw",
     potentialNumbers: "Get Potential Hit Numbers for Next Draw",
     AiAnalysis: "Gen Draws & AI Analysis",
+    pastDraws: "Past Draws",
     //openai_saying: "OpenAI Says",
   };
 
@@ -617,6 +643,13 @@ const Dashboard = () => {
                   return <LottoPlot_LSTM endpoint={url25} />;
                 case "lottoDraws":
                   return <LottoDraws endpoint={url7} columns={lottoColumns} />;
+                case "pastDraws":
+                  return (
+                    <HitNumberDistribution
+                      endpoint={url28}
+                      lottoName={lottoName}
+                    />
+                  );
                 case "numberDraws":
                   return (
                     <NumberDrawsInDistance endpoint={url8} rows={pageSize} />
