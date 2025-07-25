@@ -14,7 +14,7 @@ from datetime import datetime
 from sqlalchemy import and_, or_, func, desc 
 from sqlalchemy.orm import joinedload
 from flask_sqlalchemy import SQLAlchemy 
-from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType
+from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType, DailyGrand, DailyGrand_GrandNumber
 from potential_draws import PotentialDraws
 from pathlib import Path
 from ai_preprocess_data.data_preprocess import preprocess_data
@@ -28,6 +28,8 @@ from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pip
 from utils.database import Database
 from ai_prediction.plot import plot
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
+
+from utils.categorize_numbers import categorize_numbers
 import logging
 
 
@@ -403,7 +405,7 @@ def get_data_7():
     page_size = int(request.args.get('page_size', 10))
     page_number = int(request.args.get('page_number', 1))
     drawNumber = int(request.args.get('drawNumber'))
-    print(f'drawNumber = {drawNumber}')
+
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
 
@@ -411,9 +413,37 @@ def get_data_7():
     start_index = (page_number - 1) * page_size
     return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
 
+@app.route('/api/lotto/pastDraws', methods=['GET'])
+def get_data_8():
+    lotto_name = int(request.args.get('lotto_name', 1))
+    number_range = get_lotto_number_range(lotto_name)
+    page_size = int(request.args.get('page_size', 10))
+    page_number = int(request.args.get('page_number', 1))
+    drawNumber = int(request.args.get('drawNumber'))
+
+    if drawNumber == 1:
+        drawNumber = get_target_draw_number(lotto_name)
+
+    # Calculate the start and end indices for the current page
+    start_index = (page_number - 1) * page_size
+    data = get_past_draws(lotto_name, page_size, number_range, start_index, drawNumber)
+    
+    rows = []
+    
+    for row in data:
+        arr = []
+        if (lotto_name == 3):
+            arr = [row.Number1,row.Number2,row.Number3,row.Number4,row.Number5,row.Number6,row.Number7,row.Bonus]
+        else:
+            arr = [row.Number1,row.Number2,row.Number3,row.Number4,row.Number5,row.Number6, row.Bonus]
+        rows.append([row.DrawNumber, row.DrawDate.strftime('%Y-%m-%d'), categorize_numbers(arr)])
+    return rows
+
+
+
 
 @app.route('/api/lotto/numberDraws', methods=['GET'])
-def get_data_8():
+def get_data_9():
     lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get('page_size', 10))
@@ -549,6 +579,43 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
 
     return jsonify({'data': sorted_result_list})
 
+
+def get_past_draws(lotto_name, page_size, number_range, start_index, drawNumber):
+    
+    Table_Mapping = {
+        1: BC49,
+        2: Lotto649,
+        3: LottoMax,
+        4: DailyGrand,
+        5: DailyGrand_GrandNumber,
+    }
+    
+    # Validate lotto_name
+    if lotto_name not in Table_Mapping:
+        return jsonify({'message': 'Invalid lotto name'}), 400
+
+    # Get the model class
+    model = Table_Mapping[lotto_name]
+    
+    if not (
+        data := (
+            model.query
+            .filter(
+                model.DrawNumber <= drawNumber
+            )
+            .order_by(desc(model.DrawNumber))
+            .limit(page_size * number_range)
+            .offset(start_index)
+            .all()
+        )
+    ):
+        return jsonify({'message': 'No data found'})
+    
+    
+    return data #jsonify({'data': data})
+
+    
+    
 
 def get_target_draw_number(lotto_name):
     last_draw = (
