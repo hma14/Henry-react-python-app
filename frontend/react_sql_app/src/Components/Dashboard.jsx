@@ -410,7 +410,7 @@ const Dashboard = () => {
     predictDraws: "Predict Next Draw",
     potentialNumbers: "Get Potential Hit Numbers for Next Draw",
     AiAnalysis: "Gen Draws & AI Analysis",
-    pastDraws: "Past Draws",
+    pastDraws: "Past Draws Distribution",
     //openai_saying: "OpenAI Says",
   };
 
