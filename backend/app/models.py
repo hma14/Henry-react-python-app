@@ -111,6 +111,53 @@ class LottoMax(db.Model):
         Number6 = Number6
         Number7 = Number7
         Bonus = Bonus
+    
+    
+class DailyGrand(db.Model):
+    __tablename__ = 'DailyGrand'    
+    DrawNumber = db.Column(db.Integer, primary_key=True, unique=True)
+    DrawDate = db.Column(db.DateTime, nullable=False)
+    Number1 = db.Column(db.Integer, nullable=False)
+    Number2 = db.Column(db.Integer, nullable=False)
+    Number3 = db.Column(db.Integer, nullable=False)
+    Number4 = db.Column(db.Integer, nullable=False)
+    Number5 = db.Column(db.Integer, nullable=False)
+
+    def __init__(
+        self,
+        DrawNumber,
+        DrawDate,
+        Number1,
+        Number2,
+        Number3,
+        Number4,
+        Number5,
+    ):
+        DrawNumber = DrawNumber
+        DrawDate = datetime.strptime(DrawDate, "%Y-%m-%d")
+        Number1 = Number1
+        Number2 = Number2
+        Number3 = Number3
+        Number4 = Number4
+        Number5 = Number5
+        
+class DailyGrand_GrandNumber(db.Model):
+    __tablename__ = 'DailyGrand_GrandNumber'    
+    DrawNumber = db.Column(db.Integer, primary_key=True, unique=True)
+    DrawDate = db.Column(db.DateTime, nullable=False)
+    GrandNumber = db.Column(db.Integer, nullable=False)
+
+    def __init__(
+        self,
+        DrawNumber,
+        DrawDate,
+        GrandNumber,
+    ):
+        DrawNumber = DrawNumber
+        DrawDate = datetime.strptime(DrawDate, "%Y-%m-%d")
+        GrandNumber = GrandNumber
+        
+        
         
 class Numbers(db.Model):
     __tablename__ = 'Numbers'
