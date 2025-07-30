@@ -365,6 +365,24 @@ thead {
   justify-content: center;
   align-items: center;
 }
+.loader-container-3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: fixed; /* Keeps the loader fixed in the viewport */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  z-index: 9999; /* Ensures the loader is on top of other content */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Optional: Semi-transparent background */
+}
 
 .my-label {
   font-size: large;

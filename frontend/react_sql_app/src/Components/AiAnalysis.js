@@ -37,6 +37,8 @@ const AiAnalysis = (props) => {
   const [sliderMin, setSliderMinValue] = useState(2);
   const [sliderMax, setSliderMaxValue] = useState(4);
   const [maxValue, setMaxValue] = useState(3);
+  const [aiModel, setAiModel] = useState("deepseek-chat");
+  const [maxTokens, setMaxTokens] = useState(100);
 
   const numbers = Array.from({ length: 10 }, (_, index) => index + 1);
 
@@ -47,6 +49,19 @@ const AiAnalysis = (props) => {
     return matches.map((match) => JSON.parse(match));
   };
 
+  const ai_models = [
+    "deepseek-chat",
+    "gpt-4.1",
+    "gpt-4.1-mini",
+    "gpt-4.1-nano",
+    "o4-mini",
+    "gpt-4o",
+    "gpt-4o-mini",
+    "gpt-4o-realtime-preview",
+    "gpt-4o-mini-tts",
+    "dall-e-3",
+  ];
+  const max_tokens = [100, 200, 300, 400, 500, 1000, 1500, 2000, 3000];
   const initializeSet = (objectList) => {
     const set = new Set();
 
@@ -88,7 +103,7 @@ const AiAnalysis = (props) => {
   };
 
   const fetchData = useCallback(
-    async (analyze, numberDraws, sliderMin, sliderMax) => {
+    async (analyze, numberDraws, sliderMin, sliderMax, aiModel, maxTokens) => {
       setIsLoading(true);
       const endpoint2 =
         endpoint +
@@ -98,7 +113,11 @@ const AiAnalysis = (props) => {
         "&sliderMin=" +
         sliderMin +
         "&sliderMax=" +
-        sliderMax;
+        sliderMax +
+        "&aiModel=" +
+        aiModel +
+        "&maxTokens=" +
+        maxTokens;
       axios
         .get(endpoint2)
         .then((response) => {
@@ -125,8 +144,16 @@ const AiAnalysis = (props) => {
   );
 
   useEffect(() => {
-    fetchData(analyze, numberDraws, sliderMin, sliderMax);
-  }, [endpoint, analyze, numberDraws, sliderMin, sliderMax]);
+    fetchData(analyze, numberDraws, sliderMin, sliderMax, aiModel, maxTokens);
+  }, [
+    endpoint,
+    analyze,
+    numberDraws,
+    sliderMin,
+    sliderMax,
+    aiModel,
+    maxTokens,
+  ]);
 
   useEffect(() => {
     if (lottoName === 1 || lottoName === 2) {
@@ -143,9 +170,9 @@ const AiAnalysis = (props) => {
       <React.Fragment>
         <CssBaseline />
         <div className="card">
-          <h1 className="text-info text-center">
+          <h2 className="text-info text-center">
             Number Categories and Generated Draws
-          </h1>
+          </h2>
           {hot && hot.length > 0 ? (
             <>
               <div className="table-container">
@@ -405,14 +432,14 @@ const AiAnalysis = (props) => {
                   />
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-info">
+                  <label className="block text-sm font-medium text-info">
                     Select Number of Draws
                   </label>
                   <select
                     labelId="select-number-draws-label"
                     value={numberDraws}
                     id="select-number-draws"
-                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder, mb-4"
+                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder"
                     onChange={(e) => setNumberDraws(e.target.value)}
                   >
                     {numbers.map((num) => (
@@ -427,27 +454,68 @@ const AiAnalysis = (props) => {
                   onClick={() =>
                     fetchData(analyze, numberDraws, sliderMin, sliderMax)
                   }
-                  className="btn btn-info text-white fw-bold mb-2 three-d-button mt-2"
+                  className="btn btn-info text-white fw-bold three-d-button"
                   fullWidth
                   disabled={isLoading}
                 >
                   Generate Potential Draws
                 </button>
               </div>
-              <div className="mb-4 flex justify-end mr-4">
-                <Checkbox
-                  checked={analyze}
-                  onChange={(e) => setAnalyze(e.target.checked)}
-                  inputProps={{ "aria-label": "Request AI Analyze" }}
-                  size="large"
-                />
-                <span className="my-label text-info">Request AI Analysis</span>
+              <div className="mb-4 mt-4 flex justify-end items-center space-x-4 mr-4">
+                <div>
+                  <label className="block text-sm font-medium text-info">
+                    Select AI Model
+                  </label>
+                  <select
+                    labelId="select-number-draws-2-label"
+                    value={aiModel}
+                    id="select-number-draws-2"
+                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder mb-4"
+                    onChange={(e) => setAiModel(e.target.value)}
+                  >
+                    {ai_models.map((m, index) => (
+                      <option key={index} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-info">
+                    Select Max Tokes
+                  </label>
+                  <select
+                    labelId="select-number-draws-3-label"
+                    value={maxTokens}
+                    id="select-number-draws-3"
+                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder mb-4"
+                    onChange={(e) => setMaxTokens(e.target.value)}
+                  >
+                    {max_tokens.map((m, index) => (
+                      <option key={index} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-info">
+                    Request AI Analysis
+                  </label>
+                  <Checkbox
+                    checked={analyze}
+                    onChange={(e) => setAnalyze(e.target.checked)}
+                    inputProps={{ "aria-label": "Request AI Analyze" }}
+                    size="large"
+                    className="block text-sm font-medium text-info"
+                  />
+                </div>
               </div>
               {analyze && aiGeneratedDraws && !isLoading ? (
                 <div>
-                  <h1 className="text-info mb-4 text-center">
+                  <h2 className="text-info mb-4 text-center">
                     AI Analyze & Feedback
-                  </h1>
+                  </h2>
                   <Box
                     sx={{
                       color: "green",
@@ -461,7 +529,7 @@ const AiAnalysis = (props) => {
                   </Box>{" "}
                 </div>
               ) : analyze ? (
-                <div className="loader-container-2">
+                <div className="loader-container-3">
                   <CircularProgress />
                 </div>
               ) : (

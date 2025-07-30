@@ -1,11 +1,13 @@
 import pyodbc
 import os
+#import openai
 from openai import OpenAI
 from collections import defaultdict
 import random
 from dotenv import load_dotenv
 from utils.database import *
 import math
+
 
 lotto_hit_numbers = { 
     1: 6, 
@@ -119,11 +121,9 @@ def generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, slid
 
 
 # === AI Enhancement ===
-def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws):
-    load_dotenv()
-    api_key = os.getenv("DEEPSEEK_API_KEY")
-    client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
-
+def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws,ai_model, max_tokens):
+     
+    gptModels = ["gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "o4-mini", "gpt-4o", "gpt-4o-mini", "gpt-4o-realtime-preview", "gpt-4o-mini-tts", "dall-e-3"]
     prompt = f"""
             You are an AI lottery analysis assistant.
 
@@ -137,15 +137,31 @@ def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws):
 
             Please evaluate these combinations and suggest any improvements or alternatives.
             """
-
-    response = client.chat.completions.create(
-        model="deepseek-chat",
-        messages=[
-            {"role": "system", "content": "You are a helpful lottery assistant."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=1.0,
-        max_tokens=500
-    )
+            
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant for predicting lottery numbers."},
+        {"role": "user", "content": prompt}
+    ]
+    
+    load_dotenv()
+    
+    if (ai_model == "deepseek-chat"):     
+        api_key = os.getenv("DEEPSEEK_API_KEY")
+        base_url = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+        client = OpenAI(api_key=api_key, base_url=base_url)               
+    elif (ai_model in  gptModels):
+        api_key = os.getenv("ChatGPT_API_KEY")
+        client = OpenAI(api_key=api_key)
+    else:
+        return "AI model is missing, please choose an AI model"
+    try:
+        response = client.chat.completions.create(
+            model=ai_model, 
+            messages=messages,
+            temperature=1.0,
+            max_tokens=max_tokens
+        )
+    except Exception as e:
+        print(f"Error calling DeepSeek API: {e}")
 
     return response.choices[0].message.content

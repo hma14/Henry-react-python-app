@@ -485,6 +485,8 @@ def ai_analysis():
     analyze = request.args.get('analyze', 'false').lower() == 'true'
     sliderMin = request.args.get('sliderMin', 1)
     sliderMax = request.args.get('sliderMax', 4)
+    ai_model = request.args.get('aiModel', 'deepseek_chat')
+    max_tokens = int(request.args.get('maxTokens', 100))
     count = int(request.args.get('count', 1))
     
     
@@ -500,7 +502,7 @@ def ai_analysis():
         
     ai_generated_draws = None
     if analyze:
-        ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws)
+        ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws, ai_model, max_tokens)
         
     return [hot, cold, neutral, generated_draws, ai_generated_draws]
 
