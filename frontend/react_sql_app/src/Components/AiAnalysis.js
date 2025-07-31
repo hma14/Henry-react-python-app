@@ -452,9 +452,16 @@ const AiAnalysis = (props) => {
                 <button
                   type="button"
                   onClick={() =>
-                    fetchData(analyze, numberDraws, sliderMin, sliderMax)
+                    fetchData(
+                      analyze,
+                      numberDraws,
+                      sliderMin,
+                      sliderMax,
+                      aiModel,
+                      1
+                    )
                   }
-                  className="btn btn-info text-white fw-bold three-d-button"
+                  className="btn btn-info text-white fw-bold mt-4 three-d-button"
                   fullWidth
                   disabled={isLoading}
                 >
@@ -499,7 +506,7 @@ const AiAnalysis = (props) => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-info">
+                  <label className="flex text-sm font-medium text-info">
                     Request AI Analysis
                   </label>
                   <Checkbox
@@ -507,7 +514,7 @@ const AiAnalysis = (props) => {
                     onChange={(e) => setAnalyze(e.target.checked)}
                     inputProps={{ "aria-label": "Request AI Analyze" }}
                     size="large"
-                    className="block text-sm font-medium text-info"
+                    className="text-info"
                   />
                 </div>
               </div>
@@ -529,8 +536,8 @@ const AiAnalysis = (props) => {
                   </Box>{" "}
                 </div>
               ) : analyze ? (
-                <div className="loader-container-3">
-                  <CircularProgress />
+                <div className="loader-container">
+                  <CircularProgress size={120} />
                 </div>
               ) : (
                 ""
@@ -547,7 +554,7 @@ const AiAnalysis = (props) => {
               }}
             >
               <div className="loader-container">
-                <CircularProgress />
+                <CircularProgress size={120} />
               </div>
             </Box>
           )}

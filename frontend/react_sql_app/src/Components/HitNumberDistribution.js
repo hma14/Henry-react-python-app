@@ -6,15 +6,16 @@ import "../App.css";
 import styled from "styled-components";
 import classNames from "classnames";
 
-const StyledTable = styled.table`
+/* const StyledTable = styled.table`
   width: 100%;
   table-layout: auto;
+  hover: true;
 `;
-
+ */
 const MetaColumn = styled.th`
   width: 5%;
 `;
-const MetaColumnTd = styled.td`
+const MetaColumnId = styled.td`
   width: 5%;
 `;
 
@@ -66,17 +67,17 @@ function HitNumberDistribution(props) {
   return (
     <div>
       {lottoData && lottoData.length > 0 && (
-        <StyledTable bordered hover className="table table-secondary mb-4">
+        <Table responsive className="table-primary mb-4" size="sm" hover="true">
           {getHeader(lottoName)}
           <tbody className="fw-bold">
             {lottoData.map((row, index) => (
               <tr key={row[0]}>
-                <MetaColumnTd className="text-secondary bg-color16">
+                <MetaColumnId className="text-secondary bg-color16">
                   {index + 1}
-                </MetaColumnTd>
-                <MetaColumnTd className="text-secondary bg-color16">
+                </MetaColumnId>
+                <MetaColumnId className="text-secondary bg-color16">
                   {row[0]}
-                </MetaColumnTd>
+                </MetaColumnId>
                 <DateColumnId className="text-secondary bg-color16">
                   {row[1]}
                 </DateColumnId>
@@ -164,7 +165,7 @@ function HitNumberDistribution(props) {
             ))}
           </tbody>
           {getHeader(lottoName)}
-        </StyledTable>
+        </Table>
       )}
     </div>
   );

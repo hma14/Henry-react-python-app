@@ -11,7 +11,7 @@ import Dashboard from "./Components/Dashboard";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ClipLoader } from "react-spinners";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 const App = () => {
   const location = useLocation();
@@ -32,7 +32,7 @@ const App = () => {
   useEffect(() => {
     // Ensure gtag is available
     if (window.gtag) {
-      window.gtag('config', 'G-H3ZWVFEQW3', {
+      window.gtag("config", "G-H3ZWVFEQW3", {
         page_path: location.pathname + location.search,
       });
     }
@@ -76,7 +76,7 @@ const App = () => {
     return (
       <div>
         {/* <ClipLoader size={40} color="#3498db" /> */}
-        <CircularProgress />{" "}
+        <CircularProgress size={120} />{" "}
       </div>
     );
   }
