@@ -354,7 +354,7 @@ thead {
   }
 }
 
-.loader-container {
+.loader-container-3 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -365,7 +365,7 @@ thead {
   justify-content: center;
   align-items: center;
 }
-.loader-container-3 {
+.loader-container {
   display: flex;
   justify-content: center;
   align-items: center;
