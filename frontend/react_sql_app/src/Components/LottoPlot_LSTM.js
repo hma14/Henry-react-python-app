@@ -75,7 +75,7 @@ const LottoPlot_LSTM = (props) => {
             }}
           >
             <div className="loader-container">
-              <CircularProgress />
+              <CircularProgress size={120} />
             </div>
           </Box>
         )}

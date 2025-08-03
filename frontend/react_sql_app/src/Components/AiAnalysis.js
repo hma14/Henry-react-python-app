@@ -52,6 +52,7 @@ const AiAnalysis = (props) => {
   const ai_models = [
     "deepseek-chat",
     "gpt-4.1",
+    "gpt-4-1106-preview",
     "gpt-4.1-mini",
     "gpt-4.1-nano",
     "o4-mini",
@@ -61,7 +62,7 @@ const AiAnalysis = (props) => {
     "gpt-4o-mini-tts",
     "dall-e-3",
   ];
-  const max_tokens = [100, 200, 300, 400, 500, 1000, 1500, 2000, 3000];
+  const max_tokens = [1, 100, 200, 300, 400, 500, 1000, 1500, 2000, 3000];
   const initializeSet = (objectList) => {
     const set = new Set();
 

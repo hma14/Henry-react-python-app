@@ -71,7 +71,7 @@ const LSTMTrainingResult = (props) => {
               }}
             >
               <div className="loader-container">
-                <CircularProgress />
+                <CircularProgress size={120} />
               </div>
             </Box>
           )}

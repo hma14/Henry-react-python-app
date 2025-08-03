@@ -26,6 +26,7 @@ from ai_model_training.train_ai_model_lstm import training_LSTM_model
 from ai_prediction.ai_predict_next_draw import predict_next_draw
 from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pipeline
 from utils.database import Database
+from utils.generateImage import create_openai_image
 from ai_prediction.plot import plot
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 
@@ -507,6 +508,12 @@ def ai_analysis():
     return [hot, cold, neutral, generated_draws, ai_generated_draws]
 
 
+@app.route('/api/generate-image', methods=['POST'])
+def generateAiImage():
+    data = request.get_json()
+    prompt = data.get("prompt") if data['prompt'] != '' else None or "Xi Jinping fighting with Trump"
+    
+    return create_openai_image(prompt)
 
 
 def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
