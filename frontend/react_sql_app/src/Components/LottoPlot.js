@@ -131,7 +131,7 @@ const LottoPlot = (props) => {
             }}
           >
             <div className="loader-container">
-              <CircularProgress />
+              <CircularProgress size={120} />
             </div>
           </Box>
         )}

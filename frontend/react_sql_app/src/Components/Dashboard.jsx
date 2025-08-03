@@ -20,6 +20,7 @@ import LottoPlot_LSTM from "./LottoPlot_LSTM";
 import LottoPlot_Multi_Models from "./LottoPlot_Multi_Models";
 import { grey, lime, blue, lightBlue, red } from "@mui/material/colors";
 import AiAnalysis from "./AiAnalysis";
+import DalleImageGenerator from "./DalleImageGenerator";
 import HitNumberDistribution from "./HitNumberDistribution";
 import {
   AppBar,
@@ -218,6 +219,8 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
 
+  const url29 = "http://ep.lottotry.com:5001/api/generate-image";
+
 /*
 
   const url10 =
@@ -326,7 +329,7 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
 
-    */
+  const url29 = "http://127.0.0.1:5001/api/generate-image";
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -421,6 +424,7 @@ const Dashboard = () => {
     train_lotto_model_lgbm: "Train LightGBM Prediction",
     train_LSTM_model: "Train LSTM Prediction",
     train_multi_models: "Train Multi Models Prediction",
+    generate_image: "Generate DALL·E 3 image",
   };
 
   const handleChange2 = (value) => {
@@ -538,11 +542,13 @@ const Dashboard = () => {
                           <option value="" disabled hidden>
                             Select AI Options
                           </option>
-                          {Object.keys(aiTrainingOptionLabels).map((item) => (
-                            <option key={item} value={item}>
-                              {aiTrainingOptionLabels[item]}
-                            </option>
-                          ))}
+                          {Object.keys(aiTrainingOptionLabels).map(
+                            (item, index) => (
+                              <option key={index} value={item}>
+                                {aiTrainingOptionLabels[item]}
+                              </option>
+                            )
+                          )}
                         </select>
                       </div>
                     </li>
@@ -680,6 +686,8 @@ const Dashboard = () => {
                       lottoName={lottoName}
                     />
                   );
+                case "generate_image":
+                  return <DalleImageGenerator endpoint={url29} />;
                 default:
                   return <ApiNumbers endpoint={url4} sortType={sortType} />;
               }

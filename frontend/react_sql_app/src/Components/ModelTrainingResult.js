@@ -46,7 +46,7 @@ const ModelTrainingResult = (props) => {
         </Table>
       ) : (
         <div className="loader-container">
-          <CircularProgress />
+          <CircularProgress size={120} />
         </div>
       )}
     </div>

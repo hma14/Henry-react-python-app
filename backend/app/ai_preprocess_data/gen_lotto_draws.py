@@ -1,6 +1,6 @@
 import pyodbc
 import os
-#import openai
+import openai
 from openai import OpenAI
 from collections import defaultdict
 import random
@@ -123,7 +123,7 @@ def generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, slid
 # === AI Enhancement ===
 def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws,ai_model, max_tokens):
      
-    gptModels = ["gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "o4-mini", "gpt-4o", "gpt-4o-mini", "gpt-4o-realtime-preview", "gpt-4o-mini-tts", "dall-e-3"]
+    gptModels = ["gpt-4.1", "gpt-4-1106-preview", "gpt-4.1-mini", "gpt-4.1-nano", "o4-mini", "gpt-4o", "gpt-4o-mini", "gpt-4o-realtime-preview", "gpt-4o-mini-tts", "dall-e-3"]
     prompt = f"""
             You are an AI lottery analysis assistant.
 
@@ -162,6 +162,7 @@ def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws,ai_model, m
             max_tokens=max_tokens
         )
     except Exception as e:
-        print(f"Error calling DeepSeek API: {e}")
+        print(f"Error calling AI API: {e}")
 
     return response.choices[0].message.content
+

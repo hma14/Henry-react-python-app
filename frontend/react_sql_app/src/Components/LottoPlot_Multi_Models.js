@@ -183,7 +183,7 @@ const LottoPlot_Multi_Models = (props) => {
             }}
           >
             <div className="loader-container">
-              <CircularProgress />
+              <CircularProgress size={120} />
             </div>
           </Box>
         )}

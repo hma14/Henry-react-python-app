@@ -410,7 +410,7 @@ const PredictDraws = (props) => {
         </Table>
       ) : (
         <div className="loader-container">
-          <CircularProgress />
+          <CircularProgress size={120} />
         </div>
       )}
       <h4 className="text-success fst-italic mt-4 text-center">
