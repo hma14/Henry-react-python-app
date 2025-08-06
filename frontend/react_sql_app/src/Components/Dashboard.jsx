@@ -22,6 +22,7 @@ import { grey, lime, blue, lightBlue, red } from "@mui/material/colors";
 import AiAnalysis from "./AiAnalysis";
 import DalleImageGenerator from "./DalleImageGenerator";
 import HitNumberDistribution from "./HitNumberDistribution";
+import ImageEditor from "./ImageEditor";
 import {
   AppBar,
   Toolbar,
@@ -219,6 +220,8 @@ const Dashboard = () => {
 
   const url29 = "http://ep.lottotry.com:5001/api/generate-image";
 
+  const url30 = "http://ep.lottotry.com:5001/api/edit-image";
+
   /*
 
   const url10 =
@@ -328,6 +331,9 @@ const Dashboard = () => {
     drawNumber;
 
   const url29 = "http://127.0.0.1:5001/api/generate-image";
+
+  const url30 = "http://127.0.0.1:5001/api/edit-image";
+
   */
 
   useEffect(() => {
@@ -424,6 +430,7 @@ const Dashboard = () => {
     train_LSTM_model: "Train LSTM Prediction",
     train_multi_models: "Train Multi Models Prediction",
     generate_image: "Generate DALL·E 3 image",
+    edit_image: "Edit Image (Inpaint)",
   };
 
   const handleChange2 = (value) => {
@@ -687,6 +694,8 @@ const Dashboard = () => {
                   );
                 case "generate_image":
                   return <DalleImageGenerator endpoint={url29} />;
+                case "edit_image":
+                  return <ImageEditor endpoint={url30} />;
                 default:
                   return <ApiNumbers endpoint={url4} sortType={sortType} />;
               }

@@ -32,6 +32,7 @@ from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 
 from utils.categorize_numbers import categorize_numbers
 import logging
+from werkzeug.utils import secure_filename
 
 
 from dotenv import load_dotenv
@@ -73,6 +74,10 @@ CORS(app)
 
 
 db.init_app(app)
+
+# Make sure to allow file uploads
+app.config['UPLOAD_FOLDER'] = 'uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 lotto_table_map = {
     1: 'BC49',
@@ -514,6 +519,37 @@ def generateAiImage():
     prompt = data.get("prompt") if data['prompt'] != '' else None or "Xi Jinping fighting with Trump"
     
     return create_openai_image(prompt)
+
+@app.route('/api/edit-image', methods=['POST'])
+def edit_image():
+    prompt = request.form.get('prompt', '')
+    if 'image' not in request.files or 'mask' not in request.files:
+        return jsonify({"error": "Both 'image' and 'mask' are required"}), 400
+
+    image_file = request.files['image']
+    mask_file = request.files['mask']
+
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image_file.filename))
+    mask_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(mask_file.filename))
+
+    image_file.save(image_path)
+    mask_file.save(mask_path)
+
+    client = OpenAI(os.getenv("ChatGPT_API_KEY"))
+
+    try:
+        response = client.images.edit(
+            model="dall-e-2",
+            prompt=prompt,
+            image=open(image_path, "rb"),
+            mask=open(mask_path, "rb"),
+            n=1,
+            size="1024x1024"
+        )
+        image_url = response.data[0].url
+        return jsonify({"imageUrl": image_url})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):

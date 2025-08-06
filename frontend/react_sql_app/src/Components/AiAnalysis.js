@@ -513,7 +513,6 @@ const AiAnalysis = (props) => {
                   <Checkbox
                     checked={analyze}
                     onChange={(e) => setAnalyze(e.target.checked)}
-                    inputProps={{ "aria-label": "Request AI Analyze" }}
                     size="large"
                     className="text-info"
                   />

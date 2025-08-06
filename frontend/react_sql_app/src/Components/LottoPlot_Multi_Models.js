@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Container,
-  Grid2 as Grid,
+  Grid,
   Typography,
   CssBaseline,
   Paper,
