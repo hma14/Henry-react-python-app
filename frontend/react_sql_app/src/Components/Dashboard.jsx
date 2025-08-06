@@ -109,6 +109,8 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [redirect, setRedirect] = useState(false);
 
+  /*
+  
   const url10 =
     "http://ep.lottotry.com:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
     lottoName;
@@ -222,7 +224,7 @@ const Dashboard = () => {
 
   const url30 = "http://ep.lottotry.com:5001/api/edit-image";
 
-  /*
+  */
 
   const url10 =
     "http://127.0.0.1:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
@@ -333,8 +335,6 @@ const Dashboard = () => {
   const url29 = "http://127.0.0.1:5001/api/generate-image";
 
   const url30 = "http://127.0.0.1:5001/api/edit-image";
-
-  */
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
