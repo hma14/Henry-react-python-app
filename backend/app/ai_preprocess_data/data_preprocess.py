@@ -10,7 +10,7 @@ from datetime import datetime
 from lightgbm import LGBMClassifier
 import numpy as np
 import tensorflow as tf
-from utils.database import Database
+from database import Database
 from sklearn.metrics import accuracy_score, roc_auc_score
 
 

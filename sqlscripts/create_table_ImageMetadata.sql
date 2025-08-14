@@ -1,0 +1,6 @@
+CREATE TABLE ImageMetadata (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Prompt NVARCHAR(MAX),
+    FilePath NVARCHAR(500),
+    CreatedAt DATETIME DEFAULT GETDATE()
+);

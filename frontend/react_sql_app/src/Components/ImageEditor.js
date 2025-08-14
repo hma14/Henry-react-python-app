@@ -4,7 +4,7 @@ import { VisuallyHiddenInput, InputFileUpload } from "./FileUpload";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Container,
-  Grid2 as Grid,
+  Grid,
   Typography,
   CssBaseline,
   Paper,
@@ -56,27 +56,27 @@ function ImageEditor(props) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2 className="text-info text-center">AI Image Editor (Inpainting)</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <Typography variant="h5" sx={{ m: 2, mb: -2 }}>
+          <Typography variant="h5" sx={{ mb: 2 }}>
             Prompt:
           </Typography>
           <TextField
             id="prompt1"
-            label="Describe how to edit the image"
+            InputLabel="Describe how to edit the image"
             multiline
             fullWidth
             maxRows={4}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            sx={{ m: 2, width: "98%" }}
+            sx={{ mb: 4 }}
           />
         </div>
 
-        <Button
-          component="label"
+        {/* <Button
+          component="InputLabel"
           role={undefined}
           variant="contained"
           tabIndex={-1}
@@ -88,10 +88,10 @@ function ImageEditor(props) {
             onChange={(event) => console.log(event.target.files)}
             multiple
           />
-        </Button>
+        </Button> */}
+
         <div>
-          <label>Original Image:</label>
-          <br />
+          <InputLabel>Original Image:</InputLabel>
           <input
             type="file"
             accept="image/png, image/jpeg"
@@ -99,9 +99,10 @@ function ImageEditor(props) {
             required
           />
         </div>
+        <br />
+
         <div>
-          <label>Mask Image (Transparent PNG):</label>
-          <br />
+          <InputLabel>Mask Image (Transparent PNG):</InputLabel>
           <input
             type="file"
             accept="image/png"
@@ -109,8 +110,9 @@ function ImageEditor(props) {
             required
           />
         </div>
+        <br />
         <div>
-          <button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading}>
             {loading ? (
               <div className="loader-container">
                 <CircularProgress size={120} />
@@ -118,7 +120,7 @@ function ImageEditor(props) {
             ) : (
               "Submit"
             )}
-          </button>
+          </Button>
         </div>
       </form>
 

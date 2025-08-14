@@ -23,6 +23,9 @@ import AiAnalysis from "./AiAnalysis";
 import DalleImageGenerator from "./DalleImageGenerator";
 import HitNumberDistribution from "./HitNumberDistribution";
 import ImageEditor from "./ImageEditor";
+import ImageUpload from "./UploadImage";
+import DragDropUpload from "./DragDropUpload";
+
 import {
   AppBar,
   Toolbar,
@@ -224,6 +227,10 @@ const Dashboard = () => {
 
   const url30 = "http://ep.lottotry.com:5001/api/edit-image";
 
+  const url31 = "http://ep.lottotry.com:5001/images/upload";
+
+  const url32 = "http://ep.lottotry.com:5001/images/uploads";
+
   */
 
   const url10 =
@@ -336,6 +343,9 @@ const Dashboard = () => {
 
   const url30 = "http://127.0.0.1:5001/api/edit-image";
 
+  const url31 = "http://127.0.0.1:5001/images/upload";
+  const url32 = "http://127.0.0.1:5001/images/uploads";
+
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
       try {
@@ -429,7 +439,12 @@ const Dashboard = () => {
     train_lotto_model_lgbm: "Train LightGBM Prediction",
     train_LSTM_model: "Train LSTM Prediction",
     train_multi_models: "Train Multi Models Prediction",
-    generate_image: "Generate DALL·E 3 image",
+  };
+
+  const aiImageOptions = {
+    generate_image: "Generate DALL·E-3 image",
+    upload_image: "Upload image",
+    dragdrop_upload_image: "Drag N Drop Upload image",
     edit_image: "Edit Image (Inpaint)",
   };
 
@@ -516,7 +531,6 @@ const Dashboard = () => {
                         </select>
                       </div>
                     </li>
-
                     <li className="nav-item">
                       <div className="mt-1 margin-left margin-right fw-bold">
                         <select
@@ -537,7 +551,6 @@ const Dashboard = () => {
                         </select>
                       </div>
                     </li>
-
                     <li className="nav-item">
                       <div className="mt-1 margin-left margin-right fw-bold">
                         <select
@@ -558,7 +571,6 @@ const Dashboard = () => {
                         </select>
                       </div>
                     </li>
-
                     <li className="nav-item">
                       <div className="mt-1 margin-left margin-right fw-bold dropdown-width">
                         <select
@@ -613,6 +625,24 @@ const Dashboard = () => {
                           value={drawNumber}
                           onChange={handleDrawNumberChange}
                         />
+                      </div>
+                    </li>
+                    <li className="nav-item">
+                      <div className="mt-1 margin-left margin-right fw-bold">
+                        <select
+                          className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
+                          value={selectedAiOption}
+                          onChange={(e) => handleChange2(e.target.value)}
+                        >
+                          <option value="" disabled hidden>
+                            AI Generated Image
+                          </option>
+                          {Object.keys(aiImageOptions).map((item, index) => (
+                            <option key={index} value={item}>
+                              {aiImageOptions[item]}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </li>
                   </ul>
@@ -694,6 +724,10 @@ const Dashboard = () => {
                   );
                 case "generate_image":
                   return <DalleImageGenerator endpoint={url29} />;
+                case "upload_image":
+                  return <ImageUpload endpoint={url31} />;
+                case "dragdrop_upload_image":
+                  return <DragDropUpload endpoint={url32} />;
                 case "edit_image":
                   return <ImageEditor endpoint={url30} />;
                 default:

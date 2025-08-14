@@ -1,9 +1,23 @@
+# database.py
+
 import os
 import pyodbc
 import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+
+DATABASE_URL = r"mssql+pyodbc://sa:Bilibalabon12345@lottotry.com,1433/lottotrydb?driver=ODBC+Driver+17+for+SQL+Server"
+IMAGE_FOLDER = os.path.join(os.getcwd(), "static", "images")
+os.makedirs(IMAGE_FOLDER, exist_ok=True)
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+########################3
 def get_db_connection_string():
     cwd_dir = Path(__file__).resolve()
     root_dir = cwd_dir

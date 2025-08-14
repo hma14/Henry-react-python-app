@@ -14,7 +14,7 @@ from datetime import datetime
 from sqlalchemy import and_, or_, func, desc 
 from sqlalchemy.orm import joinedload
 from flask_sqlalchemy import SQLAlchemy 
-from models import db, BC49, LottoMax, Lotto649, Numbers, LottoType, DailyGrand, DailyGrand_GrandNumber
+from models.models import db, BC49, LottoMax, Lotto649, Numbers, LottoType, DailyGrand, DailyGrand_GrandNumber
 from potential_draws import PotentialDraws
 from pathlib import Path
 from ai_preprocess_data.data_preprocess import preprocess_data
@@ -25,7 +25,7 @@ from ai_model_training.scikit_learn_training import train_scikit_learn_model
 from ai_model_training.train_ai_model_lstm import training_LSTM_model 
 from ai_prediction.ai_predict_next_draw import predict_next_draw
 from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pipeline
-from utils.database import Database
+from database import Database
 from utils.generateImage import create_openai_image
 from ai_prediction.plot import plot
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
@@ -33,8 +33,7 @@ from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 from utils.categorize_numbers import categorize_numbers
 import logging
 from werkzeug.utils import secure_filename
-
-
+from routes.ImageMetadata import image_bp
 from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env file
 
@@ -44,6 +43,9 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 
 app = Flask(__name__)
+
+# Register the blueprint
+app.register_blueprint(image_bp, url_prefix="/images")
 
 logging.basicConfig(
     level=logging.DEBUG,

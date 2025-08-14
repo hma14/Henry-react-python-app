@@ -1,6 +1,12 @@
+
+# models.py
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Text, DateTime
+from datetime import datetime
+from database import engine
 
 
 db = SQLAlchemy()
@@ -211,3 +217,16 @@ class LottoType(db.Model):
     numbers = db.relationship('Numbers')
     
         
+        
+##################
+        
+Base = declarative_base()
+
+class ImageMetadata(Base):
+    __tablename__ = "ImageMetadata"
+    Id = Column(Integer, primary_key=True, autoincrement=True)
+    Prompt = Column(Text)
+    FilePath = Column(String(500))
+    CreatedAt = Column(DateTime, default=datetime.utcnow)
+
+Base.metadata.create_all(bind=engine)

@@ -5,7 +5,7 @@ from openai import OpenAI
 from collections import defaultdict
 import random
 from dotenv import load_dotenv
-from utils.database import *
+from database import *
 import math
 
 
