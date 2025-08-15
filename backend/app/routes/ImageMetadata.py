@@ -40,6 +40,7 @@ def list_images():
     try:
         images = session.query(ImageMetadata).order_by(ImageMetadata.CreatedAt.desc()).all()
         result = []
+        base_url = request.host_url.rstrip("/")  # e.g., http://127.0.0.1:5001
         for img in images:
             # If FilePath stores absolute path, extract basename
             filename = os.path.basename(img.FilePath) if img.FilePath else ""
@@ -49,7 +50,7 @@ def list_images():
                 "filename": filename,
                 "createdAt": img.CreatedAt.isoformat() if img.CreatedAt else None,
                 # public URL for the frontend to load
-                "url": f"/image/{filename}"
+                "url": f"{base_url}/{img.FilePath.replace(os.sep, '/')}",
             })
         return jsonify(result)
     finally:
@@ -118,9 +119,13 @@ def upload_image():
 
     # create filename and save file
     filename = filename_for(ext)
-    file_path = os.path.join(IMAGE_FOLDER, filename)
+    relative_path = os.path.join("static", "images", filename)
+    absolute_path = os.path.join(current_app.root_path, relative_path)
+    
+    # Ensure images folder exists
+    os.makedirs(os.path.dirname(absolute_path), exist_ok=True)
     try:
-        with open(file_path, "wb") as f:
+        with open(absolute_path, "wb") as f:
             f.write(file_bytes)
     except OSError as e:
         return jsonify({"error": "Failed to save file", "detail": str(e)}), 500
@@ -130,7 +135,7 @@ def upload_image():
     try:
         # If your model's FilePath is meant to store full path, use file_path.
         # If you prefer to store just filename, change to filename.
-        image = ImageMetadata(Prompt=prompt, FilePath=file_path)
+        image = ImageMetadata(Prompt=prompt, FilePath=relative_path)
         session.add(image)
         session.commit()
         # build response
@@ -141,18 +146,22 @@ def upload_image():
             "createdAt": image.CreatedAt.isoformat() if image.CreatedAt else None,
             "url": f"/image/{os.path.basename(image.FilePath)}"
         }
-        return jsonify({"message": "Image saved", "image": saved}), 201
+        #return jsonify({"message": "Image saved", "image": saved}), 201
+        
+        base_url = request.host_url.rstrip("/")  # e.g., http://127.0.0.1:5001
+        return jsonify({
+            "message": "Image saved successfully",
+            "url": f"{base_url}/{relative_path.replace(os.sep, '/')}" }), 201
+        
     except SQLAlchemyError as e:
         session.rollback()
         # delete the file we wrote to disk because DB failed
         with contextlib.suppress(OSError):
-            os.remove(file_path)
+            os.remove(absolute_path)
         return jsonify({"error": "Database error", "detail": str(e)}), 500
     finally:
         session.close()
-      
-    
-      
+
 @image_bp.route("/uploads", methods=["POST"])
 def upload_images():
     prompt = request.form.get("prompt", "")
@@ -164,11 +173,12 @@ def upload_images():
     for file in files:
         ext = os.path.splitext(file.filename)[1].lstrip(".").lower()
         filename = filename_for(ext)
-        file_path = os.path.join(IMAGE_FOLDER, filename)
-        file.save(file_path)
+        relative_path = os.path.join("static", "images", filename)
+        absolute_path = os.path.join(current_app.root_path, relative_path)
+        file.save(absolute_path)
 
         # Save to DB
-        img = ImageMetadata(Prompt=prompt, FilePath=file_path)
+        img = ImageMetadata(Prompt=prompt, FilePath=relative_path)
         session = SessionLocal()
         session.add(img)
         session.commit()
