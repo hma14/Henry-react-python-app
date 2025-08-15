@@ -102,8 +102,6 @@ const Dashboard = () => {
   const [selectedAiOption, setSelectedAiOption] = React.useState(""); // Default empty
   const [lastSelected, setLastSelected] = React.useState(""); // Track last changed dropdown
 
-  // end
-
   // eslint-disable-next-line no-unused-vars
   const [page, setPage] = useState(1);
   //const [totalPages, setTotalPages] = useState(1)
