@@ -92,14 +92,34 @@ export default function ImageUpload({ endpoint }) {
         <div>
           <input
             type="file"
-            accept="image/jpeg,image/png"
+            accept="image/*"
+            id="file-input"
             //ref={fileInputRef}
+            style={{ display: "none" }}
             onChange={handleFileChange}
             required
           />
+          <Box display="flex" alignItems="center" gap={2} mt={4}>
+            <label htmlFor="file-input">
+              <Button
+                variant="contained"
+                component="span"
+                color="primary"
+                sx={{ width: 300 }}
+              >
+                Choose Files
+              </Button>
+            </label>
+            <Box mt={2}>
+              {file && <Typography variant="body2">{file.name}</Typography>}
+            </Box>
+          </Box>
         </div>
         <br />
         <div>
+          <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+            Prompt:
+          </Typography>
           <TextField
             id="prompt1"
             label={prompt}
@@ -113,7 +133,21 @@ export default function ImageUpload({ endpoint }) {
         </div>
 
         <div>
-          <Button type="submit" disabled={loading}>
+          <Button
+            type="submit"
+            disabled={loading}
+            sx={{
+              padding: "10px 20px",
+              backgroundColor: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: loading ? "not-allowed" : "pointer",
+              marginTop: "10px",
+              width: "300px",
+              float: "right",
+            }}
+          >
             {loading ? (
               <div className="loader-container">
                 <CircularProgress size={120} />
