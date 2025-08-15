@@ -25,6 +25,7 @@ import HitNumberDistribution from "./HitNumberDistribution";
 import ImageEditor from "./ImageEditor";
 import ImageUpload from "./UploadImage";
 import DragDropUpload from "./DragDropUpload";
+import ImageGallery from "./ImageGallery";
 
 import {
   AppBar,
@@ -44,7 +45,6 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-//import { Stack } from "react-bootstrap";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -231,6 +231,9 @@ const Dashboard = () => {
 
   const url32 = "http://ep.lottotry.com:5001/images/uploads";
 
+  const url33 = "http://ep.lottotry.com:5001/images";
+
+
   */
 
   const url10 =
@@ -345,6 +348,7 @@ const Dashboard = () => {
 
   const url31 = "http://127.0.0.1:5001/images/upload";
   const url32 = "http://127.0.0.1:5001/images/uploads";
+  const url33 = "http://127.0.0.1:5001/images";
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -444,8 +448,9 @@ const Dashboard = () => {
   const aiImageOptions = {
     generate_image: "Generate DALL·E-3 image",
     upload_image: "Upload image",
-    dragdrop_upload_image: "Drag N Drop Upload image",
-    edit_image: "Edit Image (Inpaint)",
+    dragdrop_upload_image: "Drag & Drop Upload",
+    image_gallery: "Display images & Display",
+    edit_image: "Edit image (Inpaint)",
   };
 
   const handleChange2 = (value) => {
@@ -728,6 +733,8 @@ const Dashboard = () => {
                   return <ImageUpload endpoint={url31} />;
                 case "dragdrop_upload_image":
                   return <DragDropUpload endpoint={url32} />;
+                case "image_gallery":
+                  return <ImageGallery endpoint={url33} />;
                 case "edit_image":
                   return <ImageEditor endpoint={url30} />;
                 default:
