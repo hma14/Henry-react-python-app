@@ -115,7 +115,7 @@ def upload_image():
         ext = "png"
 
     # ensure image folder exists
-    os.makedirs(IMAGE_FOLDER, exist_ok=True)
+    #os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
     # create filename and save file
     filename = filename_for(ext)
