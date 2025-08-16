@@ -31,6 +31,7 @@ from ai_prediction.plot import plot
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 
 from utils.categorize_numbers import categorize_numbers
+from utils.save_ai_image_from_url import save_ai_image_from_url
 import logging
 from werkzeug.utils import secure_filename
 from routes.ImageMetadata import image_bp
@@ -518,9 +519,18 @@ def ai_analysis():
 @app.route('/api/generate-image', methods=['POST'])
 def generateAiImage():
     data = request.get_json()
-    prompt = data.get("prompt") if data['prompt'] != '' else None or "Xi Jinping fighting with Trump"
     
-    return create_openai_image(prompt)
+    #prompt = data.get("prompt") if data['prompt'] != '' else None or "Xi Jinping fighting with Trump"
+    prompt = data.get("prompt") if data['prompt'] != '' else None 
+    if prompt is None:
+        return ""
+    
+    url = create_openai_image(prompt)
+    json = url.get_json()
+    image_url = json["imageUrl"]
+    relative_path = save_ai_image_from_url(image_url, prompt)
+        
+    return url
 
 @app.route('/api/edit-image', methods=['POST'])
 def edit_image():

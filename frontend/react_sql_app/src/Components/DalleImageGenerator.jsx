@@ -69,8 +69,14 @@ function DalleImageGenerator(props) {
   }, [endpoint]);
 
   return (
-    <Container sx={{ mt: "1px", width: "100%" }}>
-      {!isLoading ? (
+    //<Container sx={{ mt: "1px", width: "100%" }}>
+    <div className="container">
+      <h2 className="text-info text-center">Generate an AI Image</h2>
+      {isLoading ? (
+        <div className="loader-container">
+          <CircularProgress size={120} />
+        </div>
+      ) : (
         <div className="center">
           <Box
             component="form"
@@ -123,12 +129,8 @@ function DalleImageGenerator(props) {
             )}
           </Box>
         </div>
-      ) : (
-        <div className="loader-container">
-          <CircularProgress size={120} />
-        </div>
       )}
-    </Container>
+    </div>
   );
 }
 
