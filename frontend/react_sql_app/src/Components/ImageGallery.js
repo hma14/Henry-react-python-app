@@ -46,6 +46,7 @@ export default function ImageGallery({ endpoint }) {
                   component="img"
                   image={`${img.url}`}
                   alt={img.prompt}
+                  title={img.prompt}
                   sx={{
                     height: 80, // small thumbnail
                     objectFit: "cover",
