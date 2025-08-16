@@ -20,9 +20,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-export default function ImageUpload({ endpoint }) {
+export default function ImageUpload(props) {
+  const { endpoint, prompt1 } = props;
   const [file, setFile] = useState(null);
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(prompt1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
