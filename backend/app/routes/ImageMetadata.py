@@ -1,4 +1,5 @@
 # ImageMetadata.py
+import base64
 import contextlib
 from flask import Blueprint, request, jsonify, send_from_directory, current_app
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,11 +8,14 @@ from uuid import uuid4
 from werkzeug.utils import secure_filename
 from urllib.parse import urlparse
 import os
+import io
 import requests
 import mimetypes
+from openai import OpenAI
 
 from models.models import ImageMetadata    # your SQLAlchemy model
 from database import SessionLocal, IMAGE_FOLDER  # DB session + image folder
+import base64
 
 image_bp = Blueprint("image_bp", __name__)
 
@@ -185,6 +189,66 @@ def upload_images():
         session.close()
 
     return jsonify({"message": f"{len(files)} images uploaded successfully!"})
+
+
+@image_bp.route("/edit-image", methods=["POST"])
+def edit_image():
+    try:
+        # Get files from the form
+        image_file = request.files.get("image")
+        mask_file = request.files.get("mask")  # optional
+        prompt = request.form.get("prompt")
+        client = OpenAI(api_key=os.getenv("ChatGPT_API_KEY"))
+
+        if not image_file:
+            return jsonify({"error": "Main image is required"}), 400
+
+        image_bytes = io.BytesIO(image_file.read())
+        image_bytes.name = image_file.filename 
+        
+        # Prepare kwargs only if mask exists
+        edit_args = {
+            "model": "gpt-image-1",
+            "image": image_bytes,  
+            "prompt": prompt,
+            "size": "1024x1024"
+        }
+
+        if mask_file:  # Only include mask if uploaded
+            edit_args["mask"] = mask_file.stream
+
+        response = client.images.edit(**edit_args)
+        
+        # Extract base64 image data
+        image_base64 = response.data[0].b64_json
+        image_bytes = base64.b64decode(image_base64)
+        
+        # create filename and save file
+        ext = "png" 
+        filename = filename_for(ext)
+        relative_path = os.path.join("static", "images", filename)
+        absolute_path = os.path.join(current_app.root_path, relative_path)
+        
+        # Ensure images folder exists
+        os.makedirs(os.path.dirname(absolute_path), exist_ok=True)
+        try:
+            with open(absolute_path, "wb") as f:
+                f.write(image_bytes)
+        except OSError as e:
+            return jsonify({"error": "Failed to save file", "detail": str(e)}), 500
+
+        # Save metadata in DB (store full path or just filename depending on your model)
+        session = SessionLocal()
+        image = ImageMetadata(Prompt=prompt, FilePath=relative_path)
+        session.add(image)
+        session.commit()
+
+        base_url = request.host_url.rstrip("/") 
+        return jsonify({"image_url": f"{base_url}/{relative_path.replace(os.sep, '/')}"})
+            
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @image_bp.route("/<filename>", methods=["GET"])

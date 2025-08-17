@@ -532,8 +532,8 @@ def generateAiImage():
         
     return url
 
-@app.route('/api/edit-image', methods=['POST'])
-def edit_image():
+@app.route('/api/edit-image-old', methods=['POST'])
+def edit_image_old():
     prompt = request.form.get('prompt', '')
     if 'image' not in request.files or 'mask' not in request.files:
         return jsonify({"error": "Both 'image' and 'mask' are required"}), 400

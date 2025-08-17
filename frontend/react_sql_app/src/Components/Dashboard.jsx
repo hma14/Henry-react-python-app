@@ -340,7 +340,7 @@ const Dashboard = () => {
 
   const url29 = "http://127.0.0.1:5001/api/generate-image";
 
-  const url30 = "http://127.0.0.1:5001/api/edit-image";
+  const url30 = "http://127.0.0.1:5001/images/edit-image";
 
   const url31 = "http://127.0.0.1:5001/images/upload";
   const url32 = "http://127.0.0.1:5001/images/uploads";
