@@ -43,7 +43,11 @@ function ImageEditor(props) {
     formData.append("mask", maskFile);
 
     try {
-      const response = await axios.post(endpoint, formData);
+      const response = await axios.post(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setEditedImageUrl(response.data.image_url);
     } catch (err) {
       if (err.response) {
