@@ -215,8 +215,11 @@ def edit_image():
         }
 
         if mask_file:  # Only include mask if uploaded
-            edit_args["mask"] = mask_file.stream
+            mask_bytes = io.BytesIO(mask_file.read())
+            mask_bytes.name = mask_file.filename
+            edit_args["mask"] = mask_bytes
 
+        
         response = client.images.edit(**edit_args)
         
         # Extract base64 image data
@@ -248,7 +251,11 @@ def edit_image():
             
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import traceback
+        return jsonify({
+            "error": str(e),
+            "trace": traceback.format_exc()
+        }), 500
 
 
 @image_bp.route("/<filename>", methods=["GET"])
