@@ -44,7 +44,7 @@ function ImageEditor(props) {
 
     try {
       const response = await axios.post(endpoint, formData);
-      setEditedImageUrl(response.data.imageUrl);
+      setEditedImageUrl(response.data.image_url);
     } catch (err) {
       if (err.response) {
         setError(err.response.data.error || "Server returned an error");
@@ -91,28 +91,78 @@ function ImageEditor(props) {
         </Button> */}
 
         <div>
-          <InputLabel>Original Image:</InputLabel>
           <input
+            id="file-input"
             type="file"
-            accept="image/png, image/jpeg"
+            accept="image/*"
             onChange={(e) => setImageFile(e.target.files[0])}
             required
+            style={{ display: "none" }}
           />
+          <Box display="flex" alignItems="center" gap={2} mt={2}>
+            <label htmlFor="file-input">
+              <Button
+                variant="contained"
+                component="span"
+                color="primary"
+                sx={{ width: 300 }}
+              >
+                Choose Original Image
+              </Button>
+            </label>
+            <Box mt={2}>
+              {imageFile && (
+                <Typography variant="body2">{imageFile.name}</Typography>
+              )}
+            </Box>
+          </Box>
         </div>
         <br />
 
         <div>
-          <InputLabel>Mask Image (Transparent PNG):</InputLabel>
           <input
+            id="file-input2"
             type="file"
             accept="image/png"
             onChange={(e) => setMaskFile(e.target.files[0])}
-            required
+            style={{ display: "none" }}
           />
+          <Box display="flex" alignItems="center" gap={2} mt={2}>
+            <label htmlFor="file-input2">
+              <Button
+                variant="contained"
+                component="span"
+                color="primary"
+                sx={{ width: 300 }}
+              >
+                Choose Mask Image
+              </Button>
+            </label>
+            <Box mt={2}>
+              {maskFile && (
+                <Typography variant="body2">{maskFile.name}</Typography>
+              )}{" "}
+              (Optional)
+            </Box>
+          </Box>
         </div>
         <br />
         <div>
-          <Button type="submit" disabled={loading}>
+          <Button
+            type="submit"
+            disabled={loading}
+            sx={{
+              padding: "10px 20px",
+              backgroundColor: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: loading ? "not-allowed" : "pointer",
+              margin: "10px",
+              width: "300px",
+              float: "right",
+            }}
+          >
             {loading ? (
               <div className="loader-container">
                 <CircularProgress size={120} />
@@ -129,11 +179,22 @@ function ImageEditor(props) {
       {editedImageUrl && (
         <div>
           <h3>Edited Image:</h3>
-          <img
-            src={editedImageUrl}
-            alt="Edited result"
-            style={{ maxWidth: "600px", border: "1px solid #ccc" }}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center", // Horizontal centering
+              alignItems: "center", // Vertical centering
+              minHeight: "200px", // Optional: Set a height to see vertical centering
+              width: "100%", // Optional: Full width or set a specific width like '500px'
+              mt: 5,
+            }}
+          >
+            <img
+              src={editedImageUrl}
+              alt="Edited result"
+              style={{ maxWidth: "100%", border: "1px solid #ccc" }}
+            />
+          </Box>
         </div>
       )}
     </div>
