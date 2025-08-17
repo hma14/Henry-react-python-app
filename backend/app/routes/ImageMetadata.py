@@ -219,8 +219,10 @@ def edit_image():
             mask_bytes.name = mask_file.filename
             edit_args["mask"] = mask_bytes
 
-        
-        response = client.images.edit(**edit_args)
+        try:
+            response = client.images.edit(**edit_args)
+        except Exception as e:
+            return jsonify({"error": "Failed to save file", "detail": str(e)}), 500
         
         # Extract base64 image data
         image_base64 = response.data[0].b64_json
