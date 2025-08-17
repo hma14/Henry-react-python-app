@@ -221,7 +221,7 @@ const Dashboard = () => {
 
   const url29 = "http://ep.lottotry.com:5001/api/generate-image";
 
-  const url30 = "http://ep.lottotry.com:5001/api/edit-image";
+  const url30 = "http://ep.lottotry.com:5001/images/edit-image";
 
   const url31 = "http://ep.lottotry.com:5001/images/upload";
 
