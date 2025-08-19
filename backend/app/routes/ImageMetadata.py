@@ -196,7 +196,7 @@ def edit_image():
     try:
         # Get files from the form
         image_file = request.files.get("image")
-        mask_file = request.files.get("mask")  # optional
+        #mask_file = request.files.get("mask")  # optional
         prompt = request.form.get("prompt")
         client = OpenAI(api_key=os.getenv("ChatGPT_API_KEY"))
 
@@ -214,15 +214,10 @@ def edit_image():
             "size": "1024x1024"
         }
 
-        if mask_file:  # Only include mask if uploaded
-            mask_bytes = io.BytesIO(mask_file.read())
-            mask_bytes.name = mask_file.filename
-            edit_args["mask"] = mask_bytes
-
         try:
             response = client.images.edit(**edit_args)
         except Exception as e:
-            return jsonify({"error": "Failed to save file", "detail": str(e)}), 500
+            return jsonify({"error": "Failed to save file", "detail": e.message}), 500
         
         # Extract base64 image data
         image_base64 = response.data[0].b64_json
