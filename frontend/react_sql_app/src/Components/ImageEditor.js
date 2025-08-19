@@ -51,9 +51,15 @@ function ImageEditor(props) {
       setEditedImageUrl(response.data.image_url);
     } catch (err) {
       if (err.response) {
-        setError(err.response.data.error || "Server returned an error");
+        //setError(err.response.data["detail"] || "Server returned an error");
+        const msg =
+          err.response?.data?.detail?.error?.message ||
+          err.response?.data?.detail ||
+          "Unexpected error occurred";
+        setError(msg);
+      } else {
+        setError("Failed to reach the server");
       }
-      setError("Failed to reach the server");
     }
 
     setLoading(false);
@@ -178,8 +184,19 @@ function ImageEditor(props) {
         </div>
       </form>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
+      {error && (
+        <Box
+          mt={10}
+          display="flex"
+          sx={{
+            color: "red",
+            fontWeight: "bold",
+            fontStyle: "italic",
+          }}
+        >
+          {error}
+        </Box>
+      )}
       {editedImageUrl && (
         <div>
           <h3>Edited Image:</h3>
