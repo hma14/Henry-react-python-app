@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
+import SendIcon from "@mui/icons-material/Send"; // arrow icon
+import SpinningLogo from "./SpinningLogo";
+import Spinning_Ai_Logo from "./Spinning_Ai_Logo";
+
 import {
   Container,
   Grid2 as Grid,
@@ -16,6 +20,7 @@ import {
   SelectChangeEvent,
   TextField,
   Button,
+  IconButton,
 } from "@mui/material";
 
 function DalleImageGenerator(props) {
@@ -70,44 +75,60 @@ function DalleImageGenerator(props) {
 
   return (
     //<Container sx={{ mt: "1px", width: "100%" }}>
-    <div className="container">
+    <Container maxWidth="md">
       <h2 className="text-info text-center">Generate an AI Image</h2>
       {isLoading ? (
         <div className="loader-container">
           <CircularProgress size={120} />
         </div>
       ) : (
-        <div className="center">
+        <Box
+          component="form"
+          sx={{
+            "& .MuiTextField-root": {
+              m: 2,
+            },
+          }}
+          noValidate
+          autoComplete="off"
+        >
           <Box
-            component="form"
             sx={{
-              "& .MuiTextField-root": {
-                m: 2,
-              },
+              display: "flex",
+              alignItems: "center",
             }}
-            noValidate
-            autoComplete="off"
           >
+            <Spinning_Ai_Logo />
             <TextField
-              id="outlined-multiline-flexible"
-              label="Enter your image prompt"
-              multiline
               fullWidth
-              maxRows={4}
+              multiline
+              id="outlined-multiline-flexible"
+              label="Describe what image you want to create"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              sx={{ mt: "2px", width: "100%" }}
+              sx={{
+                mt: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "20px", // round the input box
+                },
+              }}
             />
 
-            <Button
-              variant="contained"
-              type="button"
+            <IconButton
+              type="submit"
+              sx={{
+                ml: 1,
+                bgcolor: "Highlight", // ChatGPT green
+                color: "white",
+                "&:hover": { bgcolor: "#0d8c6c" },
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
               onClick={fetchData}
               disabled={isLoading}
-              sx={{ width: "25%", float: "right" }}
             >
-              Generate Image
-            </Button>
+              <SendIcon />
+            </IconButton>
           </Box>
 
           <Box
@@ -134,9 +155,9 @@ function DalleImageGenerator(props) {
               )
             )}
           </Box>
-        </div>
+        </Box>
       )}
-    </div>
+    </Container>
   );
 }
 

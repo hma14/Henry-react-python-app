@@ -69,7 +69,7 @@ class Database:
         if not self.connection:
             raise Exception("Database connection is not established.")
 
-        cwd_dir = Path(__file__).resolve().parent.parent
+        cwd_dir = Path(__file__).resolve().parent
         query_path = cwd_dir / 'ai_preprocess_data' / 'saved_training_data' / query_file
 
         try:
