@@ -547,7 +547,7 @@ def edit_image_old():
     image_file.save(image_path)
     mask_file.save(mask_path)
 
-    client = OpenAI(os.getenv("ChatGPT_API_KEY"))
+    client = OpenAI(os.getenv("OPENAI_API_KEY"))
 
     try:
         response = client.images.edit(

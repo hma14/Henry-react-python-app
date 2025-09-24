@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from "react";
 import axios from "axios";
+import SendIcon from "@mui/icons-material/Send"; // arrow icon
+import Spinning_Ai_Logo from "./Spinning_Ai_Logo";
 
 import {
   Container,
@@ -19,13 +21,14 @@ import {
   TextField,
   Button,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 
 export default function DragDropUpload({ endpoint }) {
   const [files, setFiles] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const onDrop = useCallback((e) => {
     e.preventDefault();
@@ -80,7 +83,7 @@ export default function DragDropUpload({ endpoint }) {
   };
 
   return (
-    <div className="container">
+    <Container maxWidth="md">
       <h2 className="text-info text-center">Drag & Drop Multi-Image Upload</h2>
 
       <Box alignItems="center" gap={2} mt={4}>
@@ -103,8 +106,7 @@ export default function DragDropUpload({ endpoint }) {
           ) : (
             <p>Drag & drop images here, or click to select</p>
           )}
-        </div>
-
+        </div>{" "}
         {/* Hidden file input */}
         <input
           id="multiFileInput"
@@ -113,55 +115,59 @@ export default function DragDropUpload({ endpoint }) {
           style={{ display: "none" }}
           onChange={onFileChange}
         />
-
-        {/* Prompt input */}
-        <Typography variant="h5" sx={{ mb: 2, mt: 5 }}>
-          Prompt:
-        </Typography>
-        <div>
-          <TextField
-            id="prompt3"
-            label={prompt}
-            multiline
-            fullWidth
-            maxRows={4}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            sx={{ mb: 4 }}
-          />
-        </div>
-      </Box>
-      {/* Upload button */}
-
-      <div>
-        <Button
-          onClick={uploadFiles}
-          type="submit"
-          disabled={loading}
+        <Box
+          component="form"
           sx={{
-            padding: "10px 20px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: loading ? "not-allowed" : "pointer",
-            marginTop: "10px",
-            width: "300px",
-            float: "right",
+            "& .MuiTextField-root": {
+              m: 2,
+            },
           }}
+          noValidate
+          autoComplete="off"
         >
-          {loading ? (
-            <div className="loader-container">
-              <CircularProgress size={120} />
-            </div>
-          ) : (
-            "Upload"
-          )}
-        </Button>
-      </div>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Spinning_Ai_Logo />
+            <TextField
+              fullWidth
+              multiline
+              id="prompt3"
+              label="Describe what image you want to create"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              sx={{
+                mt: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "20px", // round the input box
+                },
+              }}
+            />
+
+            <IconButton
+              type="submit"
+              sx={{
+                ml: 1,
+                bgcolor: "Highlight", // ChatGPT green
+                color: "white",
+                "&:hover": { bgcolor: "#0d8c6c" },
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+              onClick={onFileChange}
+              disabled={isLoading}
+            >
+              <SendIcon />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Status */}
       {message && <p style={{ marginTop: "10px" }}>{message}</p>}
-    </div>
+    </Container>
   );
 }

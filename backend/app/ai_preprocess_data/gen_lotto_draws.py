@@ -150,7 +150,7 @@ def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws,ai_model, m
         base_url = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
         client = OpenAI(api_key=api_key, base_url=base_url)               
     elif (ai_model in  gptModels):
-        api_key = os.getenv("ChatGPT_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         client = OpenAI(api_key=api_key)
     else:
         return "AI model is missing, please choose an AI model"

@@ -198,7 +198,7 @@ def edit_image():
         image_file = request.files.get("image")
         #mask_file = request.files.get("mask")  # optional
         prompt = request.form.get("prompt")
-        client = OpenAI(api_key=os.getenv("ChatGPT_API_KEY"))
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
         if not image_file:
             return jsonify({"error": "Main image is required"}), 400

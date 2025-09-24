@@ -110,6 +110,9 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [redirect, setRedirect] = useState(false);
 
+  const BASE_URL = "http://ep.lottotry.com:5001";
+  //const BASE_URL = "http://127.0.0.1:5001";
+
   /*
 
   const url10 =
@@ -234,11 +237,10 @@ const Dashboard = () => {
 */
 
   const url10 =
-    "http://127.0.0.1:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
-    lottoName;
-  const url = "http://127.0.0.1:5001/api/openai";
+    `${BASE_URL}/api/lotto/getCurrentDrawNumber?lotto_name=` + lottoName;
+  const url = `${BASE_URL}/api/openai`;
   const url4 =
-    "http://127.0.0.1:5001/api/lotto/allNumbers?lotto_name=" +
+    `${BASE_URL}/api/lotto/allNumbers?lotto_name=` +
     lottoName +
     "&page_number=" +
     page +
@@ -247,7 +249,7 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
   const url5 =
-    "http://127.0.0.1:5001/api/lotto/predict?lotto_name=" +
+    `${BASE_URL}/api/lotto/predict?lotto_name=` +
     lottoName +
     "&columns=" +
     lottoColumns +
@@ -255,7 +257,7 @@ const Dashboard = () => {
     drawNumber;
 
   const url7 =
-    "http://127.0.0.1:5001/api/lotto/lottoDraws?lotto_name=" +
+    `${BASE_URL}/api/lotto/lottoDraws?lotto_name=` +
     lottoName +
     "&page_number=" +
     page +
@@ -266,7 +268,7 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
   const url8 =
-    "http://127.0.0.1:5001/api/lotto/numberDraws?lotto_name=" +
+    `${BASE_URL}/api/lotto/numberDraws?lotto_name=` +
     lottoName +
     "&page_number=" +
     page +
@@ -275,7 +277,7 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
   const url9 =
-    "http://127.0.0.1:5001/api/lotto/potential_draws?lotto_name=" +
+    `${BASE_URL}/api/lotto/potential_draws?lotto_name=` +
     lottoName +
     "&columns=" +
     potentialColumns +
@@ -284,36 +286,36 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
   const url20 =
-    "http://127.0.0.1:5001/api/preprocess_dataset?lotto_name=" +
+    `${BASE_URL}/api/preprocess_dataset?lotto_name=` +
     lottoName +
     "&drawNumber=" +
     drawNumber;
 
-  const url21 = "http://127.0.0.1:5001/api/train_scikit_learn_model";
+  const url21 = `${BASE_URL}/api/train_scikit_learn_model`;
   const url22 =
-    "http://127.0.0.1:5001/api/train_lottery_model?lotto_name=" +
+    "${BASE_URL}/api/train_lottery_model?lotto_name=" +
     lottoName +
     "&drawNumber=" +
     drawNumber;
   const url23 =
-    "http://127.0.0.1:5001/api/predict_next_draw_lgbm?lotto_name=" +
+    `${BASE_URL}/api/predict_next_draw_lgbm?lotto_name=` +
     lottoName +
     "&drawNumber=" +
     drawNumber;
   const url24 =
-    "http://127.0.0.1:5001/api/train_multi_models?lotto_name=" +
+    `${BASE_URL}/api/train_multi_models?lotto_name=` +
     lottoName +
     "&drawNumber=" +
     drawNumber;
 
   const url25 =
-    "http://127.0.0.1:5001/api/lstm_predict_next_draw?lotto_name=" +
+    `${BASE_URL}/api/lstm_predict_next_draw?lotto_name=` +
     lottoName +
     "&drawNumber=" +
     drawNumber;
 
   const url26 =
-    "http://127.0.0.1:5001/api/lotto/potential_numbers?lotto_name=" +
+    `${BASE_URL}/api/lotto/potential_numbers?lotto_name=` +
     lottoName +
     "&columns=" +
     potentialColumns +
@@ -323,14 +325,14 @@ const Dashboard = () => {
     drawNumber +
     "&targetRows=";
   const url27 =
-    "http://127.0.0.1:5001/api/AiAnalysis?lotto_name=" +
+    `${BASE_URL}/api/AiAnalysis?lotto_name=` +
     lottoName +
     "&drawNumber=" +
     drawNumber +
     "&analyze=";
 
   const url28 =
-    "http://127.0.0.1:5001/api/lotto/pastDraws?lotto_name=" +
+    `${BASE_URL}/api/lotto/pastDraws?lotto_name=` +
     lottoName +
     "&page_number=" +
     page +
@@ -339,13 +341,13 @@ const Dashboard = () => {
     "&drawNumber=" +
     drawNumber;
 
-  const url29 = "http://127.0.0.1:5001/api/generate-image";
+  const url29 = `${BASE_URL}/api/generate-image`;
 
-  const url30 = "http://127.0.0.1:5001/images/edit-image";
+  const url30 = `${BASE_URL}/images/edit-image`;
 
-  const url31 = "http://127.0.0.1:5001/images/upload";
-  const url32 = "http://127.0.0.1:5001/images/uploads";
-  const url33 = "http://127.0.0.1:5001/images";
+  const url31 = `${BASE_URL}/images/upload`;
+  const url32 = `${BASE_URL}/images/uploads`;
+  const url33 = `${BASE_URL}/images`;
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
@@ -446,7 +448,7 @@ const Dashboard = () => {
     generate_image: "Generate DALL·E-3 image",
     upload_image: "Upload image",
     dragdrop_upload_image: "Drag & Drop Upload",
-    image_gallery: "Display images & Display",
+    image_gallery: "AI Image Gallery",
     edit_image: "Edit image (Inpaint)",
   };
 

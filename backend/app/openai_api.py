@@ -4,7 +4,7 @@ from config import Config
 from dotenv import load_dotenv
 
 load_dotenv()
-ChatGPT_API_KEY = os.getenv("ChatGPT_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
 def get_string_response():
@@ -13,7 +13,7 @@ def get_string_response():
 
 def get_openai_response():    
     
-    client = openai(api_key=ChatGPT_API_KEY)
+    client = openai(api_key=OPENAI_API_KEY)
     
     conversation = [
         {"role": "system", "content": "You are a helpful assistant."},

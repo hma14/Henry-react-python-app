@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { VisuallyHiddenInput, InputFileUpload } from "./FileUpload";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import SendIcon from "@mui/icons-material/Send"; // arrow icon
+import Spinning_Ai_Logo from "./Spinning_Ai_Logo";
+
 import {
   Container,
   Grid,
@@ -18,6 +21,7 @@ import {
   TextField,
   Button,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import { grey, red } from "@mui/material/colors";
 
@@ -28,7 +32,7 @@ function ImageEditor(props) {
   const [imageFile, setImageFile] = useState(null);
   const [maskFile, setMaskFile] = useState(null);
   const [editedImageUrl, setEditedImageUrl] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -66,41 +70,19 @@ function ImageEditor(props) {
   };
 
   return (
-    <div className="container">
+    <Container maxWidth="md">
       <h2 className="text-info text-center">AI Image Editor (Inpainting)</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            Prompt:
-          </Typography>
-          <TextField
-            id="prompt1"
-            InputLabel="Describe how to edit the image"
-            multiline
-            fullWidth
-            maxRows={4}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            sx={{ mb: 4 }}
-          />
-        </div>
-
-        {/* <Button
-          component="InputLabel"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload files
-          <VisuallyHiddenInput
-            type="file"
-            onChange={(event) => console.log(event.target.files)}
-            multiple
-          />
-        </Button> */}
-
-        <div>
+      <Box
+        component="form"
+        sx={{
+          "& .MuiTextField-root": {
+            m: 4,
+          },
+        }}
+        noValidate
+        autoComplete="off"
+      >
+        <Box display="flex" alignItems="center" gap={5} mt={10}>
           <input
             id="file-input"
             type="file"
@@ -109,27 +91,23 @@ function ImageEditor(props) {
             required
             style={{ display: "none" }}
           />
-          <Box display="flex" alignItems="center" gap={2} mt={2}>
-            <label htmlFor="file-input">
-              <Button
-                variant="contained"
-                component="span"
-                color="primary"
-                sx={{ width: 300 }}
-              >
-                Choose Original Image
-              </Button>
-            </label>
-            <Box mt={2}>
-              {imageFile && (
-                <Typography variant="body2">{imageFile.name}</Typography>
-              )}
-            </Box>
-          </Box>
-        </div>
-        <br />
 
-        <div>
+          <label htmlFor="file-input">
+            <Button
+              variant="contained"
+              component="span"
+              color="primary"
+              sx={{ width: 300 }}
+            >
+              Choose Original Image
+            </Button>
+          </label>
+          <Box>
+            {imageFile && (
+              <Typography variant="body2">{imageFile.name}</Typography>
+            )}
+          </Box>
+
           <input
             id="file-input2"
             type="file"
@@ -137,52 +115,65 @@ function ImageEditor(props) {
             onChange={(e) => setMaskFile(e.target.files[0])}
             style={{ display: "none" }}
           />
-          <Box display="flex" alignItems="center" gap={2} mt={2}>
-            <label htmlFor="file-input2">
-              <Button
-                variant="contained"
-                component="span"
-                color="primary"
-                sx={{ width: 300 }}
-              >
-                Choose Mask Image
-              </Button>
-            </label>
-            <Box mt={2}>
-              {maskFile && (
-                <Typography variant="body2">{maskFile.name}</Typography>
-              )}{" "}
-              (Optional)
-            </Box>
+          <label htmlFor="file-input2">
+            <Button
+              variant="contained"
+              component="span"
+              color="primary"
+              sx={{ width: 300 }}
+            >
+              Choose Mask Image
+            </Button>
+          </label>
+          <Box>
+            {maskFile && (
+              <Typography variant="body2">{maskFile.name}</Typography>
+            )}{" "}
+            (Optional)
           </Box>
-        </div>
-        <br />
-        <div>
-          <Button
-            type="submit"
-            disabled={loading}
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mt: 5,
+          }}
+        >
+          <Spinning_Ai_Logo />
+          <TextField
+            fullWidth
+            multiline
+            id="prompt4"
+            label="Describe how to edit the image"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
             sx={{
-              padding: "10px 20px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: loading ? "not-allowed" : "pointer",
-              margin: "10px",
-              width: "300px",
-              float: "right",
+              mt: 2,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "20px", // round the input box
+              },
             }}
+          />
+
+          <IconButton
+            type="submit"
+            sx={{
+              ml: 1,
+              bgcolor: "Highlight", // ChatGPT green
+              color: "white",
+              "&:hover": { bgcolor: "#0d8c6c" },
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+            onClick={handleSubmit}
+            disabled={isLoading}
           >
-            {loading ? (
-              <div className="loader-container">
-                <CircularProgress size={120} />
-              </div>
-            ) : (
-              "Submit"
-            )}
-          </Button>
-        </div>
-      </form>
+            <SendIcon />
+          </IconButton>
+        </Box>
+
+        <br />
+      </Box>
 
       {error && (
         <Box
@@ -218,7 +209,7 @@ function ImageEditor(props) {
           </Box>
         </div>
       )}
-    </div>
+    </Container>
   );
 }
 

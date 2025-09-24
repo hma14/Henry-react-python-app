@@ -18,13 +18,16 @@ import {
   TextField,
   Button,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
+import Spinning_Ai_Logo from "./Spinning_Ai_Logo";
+import SendIcon from "@mui/icons-material/Send"; // arrow icon
 
 export default function ImageUpload(props) {
   const { endpoint, prompt1 } = props;
   const [file, setFile] = useState(null);
   const [prompt, setPrompt] = useState(prompt1);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const fileInputRef = useRef(null);
@@ -87,7 +90,7 @@ export default function ImageUpload(props) {
   };
 
   return (
-    <div className="container">
+    <Container maxWidth="md">
       <h2 className="text-info text-center">Upload an Image</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -117,50 +120,64 @@ export default function ImageUpload(props) {
           </Box>
         </div>
         <br />
-        <div>
-          <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
-            Prompt:
-          </Typography>
-          <TextField
-            id="prompt1"
-            label={prompt}
-            multiline
-            fullWidth
-            maxRows={4}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            sx={{ mb: 4 }}
-          />
-        </div>
-
-        <div>
-          <Button
-            type="submit"
-            disabled={loading}
+        <Box
+          component="form"
+          sx={{
+            "& .MuiTextField-root": {
+              m: 2,
+            },
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <Box
             sx={{
-              padding: "10px 20px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: loading ? "not-allowed" : "pointer",
-              marginTop: "10px",
-              width: "300px",
-              float: "right",
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            {loading ? (
-              <div className="loader-container">
-                <CircularProgress size={120} />
-              </div>
-            ) : (
-              "Submit"
-            )}
-          </Button>
-        </div>
+            <Spinning_Ai_Logo />
+            <TextField
+              id="prompt1"
+              fullWidth
+              multiline
+              label={prompt}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              sx={{
+                mt: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "20px", // round the input box
+                },
+              }}
+            />
+
+            <IconButton
+              type="submit"
+              sx={{
+                ml: 1,
+                bgcolor: "Highlight", // ChatGPT green
+                color: "white",
+                "&:hover": { bgcolor: "#0d8c6c" },
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="loader-container">
+                  <CircularProgress size={120} />
+                </div>
+              ) : (
+                <SendIcon />
+              )}
+            </IconButton>
+          </Box>
+        </Box>
       </form>
 
       {message && <p>{message}</p>}
-    </div>
+    </Container>
   );
 }
