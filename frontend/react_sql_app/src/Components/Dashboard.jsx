@@ -110,8 +110,8 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [redirect, setRedirect] = useState(false);
 
-  const BASE_URL = "http://ep.lottotry.com:5001";
-  //const BASE_URL = "http://127.0.0.1:5001";
+  //const BASE_URL = "http://ep.lottotry.com:5001";
+  const BASE_URL = "http://127.0.0.1:5001";
 
   /*
 
