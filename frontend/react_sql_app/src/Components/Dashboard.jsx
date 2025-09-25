@@ -110,14 +110,11 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [redirect, setRedirect] = useState(false);
 
-<<<<<<< HEAD
-=======
   const BASE_URL = "http://ep.lottotry.com:5001";
   //const BASE_URL = "http://127.0.0.1:5001";
 
   /*
 
->>>>>>> 6067b198dfb305cb2d6836867fae9610de56cc1e
   const url10 =
     "http://ep.lottotry.com:5001/api/lotto/getCurrentDrawNumber?lotto_name=" +
     lottoName;
@@ -237,7 +234,7 @@ const Dashboard = () => {
 
   const url33 = "http://ep.lottotry.com:5001/images";
 
-  /*
+  */
 
   const url10 =
     `${BASE_URL}/api/lotto/getCurrentDrawNumber?lotto_name=` + lottoName;
@@ -352,7 +349,7 @@ const Dashboard = () => {
   const url32 = `${BASE_URL}/images/uploads`;
   const url33 = `${BASE_URL}/images`;
 
-  */
+  
 
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
