@@ -4,7 +4,7 @@ import openai
 from openai import OpenAI
 from collections import defaultdict
 import random
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from database import *
 import math
 
@@ -143,7 +143,9 @@ def ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, draws,ai_model, m
         {"role": "user", "content": prompt}
     ]
     
-    load_dotenv()
+    dotenv_path = find_dotenv()
+    #print("Using .env file:", dotenv_path)
+    load_dotenv(dotenv_path, override=True)    
     
     if (ai_model == "deepseek-chat"):     
         api_key = os.getenv("DEEPSEEK_API_KEY")

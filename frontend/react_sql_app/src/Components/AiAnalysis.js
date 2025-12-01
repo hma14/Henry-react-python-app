@@ -37,7 +37,7 @@ const AiAnalysis = (props) => {
   const [sliderMin, setSliderMinValue] = useState(2);
   const [sliderMax, setSliderMaxValue] = useState(4);
   const [maxValue, setMaxValue] = useState(3);
-  const [aiModel, setAiModel] = useState("deepseek-chat");
+  const [aiModel, setAiModel] = useState("gpt-5");
   const [maxTokens, setMaxTokens] = useState(100);
 
   const numbers = Array.from({ length: 10 }, (_, index) => index + 1);
@@ -61,6 +61,7 @@ const AiAnalysis = (props) => {
     "gpt-4o-realtime-preview",
     "gpt-4o-mini-tts",
     "dall-e-3",
+    "gpt-5",
   ];
   const max_tokens = [1, 100, 200, 300, 400, 500, 1000, 1500, 2000, 3000];
   const initializeSet = (objectList) => {

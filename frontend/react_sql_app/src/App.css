@@ -407,3 +407,15 @@ thead {
 .slider {
   width: 25%;
 }
+
+.markdown h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.markdown h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.markdown p {
+  margin: 0.5rem 0;
+}

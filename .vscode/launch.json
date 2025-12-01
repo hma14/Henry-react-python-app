@@ -11,7 +11,7 @@
         "FLASK_APP": "app.py",
         "FLASK_ENV": "development"
       },
-      "args": ["run", "--no-debugger", "--no-reload"],
+      "args": ["run", "--host=0.0.0.0", "--port=5001"],
       "jinja": true
     },
     {
@@ -19,7 +19,7 @@
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}/frontend/react_sql_app/src",
+      "webRoot": "${workspaceFolder}/frontend/react_sql_app",
       "sourceMaps": true,
       "trace": true
     },

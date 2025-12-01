@@ -4,6 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import SendIcon from "@mui/icons-material/Send"; // arrow icon
 import SpinningLogo from "./SpinningLogo";
 import Spinning_Ai_Logo from "./Spinning_Ai_Logo";
+//import { BASE_URL } from "./Dashboard";
 
 import {
   Container,
@@ -22,6 +23,7 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
+import Dashboard from "./Dashboard";
 
 function DalleImageGenerator(props) {
   const { endpoint } = props;
@@ -45,33 +47,29 @@ function DalleImageGenerator(props) {
   };
 
   const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    setError("");
-    setImageUrl("");
     try {
+      setIsLoading(true);
+      setError("");
+      setImageUrl("");
+
       const response = await axios.post(endpoint, {
         prompt: prompt,
       });
-
-      setImageUrl(response.data.imageUrl);
-    } catch (error) {
-      //setError(parseErrorMessage(error.response.data?.error));
-      //setError(error.response.data.error);
-      setError(error.response.data);
+      if ("error" in response.data) {
+        setError(response.data);
+      }
+      setImageUrl(response.data);
+    } catch (err) {
+      setError(err.response?.data?.error || "Unknown error has occurred");
     } finally {
       setIsLoading(false);
     }
   }, [endpoint, prompt]);
 
-  const fetchData_test = useCallback(async () => {
-    setIsLoading(false);
-    console.info("Testing");
-  }, [endpoint]);
-
-  useEffect(() => {
+  /*  useEffect(() => {
     setIsLoading(true);
     fetchData();
-  }, [endpoint]);
+  }, [endpoint]); */
 
   return (
     //<Container sx={{ mt: "1px", width: "100%" }}>

@@ -7,6 +7,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from datetime import datetime
 from database import engine
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 
 db = SQLAlchemy()
@@ -168,6 +170,7 @@ class DailyGrand_GrandNumber(db.Model):
 class Numbers(db.Model):
     __tablename__ = 'Numbers'
     Id = db.Column(db.String, primary_key=True, unique=True)
+    #Id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     Value = db.Column(db.Integer, nullable=False)
     Distance = db.Column(db.Integer, nullable=False)
     IsHit = db.Column(db.Boolean)
@@ -176,8 +179,9 @@ class Numbers(db.Model):
     TotalHits = db.Column(db.Integer, nullable=False)
     Probability = db.Column(db.Integer, nullable=False)
     
-    LottoTypeId = db.Column(db.String, db.ForeignKey('LottoTypes.Id'), nullable=False)
+    LottoTypeId = db.Column(UUID(as_uuid=True), db.ForeignKey('LottoTypes.Id'), nullable=False)
     LottoType = db.relationship('LottoType')
+    #LottoType = db.relationship("LottoType", back_populates="Numbers")
 
     # Extra fields not related to the database table
     NumberOfAppearing = 0

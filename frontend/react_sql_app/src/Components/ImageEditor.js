@@ -52,21 +52,17 @@ function ImageEditor(props) {
           "Content-Type": "multipart/form-data",
         },
       });
+
+      setLoading(false);
       setEditedImageUrl(response.data.image_url);
     } catch (err) {
       if (err.response) {
-        //setError(err.response.data["detail"] || "Server returned an error");
-        const msg =
-          err.response?.data?.detail?.error?.message ||
-          err.response?.data?.detail ||
-          "Unexpected error occurred";
+        const msg = err.response?.data?.error || "Unexpected error occurred";
         setError(msg);
       } else {
         setError("Failed to reach the server");
       }
     }
-
-    setLoading(false);
   };
 
   return (
