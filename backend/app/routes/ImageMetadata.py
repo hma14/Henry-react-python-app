@@ -4,7 +4,6 @@ import contextlib
 from flask import Blueprint, request, jsonify, send_from_directory, current_app
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timezone
-from uuid import uuid4
 from werkzeug.utils import secure_filename
 from urllib.parse import urlparse
 import os
@@ -16,6 +15,7 @@ from openai import OpenAI
 from models.models import ImageMetadata    # your SQLAlchemy model
 from database import SessionLocal, IMAGE_FOLDER  # DB session + image folder
 import base64
+from dotenv import load_dotenv
 
 image_bp = Blueprint("image_bp", __name__)
 
@@ -43,16 +43,19 @@ def list_images():
     session = SessionLocal()
     try:
         images = session.query(ImageMetadata).order_by(ImageMetadata.CreatedAt.desc()).all()
+        if images == '' or images is None:
+            raise ValueError('No images were found')
         result = []
         base_url = request.host_url.rstrip("/")  # e.g., http://127.0.0.1:5001
         for img in images:
-            # If FilePath stores absolute path, extract basename
+            # If FilePath stores absolute path, extract basename            
             filename = os.path.basename(img.FilePath) if img.FilePath else ""
+            createdAt = img.CreatedAt
             result.append({
                 "id": img.Id,
                 "prompt": img.Prompt,
                 "filename": filename,
-                "createdAt": img.CreatedAt.isoformat() if img.CreatedAt else None,
+                "createdAt": createdAt.isoformat(),
                 # public URL for the frontend to load
                 "url": f"{base_url}/{img.FilePath.replace(os.sep, '/')}",
             })
@@ -75,8 +78,10 @@ def upload_image():
     if "file" in request.files:
         uploaded = request.files["file"]
         prompt = request.form.get("prompt", "")
-        if uploaded.filename == "":
-            return jsonify({"error": "No file selected"}), 400
+        if uploaded.filename == '' or uploaded.filename is None:
+            #return jsonify({"error": "No file selected"}), 400
+            raise ValueError("No file selected")
+        
         # determine extension from filename
         if not allowed_file_ext(uploaded.filename):
             return jsonify({"error": "Unsupported file type"}), 400
@@ -95,7 +100,9 @@ def upload_image():
         try:
             resp = requests.get(image_url, timeout=30)
             if resp.status_code != 200:
-                return jsonify({"error": "Failed to download image from URL", "status": resp.status_code}), 502
+                raise ValueError(f'Failed to download image from URL:{resp.status_code}')
+                #return jsonify({"error": "Failed to download image from URL", "status": resp.status_code}), 502
+                
             file_bytes = resp.content
 
             # try to get extension from URL path first
@@ -175,6 +182,7 @@ def upload_images():
         return jsonify({"error": "No files uploaded"}), 400
 
     for file in files:
+        if file.filename is None: continue
         ext = os.path.splitext(file.filename)[1].lstrip(".").lower()
         filename = filename_for(ext)
         relative_path = os.path.join("static", "images", filename)
@@ -193,20 +201,28 @@ def upload_images():
 
 @image_bp.route("/edit-image", methods=["POST"])
 def edit_image():
+    
     try:
         # Get files from the form
         image_file = request.files.get("image")
         #mask_file = request.files.get("mask")  # optional
-        prompt = request.form.get("prompt")
+        prompt = request.form.get("prompt", None) 
+        
+        if prompt == '':
+            raise ValueError ("You need to provide description")
+        
+        load_dotenv(override=True)
+        print(os.getenv("OPENAI_API_KEY"))
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
         if not image_file:
-            return jsonify({"error": "Main image is required"}), 400
+            raise ValueError("Main image is required")
 
         image_bytes = io.BytesIO(image_file.read())
         image_bytes.name = image_file.filename 
         
         # Prepare kwargs only if mask exists
+        
         edit_args = {
             "model": "gpt-image-1",
             "image": image_bytes,  
@@ -217,10 +233,12 @@ def edit_image():
         try:
             response = client.images.edit(**edit_args)
         except Exception as e:
-            return jsonify({"error": "Failed to save file", "detail": e.message}), 500
+            return jsonify({"error": "Failed to save file", "detail": e}), 500
         
         # Extract base64 image data
         image_base64 = response.data[0].b64_json
+        if image_base64 is None:
+            raise ValueError('Image is empty')
         image_bytes = base64.b64decode(image_base64)
         
         # create filename and save file

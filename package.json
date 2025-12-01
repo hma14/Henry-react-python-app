@@ -7,7 +7,9 @@
     "icons-material": "^0.0.1-security",
     "lint": "^0.8.19",
     "react-chartjs-2": "^5.3.0",
-    "react-spinners": "^0.17.0"
+    "react-markdown": "^10.1.0",
+    "react-spinners": "^0.17.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",

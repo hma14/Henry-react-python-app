@@ -6,7 +6,7 @@ import joblib
 import json
 import pandas as pd
 import requests
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS   # Import the CORS module
 from config import Config
 from openai_api import get_openai_response, get_string_response
@@ -36,7 +36,6 @@ import logging
 from werkzeug.utils import secure_filename
 from routes.ImageMetadata import image_bp
 from dotenv import load_dotenv
-load_dotenv()  # Load environment variables from .env file
 
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -44,6 +43,9 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 
 app = Flask(__name__)
+
+api_key = os.getenv("OPENAI_API_KEY")
+#print("Loaded API key:", api_key)
 
 # Register the blueprint
 app.register_blueprint(image_bp, url_prefix="/images")
@@ -332,7 +334,7 @@ def potential_draws():
     lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get('page_size', 10))
-    drawNumber = int(request.args.get('drawNumber'))
+    drawNumber = int(request.args.get('drawNumber', 1))
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -352,7 +354,7 @@ def potential_draws():
 
     # Access the 'data' key, which contains an array
     numbers = parsed_data['data']
-    columns = int(request.args.get('columns'))
+    columns = int(request.args.get('columns', 6))
 
     potential_draws = PotentialDraws(numbers, columns, page_size)
 
@@ -371,8 +373,8 @@ def potential_numbers():
     lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get('page_size', 10))
-    drawNumber = int(request.args.get('drawNumber'))
-    target_rows = int(request.args.get('targetRows'))
+    drawNumber = int(request.args.get('drawNumber', 1))
+    target_rows = int(request.args.get('targetRows', 1))
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -392,7 +394,7 @@ def potential_numbers():
 
     # Access the 'data' key, which contains an array
     numbers = parsed_data['data']
-    columns = int(request.args.get('columns'))
+    columns = int(request.args.get('columns', 6))
 
     potential_draws = PotentialDraws(numbers, columns, page_size, target_rows)
 
@@ -413,7 +415,7 @@ def get_data_7():
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get('page_size', 10))
     page_number = int(request.args.get('page_number', 1))
-    drawNumber = int(request.args.get('drawNumber'))
+    drawNumber = int(request.args.get('drawNumber', 1))
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -428,7 +430,7 @@ def get_data_8():
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get('page_size', 10))
     page_number = int(request.args.get('page_number', 1))
-    drawNumber = int(request.args.get('drawNumber'))
+    drawNumber = int(request.args.get('drawNumber', 1))
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -457,7 +459,7 @@ def get_data_9():
     number_range = get_lotto_number_range(lotto_name)
     page_size = int(request.args.get('page_size', 10))
     page_number = int(request.args.get('page_number', 1))
-    drawNumber = int(request.args.get('drawNumber'))
+    drawNumber = int(request.args.get('drawNumber', 1))
     #print(f'drawNumber = {drawNumber}')
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
@@ -506,8 +508,6 @@ def ai_analysis():
     for da in generated_draws:
         for d in da:
             d['NumberOfAppearing'] += 1
-
-
         
     ai_generated_draws = None
     if analyze:
@@ -520,54 +520,25 @@ def ai_analysis():
 def generateAiImage():
     data = request.get_json()
     
-    #prompt = data.get("prompt") if data['prompt'] != '' else None or "Xi Jinping fighting with Trump"
-    prompt = data.get("prompt") if data['prompt'] != '' else None 
-    if prompt is None:
-        return ""
-    
-    url = create_openai_image(prompt)
-    json = url.get_json()
-    image_url = json["imageUrl"]
-    relative_path = save_ai_image_from_url(image_url, prompt)
-        
-    return url
-
-@app.route('/api/edit-image-old', methods=['POST'])
-def edit_image_old():
-    prompt = request.form.get('prompt', '')
-    if 'image' not in request.files or 'mask' not in request.files:
-        return jsonify({"error": "Both 'image' and 'mask' are required"}), 400
-
-    image_file = request.files['image']
-    mask_file = request.files['mask']
-
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image_file.filename))
-    mask_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(mask_file.filename))
-
-    image_file.save(image_path)
-    mask_file.save(mask_path)
-
-    client = OpenAI(os.getenv("OPENAI_API_KEY"))
-
     try:
-        response = client.images.edit(
-            model="dall-e-2",
-            prompt=prompt,
-            image=open(image_path, "rb"),
-            mask=open(mask_path, "rb"),
-            n=1,
-            size="1024x1024"
-        )
-        image_url = response.data[0].url
-        return jsonify({"imageUrl": image_url})
+        #prompt = data.get("prompt") if data['prompt'] != '' else None or "Xi Jinping fighting with Trump"
+        prompt = data.get("prompt") if data['prompt'] != '' else None 
+        if prompt is None:
+            raise ValueError ("You need to provide description")
+        
+        res = create_openai_image(prompt)
+        data = res.get_json() 
+        return data["image_url"]
+        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
     if not (
         data := (
-            Numbers.query.join(LottoType, LottoType.Id == Numbers.LottoTypeId)
+            Numbers.query.join(LottoType, LottoType.Id == Numbers.LottoTypeId) 
             .filter(
                 LottoType.LottoName == lotto_name, LottoType.DrawNumber <= drawNumber
             )
@@ -637,7 +608,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
     return jsonify({'data': sorted_result_list})
 
 
-def get_past_draws(lotto_name, page_size, number_range, start_index, drawNumber):
+def get_past_draws(lotto_name, page_size, number_range, start_index, drawNumber) -> Response:
     
     Table_Mapping = {
         1: BC49,
@@ -649,7 +620,7 @@ def get_past_draws(lotto_name, page_size, number_range, start_index, drawNumber)
     
     # Validate lotto_name
     if lotto_name not in Table_Mapping:
-        return jsonify({'message': 'Invalid lotto name'}), 400
+        return jsonify({'message': 'Invalid lotto name'})
 
     # Get the model class
     model = Table_Mapping[lotto_name]

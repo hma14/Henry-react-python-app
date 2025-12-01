@@ -1,33 +1,48 @@
 // ApiOpenAI.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../App.css'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../App.css";
+import remarkGfm from "remark-gfm";
+import ReactMarkdown from "react-markdown";
+import {
+  Container,
+  Card,
+  CardContent,
+  Accordion,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
 
 const ApiOpenAI = (props) => {
-    const {endpoint} = props
-    const [data, setData] = useState('');
+  const { endpoint } = props;
+  const [data, setData] = useState("");
 
-    useEffect(() => {
-        // Fetch data from the specified endpoint
-        axios.get(endpoint)
-            .then(response => {
-                setData(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }, [endpoint]);
+  useEffect(() => {
+    // Fetch data from the specified endpoint
+    axios
+      .get(endpoint)
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, [endpoint]);
 
-    return (
-        
-        <div className="card">
-            <h3 className="text-info">Open AI Response</h3>
-            <div className="card-body bg-success ml-4">
-                <div className='card-text text-light fs-4'> {data}</div>
-            </div>
-        </div>
-    )
-}
+  return (
+    <Container maxWidth="md">
+      <h3 className="text-info">Open AI Response</h3>
 
-export default ApiOpenAI
+      <Card sx={{ mt: 3 }}>
+        <CardContent>
+          <AccordionDetails>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{data}</ReactMarkdown>
+          </AccordionDetails>
+        </CardContent>
+      </Card>
+    </Container>
+  );
+};
+
+export default ApiOpenAI;
