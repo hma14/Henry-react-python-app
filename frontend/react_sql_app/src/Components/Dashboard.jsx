@@ -329,6 +329,7 @@ const Dashboard = () => {
     dragdrop_upload_image: "Drag & Drop Upload",
     image_gallery: "AI Image Gallery",
     edit_image: "Edit image (Inpaint)",
+    kaia_countdown: "Kaia Birth Date Countdown",
   };
 
   const handleChange2 = (value) => {
@@ -515,7 +516,14 @@ const Dashboard = () => {
                         <select
                           className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
                           value={selectedAiOption}
-                          onChange={(e) => handleChange2(e.target.value)}
+                          //onChange={(e) => handleChange2(e.target.value)}
+                          onChange={(e) => {
+                            if (e.target.value == "kaia_countdown") {
+                              window.location.href = e.target.value + ".html";
+                            } else {
+                              return handleChange2(e.target.value);
+                            }
+                          }}
                         >
                           <option value="" disabled hidden>
                             AI Generated Image
