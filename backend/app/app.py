@@ -99,7 +99,7 @@ def get_table_name(lotto_id):
     }
     return lotto_table_map.get(lotto_id, 'Unknown')
 
-#NET_API_URL = 'https://localhost:5006/api/' #later change to: http://api.lottotry.com
+#NET_API_URL = 'https://localhost:5006/api/' # no need to change in either dev or prod, just for remembering
 NET_API_URL = 'https://api.lottotry.com/api/' 
 
 @app.route('/api/signup', methods=['POST'])
