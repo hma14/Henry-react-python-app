@@ -93,7 +93,7 @@ const Styles = styled.div`
 const Dashboard = () => {
   //const [selectedLotto, setSelectedLotto] = useState('AllNumbers')
   const [sortType, setSortType] = useState("number");
-  const [, setNumberRange] = useState(49);
+  const [numberRange, setNumberRange] = useState(49);
 
   // change default lotto options
   const [lottoName, setLottoName] = useState(1);
@@ -104,6 +104,7 @@ const Dashboard = () => {
   const [selectedValue, setSelectedValue] = React.useState(""); // Default empty
   const [selectedAiOption, setSelectedAiOption] = React.useState(""); // Default empty
   const [lastSelected, setLastSelected] = React.useState(""); // Track last changed dropdown
+  const [selectedOp, setSelectedOp] = useState("");
 
   // eslint-disable-next-line no-unused-vars
   const [page, setPage] = useState(1);
@@ -288,9 +289,7 @@ const Dashboard = () => {
   };
 
   const setPlayType = (value) => {
-    setSelectedStatsOption(value);
-    setSelectedAiOption("");
-    setLastSelected("selectedStatsOption");
+    setSelectedOp(value);
     setSortType(value);
   };
 
@@ -333,15 +332,8 @@ const Dashboard = () => {
   };
 
   const handleChange2 = (value) => {
-    setSelectedAiOption(value);
-    setSelectedStatsOption("");
-    setLastSelected("selectedAiOption");
+    setSelectedOp(value);
   };
-
-  const selectedOp =
-    lastSelected === "selectedAiOption"
-      ? selectedAiOption
-      : selectedStatsOption;
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -476,7 +468,6 @@ const Dashboard = () => {
                         </span>
                       </div>
                     </li>
-
                     <li className="nav-item">
                       <div className="margin-left mt-1 row  dropdown-width">
                         <div className="col-md-6 mt-1">
