@@ -101,9 +101,7 @@ const Dashboard = () => {
   const [potentialColumns, setPotentialColumns] = useState(6);
   const [selectedOption, setSelectedOption] = useState("BC49");
   const [selectedStatsOption, setSelectedStatsOption] = useState("");
-  const [selectedValue, setSelectedValue] = React.useState(""); // Default empty
   const [selectedAiOption, setSelectedAiOption] = React.useState(""); // Default empty
-  const [lastSelected, setLastSelected] = React.useState(""); // Track last changed dropdown
   const [selectedOp, setSelectedOp] = useState("");
 
   // eslint-disable-next-line no-unused-vars
@@ -346,6 +344,67 @@ const Dashboard = () => {
     window.location.href = "/";
   }
 
+  const renderContent = () => {
+    switch (selectedOp) {
+      case "openai_saying":
+        return <ApiOpenAI endpoint={url} />;
+      case "train_lotto_model":
+        return <LottoPlot endpoint={url22} />;
+      case "train_lotto_model_lgbm":
+        return <LottoPlot_LSBM endpoint={url23} />;
+      case "train_multi_models":
+        return <LottoPlot_Multi_Models endpoint={url24} />;
+      case "train_LSTM_model":
+        return <LottoPlot_LSTM endpoint={url25} />;
+      case "lottoDraws":
+        return <LottoDraws endpoint={url7} columns={lottoColumns} />;
+      case "pastDraws":
+        return <HitNumberDistribution endpoint={url28} lottoName={lottoName} />;
+      case "numberDraws":
+        return <NumberDrawsInDistance endpoint={url8} rows={pageSize} />;
+      case "predictDraws":
+        return (
+          <PredictDraws
+            endpoint={url5}
+            endpoint2={url9}
+            columns={potentialColumns}
+            rows={pageSize}
+            drawNumber={drawNumber}
+          />
+        );
+      case "potentialNumbers":
+        return (
+          <PotentialNumbers
+            endpoint={url5}
+            endpoint2={url26}
+            columns={potentialColumns}
+            rows={pageSize}
+            drawNumber={drawNumber}
+          />
+        );
+      case "AiAnalysis":
+        return (
+          <AiAnalysis
+            endpoint={url27}
+            sortType={sortType}
+            lottoName={lottoName}
+          />
+        );
+      case "generate_image":
+        return <DalleImageGenerator endpoint={url29} />;
+      case "upload_image":
+        return <ImageUpload endpoint={url31} />;
+      case "dragdrop_upload_image":
+        return <DragDropUpload endpoint={url32} />;
+      case "image_gallery":
+        return <ImageGallery endpoint={url33} />;
+      case "edit_image":
+        return <ImageEditor endpoint={url30} />;
+      default:
+        return <ApiNumbers endpoint={url4} sortType={sortType} />;
+    }
+  };
+
   return (
     <Styles>
       {
@@ -548,75 +607,7 @@ const Dashboard = () => {
               </Button>
             </Box>
           </nav>
-          <>
-            {(() => {
-              switch (selectedOp) {
-                case "openai_saying":
-                  return <ApiOpenAI endpoint={url} />;
-                case "train_lotto_model":
-                  return <LottoPlot endpoint={url22} />;
-                case "train_lotto_model_lgbm":
-                  return <LottoPlot_LSBM endpoint={url23} />;
-                case "train_multi_models":
-                  return <LottoPlot_Multi_Models endpoint={url24} />;
-                case "train_LSTM_model":
-                  return <LottoPlot_LSTM endpoint={url25} />;
-                case "lottoDraws":
-                  return <LottoDraws endpoint={url7} columns={lottoColumns} />;
-                case "pastDraws":
-                  return (
-                    <HitNumberDistribution
-                      endpoint={url28}
-                      lottoName={lottoName}
-                    />
-                  );
-                case "numberDraws":
-                  return (
-                    <NumberDrawsInDistance endpoint={url8} rows={pageSize} />
-                  );
-                case "predictDraws":
-                  return (
-                    <PredictDraws
-                      endpoint={url5}
-                      endpoint2={url9}
-                      columns={potentialColumns}
-                      rows={pageSize}
-                      drawNumber={drawNumber}
-                    />
-                  );
-                case "potentialNumbers":
-                  return (
-                    <PotentialNumbers
-                      endpoint={url5}
-                      endpoint2={url26}
-                      columns={potentialColumns}
-                      rows={pageSize}
-                      drawNumber={drawNumber}
-                    />
-                  );
-                case "AiAnalysis":
-                  return (
-                    <AiAnalysis
-                      endpoint={url27}
-                      sortType={sortType}
-                      lottoName={lottoName}
-                    />
-                  );
-                case "generate_image":
-                  return <DalleImageGenerator endpoint={url29} />;
-                case "upload_image":
-                  return <ImageUpload endpoint={url31} />;
-                case "dragdrop_upload_image":
-                  return <DragDropUpload endpoint={url32} />;
-                case "image_gallery":
-                  return <ImageGallery endpoint={url33} />;
-                case "edit_image":
-                  return <ImageEditor endpoint={url30} />;
-                default:
-                  return <ApiNumbers endpoint={url4} sortType={sortType} />;
-              }
-            })()}
-          </>
+          <>{renderContent()}</>
         </div>
       }
     </Styles>
