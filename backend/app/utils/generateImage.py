@@ -37,7 +37,7 @@ def create_openai_image(prompt) -> Response:
         client = OpenAI(api_key=api_key)
         response = client.images.generate(
             prompt=prompt,
-            model="gpt-image-1",
+            model="gpt-image-1.5",
             n=1,
             size="1024x1024"
         )

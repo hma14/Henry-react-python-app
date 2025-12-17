@@ -224,7 +224,7 @@ def edit_image():
         # Prepare kwargs only if mask exists
         
         edit_args = {
-            "model": "gpt-image-1",
+            "model": "gpt-image-1.5",
             "image": image_bytes,  
             "prompt": prompt,
             "size": "1024x1024"
