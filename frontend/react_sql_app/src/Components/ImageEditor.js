@@ -184,26 +184,32 @@ function ImageEditor(props) {
           {error}
         </Box>
       )}
-      {editedImageUrl && (
-        <div>
-          <h3>Edited Image:</h3>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center", // Horizontal centering
-              alignItems: "center", // Vertical centering
-              minHeight: "200px", // Optional: Set a height to see vertical centering
-              width: "100%", // Optional: Full width or set a specific width like '500px'
-              mt: 5,
-            }}
-          >
-            <img
-              src={editedImageUrl}
-              alt="Edited result"
-              style={{ maxWidth: "100%", border: "1px solid #ccc" }}
-            />
-          </Box>
+      {isLoading ? (
+        <div className="loader-container">
+          <CircularProgress size={120} />
         </div>
+      ) : (
+        editedImageUrl && (
+          <div>
+            <h3>Edited Image:</h3>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center", // Horizontal centering
+                alignItems: "center", // Vertical centering
+                minHeight: "200px", // Optional: Set a height to see vertical centering
+                width: "100%", // Optional: Full width or set a specific width like '500px'
+                mt: 5,
+              }}
+            >
+              <img
+                src={editedImageUrl}
+                alt="Edited result"
+                style={{ maxWidth: "100%", border: "1px solid #ccc" }}
+              />
+            </Box>
+          </div>
+        )
       )}
     </Container>
   );
