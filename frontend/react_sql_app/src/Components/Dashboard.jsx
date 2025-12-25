@@ -46,8 +46,8 @@ import {
   Button,
 } from "@mui/material";
 
-//export const BASE_URL = "http://127.0.0.1:5001";
-export const BASE_URL = "http://ep.lottotry.com:5001";
+export const BASE_URL = "http://127.0.0.1:5001";
+//export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -566,7 +566,7 @@ const Dashboard = () => {
                           value={selectedAiOption}
                           //onChange={(e) => handleChange2(e.target.value)}
                           onChange={(e) => {
-                            if (e.target.value == "kaia_countdown") {
+                            if (e.target.value === "kaia_countdown") {
                               window.location.href = e.target.value + ".html";
                             } else {
                               return handleChange2(e.target.value);
