@@ -2,6 +2,7 @@
 
 import sys
 import os
+from unittest import result
 import joblib
 import json
 import pandas as pd
@@ -300,13 +301,8 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    lotto_data = retrieve_data(
-        lotto_name, page_size, number_range, start_index, drawNumber
-    )
-    if lotto_data is not None:
-        return lotto_data
-    else:
-        return 'Error on calling get_data_4 (allNumbers)'
+    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber), 200
+    
 
 
 @app.route('/api/lotto/predict', methods=['GET'])
@@ -346,17 +342,12 @@ def potential_draws():
         lotto_name, total_page_size, number_range, start_index, drawNumber
     )
 
-    # Decode the byte string to a regular string
-    json_str = result.data.decode('utf-8')
-
-    # Parse the JSON string
-    parsed_data = json.loads(json_str)
-
-    # Access the 'data' key, which contains an array
-    numbers = parsed_data['data']
+    json_obj = result.get_json()
+    draws = json_obj['data']
+    
     columns = int(request.args.get('columns', 6))
 
-    potential_draws = PotentialDraws(numbers, columns, page_size)
+    potential_draws = PotentialDraws(draws, columns, page_size)
 
     data = potential_draws.next_potential_draws()
     #logging.debug(f"Data received: {data}")
@@ -549,7 +540,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
             .all()
         )
     ):
-        return jsonify({'message': 'No data found'})
+        return jsonify({'data': []})
 
     numbers_dict = {}
     drawNumber_dict = {}
