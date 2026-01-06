@@ -244,34 +244,46 @@ const ApiNumbers = (props) => {
   };
 
   return (
-    <div>
-      {data && data.length > 0 && (
-        <Table responsive className="table-default mb-4" size="sm" hover="true">
-          {getHeader()}
-          <tbody className="fw-bold">
-            {data.map((draw, index) => (
-              <tr key={draw.DrawNumber}>
-                <td className="text-danger bg-color9 fs-9">{index + 1}</td>
-                <td className="text-warning bg-primary fs-7">
-                  {draw.DrawNumber}
-                </td>
-                <td className="text-warning bg-success fs-7">
-                  {draw.DrawDate}
-                </td>
-                {[...draw.Numbers]
-                  .sort((a, b) =>
-                    a[sortProperty] === b[sortProperty]
-                      ? a.value - b.value
-                      : a[sortProperty] - b[sortProperty]
-                  )
-                  .map((no) => getColors(no))}
-              </tr>
-            ))}
-          </tbody>
-          {getHeader()}
-        </Table>
+    <>
+      <div>
+        {data && data.length > 0 && (
+          <Table
+            responsive
+            className="table-default mb-4"
+            size="sm"
+            hover="true"
+          >
+            {getHeader()}
+            <tbody className="fw-bold">
+              {data.map((draw, index) => (
+                <tr key={draw.DrawNumber}>
+                  <td className="text-danger bg-color9 fs-9">{index + 1}</td>
+                  <td className="text-warning bg-primary fs-7">
+                    {draw.DrawNumber}
+                  </td>
+                  <td className="text-warning bg-success fs-7">
+                    {draw.DrawDate}
+                  </td>
+                  {[...draw.Numbers]
+                    .sort((a, b) =>
+                      a[sortProperty] === b[sortProperty]
+                        ? a.value - b.value
+                        : a[sortProperty] - b[sortProperty]
+                    )
+                    .map((no) => getColors(no))}
+                </tr>
+              ))}
+            </tbody>
+            {getHeader()}
+          </Table>
+        )}{" "}
+      </div>
+      {data.length === 0 && (
+        <div className="text-center text-red-600 text-3xl font-semibold mt-8">
+          No data available
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

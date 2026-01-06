@@ -288,7 +288,7 @@ const Dashboard = () => {
     setSelectedOp(value);
     setSortType(value);
   };
-
+  /*
   const handleDrawNumberChange = (event) => {
     // Ensure that only numeric values are entered
     //const numericValue = event.target.value.replace(/[^0-9]/g, '')
@@ -296,6 +296,19 @@ const Dashboard = () => {
     if (!isNaN(numericValue)) {
       setDrawNumber(numericValue);
     }
+  };
+  */
+
+  const handleDrawNumberChange = (e) => {
+    const { value } = e.target;
+
+    if (value === "") return;
+
+    const intValue = Number(value);
+
+    if (!Number.isInteger(intValue)) return;
+
+    setDrawNumber(intValue);
   };
 
   const lottoStatisticsOptionLabels = {
@@ -555,7 +568,7 @@ const Dashboard = () => {
                           id="numberInput"
                           name="numberInput"
                           value={drawNumber}
-                          onChange={handleDrawNumberChange}
+                          onInput={handleDrawNumberChange}
                         />
                       </div>
                     </li>
