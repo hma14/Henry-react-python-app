@@ -278,7 +278,7 @@ const ApiNumbers = (props) => {
           </Table>
         )}{" "}
       </div>
-      {data?.length === 0 && (
+      {(!data || data?.length === 0) && (
         <div className="text-center text-red-600 text-3xl font-semibold mt-8">
           No data available
         </div>
