@@ -319,7 +319,7 @@ thead {
 .general-error {
   color: red;
   font-style: italic;
-  text-align: left;
+  text-align: center;
   font-weight: 500;
 }
 
@@ -418,4 +418,14 @@ thead {
 }
 .markdown p {
   margin: 0.5rem 0;
+}
+
+.no-data {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: #b2ea6e;
+  font-weight: bold;
 }

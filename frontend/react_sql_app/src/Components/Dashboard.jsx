@@ -46,8 +46,8 @@ import {
   Button,
 } from "@mui/material";
 
-//export const BASE_URL = "http://127.0.0.1:5001";
-export const BASE_URL = "http://ep.lottotry.com:5001";
+export const BASE_URL = "http://127.0.0.1:5001";
+//export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -232,10 +232,7 @@ const Dashboard = () => {
         const response = await axios(url10);
         setDrawNumber(response.data.drawNumber);
       } catch (err) {
-        setError(
-          "Failed to fetch the draw number. Please try again later, error: " +
-            err
-        );
+        setError(err.message);
       }
     };
 
@@ -436,7 +433,7 @@ const Dashboard = () => {
               }}
             >
               {error ? (
-                <p style={{ color: "red" }}>{error}</p>
+                <p className="general-error">{error}</p>
               ) : drawNumber === null ? (
                 <p>Loading...</p>
               ) : (
