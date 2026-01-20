@@ -46,8 +46,8 @@ import {
   Button,
 } from "@mui/material";
 
-//export const BASE_URL = "http://127.0.0.1:5001";
-export const BASE_URL = "http://ep.lottotry.com:5001";
+export const BASE_URL = "http://127.0.0.1:5001";
+//export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -169,7 +169,7 @@ const Dashboard = () => {
 
   const url21 = `${BASE_URL}/api/train_scikit_learn_model`;
   const url22 =
-    "${BASE_URL}/api/train_lottery_model?lotto_name=" +
+    `${BASE_URL}/api/train_lottery_model?lotto_name=` +
     lottoName +
     "&drawNumber=" +
     drawNumber;
