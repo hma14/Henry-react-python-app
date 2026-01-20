@@ -29,6 +29,7 @@ from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pip
 from database import Database
 from utils.generateImage import create_openai_image
 from ai_prediction.plot import plot
+from ai_prediction.plot_seaborn import plot_seaborn
 from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 
 from utils.categorize_numbers import categorize_numbers
@@ -282,9 +283,10 @@ def train_LSTM_model():
     
     # save the result to Plot image
     img_base64 = plot(X_new, num_range, width=10, height=3)
+    img_base64_2 = plot_seaborn(X_new, num_range, width=10, height=3)
     
     # Send the base64 image as JSON
-    return jsonify({'numbers': numbers.tolist(), 'image': img_base64})
+    return jsonify({'numbers': numbers.tolist(), 'image': img_base64, 'image2': img_base64_2})
         
 
 

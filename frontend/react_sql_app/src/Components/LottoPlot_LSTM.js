@@ -19,6 +19,7 @@ import "../App.css";
 const LottoPlot_LSTM = (props) => {
   const { endpoint } = props;
   const [image, setImage] = useState("");
+  const [image2, setImage2] = useState("");
   const [numbers, setNumbers] = useState("");
   useEffect(() => {
     axios
@@ -28,6 +29,7 @@ const LottoPlot_LSTM = (props) => {
           const parsedData =
             typeof res.data === "string" ? JSON.parse(res.data) : res.data;
           setImage(`data:image/png;base64,${parsedData.image}`);
+          setImage2(`data:image/png;base64,${parsedData.image2}`);
           setNumbers(parsedData.numbers);
         } catch (error) {
           console.error("Error parsing JSON:", error);
@@ -49,6 +51,11 @@ const LottoPlot_LSTM = (props) => {
               <span style={{ color: "red" }}>LGTM</span> Model
             </h1>
             <img src={image} alt="Lottery Plot" style={{ width: "100%" }} />
+            <img
+              src={image2}
+              alt="Lottery Plot with Seaborn"
+              style={{ width: "100%" }}
+            />
             <Box sx={{ marginTop: "10px" }}>
               <Typography
                 sx={{ fontSize: "24px", color: "green", textAlign: "center" }}

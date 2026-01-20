@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use("Agg")  # Use the non-GUI Agg backend (for image generation)
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 import os
 from pathlib import Path
 from flask import Flask
@@ -23,6 +24,10 @@ def plot(X_new, number_range, width=12, height=6):
     ax.set_xlabel(f"Lottery Number (1-{number_range})")
     ax.set_ylabel("Predicted Probability")
     ax.set_title("Predicted Probability of Each Lottery Number")
+    
+    
+    ax.tick_params(axis="x", labelsize=8)
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 
     # Save the plot to a BytesIO object
     img_buf = io.BytesIO()

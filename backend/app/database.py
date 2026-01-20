@@ -6,11 +6,19 @@ import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 
 
-DATABASE_URL = r"mssql+pyodbc://sa:Bilibalabon12345@lottotry.com,1433/lottotrydb?driver=ODBC+Driver+17+for+SQL+Server"
+
+load_dotenv(override=True)
+
+pwd = os.getenv("DB_PWD")
+dbname = os.getenv("DB_NAME")   
+dbuid = os.getenv("DB_UID")
+
+DATABASE_URL = f"mssql+pyodbc://{dbuid}:{pwd}@lottotry.com,1433/{dbname}?driver=ODBC+Driver+17+for+SQL+Server"
 IMAGE_FOLDER = os.path.join(os.getcwd(), "static", "images")
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
@@ -35,6 +43,7 @@ class Database:
         #self._load_env()
         self.connection = self._connect()
         self.table_name = table_name
+        self.engine: Engine = engine
         
         # Define a whitelist of allowed tables to prevent SQL injection
         self.allowed_tables = {"BC49", "LottoMax", "Lotto649"}
@@ -67,7 +76,7 @@ class Database:
     def fetch_data(self, query_file, params=None):
         """Fetch data from the database using a SQL query file."""
         if not self.connection:
-            raise Exception("Database connection is not established.")
+            raise ValueError("Database connection is not established.")
 
         cwd_dir = Path(__file__).resolve().parent
         query_path = cwd_dir / 'ai_preprocess_data' / 'saved_training_data' / query_file
@@ -77,7 +86,7 @@ class Database:
                 query = file.read()
 
             query = query.replace("{TABLE_NAME}", self.table_name)
-            return pd.read_sql(query, self.connection, params=params)
+            return pd.read_sql(sql=query, con=self.engine, params=params)
         
         except Exception as e:
             print(f"Error fetching data: {e}")

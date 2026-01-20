@@ -30,6 +30,7 @@ def train_ai_model_LightGBM (table_name, lotto_name, to_draw_number, from_draw_n
         df = df.fillna(0)  
     else:
         print("Error: df is None!")
+        return None, None   
 
     
     
