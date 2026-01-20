@@ -46,8 +46,8 @@ import {
   Button,
 } from "@mui/material";
 
-export const BASE_URL = "http://127.0.0.1:5001";
-//export const BASE_URL = "http://ep.lottotry.com:5001";
+//export const BASE_URL = "http://127.0.0.1:5001";
+export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -489,7 +489,7 @@ const Dashboard = () => {
                               <option key={item} value={item}>
                                 {lottoStatisticsOptionLabels[item]}
                               </option>
-                            )
+                            ),
                           )}
                         </select>
                       </div>
@@ -509,7 +509,7 @@ const Dashboard = () => {
                               <option key={index} value={item}>
                                 {aiTrainingOptionLabels[item]}
                               </option>
-                            )
+                            ),
                           )}
                         </select>
                       </div>
@@ -527,7 +527,7 @@ const Dashboard = () => {
                                 {" "}
                                 {pageSize}
                               </option>
-                            )
+                            ),
                           )}
                         </select>
                         <span className="bg-info text-white ps-2 fw-bolder">
