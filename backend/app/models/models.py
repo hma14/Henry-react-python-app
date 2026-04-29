@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from datetime import datetime
-from database import engine
+from db.database import engine
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 

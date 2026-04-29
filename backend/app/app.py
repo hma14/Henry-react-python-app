@@ -6,16 +6,19 @@ from unittest import result
 import joblib
 import json
 import pandas as pd
+import numpy as np
 import requests
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS   # Import the CORS module
+from ai_model_training.predict_lottery_draw import predict_lottery_draw
 from config import Config
 from openai_api import get_openai_response, get_string_response
 from datetime import datetime
 from sqlalchemy import and_, or_, func, desc 
 from sqlalchemy.orm import joinedload
 from flask_sqlalchemy import SQLAlchemy 
-from models.models import db, BC49, LottoMax, Lotto649, Numbers, LottoType, DailyGrand, DailyGrand_GrandNumber
+#from models.models import db, BC49, LottoMax, Lotto649, Numbers, LottoType, DailyGrand, DailyGrand_GrandNumber
+from models.models import *
 from potential_draws import PotentialDraws
 from pathlib import Path
 from ai_preprocess_data.data_preprocess import preprocess_data
@@ -25,8 +28,9 @@ from ai_preprocess_data.gen_lotto_draws import *
 from ai_model_training.scikit_learn_training import train_scikit_learn_model
 from ai_model_training.train_ai_model_lstm import training_LSTM_model 
 from ai_prediction.ai_predict_next_draw import predict_next_draw
+from ai_model_training.train_pipeline_model import train_pipeline_model    
 from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pipeline
-from database import Database
+from db.database import Database
 from utils.generateImage import create_openai_image
 from ai_prediction.plot import plot
 from ai_prediction.plot_seaborn import plot_seaborn
@@ -38,6 +42,8 @@ import logging
 from werkzeug.utils import secure_filename
 from routes.ImageMetadata import image_bp
 from dotenv import load_dotenv
+from db.get_prediction_from_db import get_prediction_from_db
+from db.save_trainings_to_db import save_prediction_to_db
 
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -92,6 +98,14 @@ lotto_table_map = {
     3: 'LottoMax',
     4: 'DailyGrand'
 }
+
+
+training_type = {
+    1: 'LightGBM',  
+    2: 'Pipeline',
+    3: 'LSTM'
+}
+
 
 def get_table_name(lotto_id):
     lotto_table_map = {
@@ -163,6 +177,10 @@ def train_multi_models():
     
     X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
     
+    predict_pipeline, metrics, feature_importance_json = train_pipeline_model(X_train, y_train, model_config)
+    
+    X_new, top_hit_numbers = predict_lottery_draw(predict_pipeline, X_test)
+    
     # Train Pipleline model
     metrics, feature_importance_json, X_new, top_hit_numbers_pipeline = training_lottery_model_Pipeline(
         X_train, 
@@ -200,7 +218,11 @@ def train_multi_models():
     
     return jsonify({'numbers': top_hit_numbers, 'images': images, 'metrics': metrics, 'feature_importance': feature_importance_json, 'missed_numbers':  missed_numbers, 'model_names': model_names})     
     
-    
+
+def to_py(v):
+    if isinstance(v, (np.integer,)):
+        return int(v)
+    return float(v) if isinstance(v, (np.floating,)) else v
 
 @app.route('/api/train_lottery_model', methods=['GET'])
 def train_lottery_model():
@@ -208,6 +230,7 @@ def train_lottery_model():
     to_draw_number = int(request.args.get('drawNumber', 1)) 
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
+    version = 1   # ← change when retraining logic changes
 
     model_config = {
         'class_weight': 'balanced_subsample',
@@ -216,19 +239,32 @@ def train_lottery_model():
         'sampling_ratio': 0.5
     }
     
-    X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
-    
-    # Train the model
-    metrics, feature_importance_json, X_new, top_hit_numbers = training_lottery_model_Pipeline(
-        X_train, 
-        y_train, 
-        model_config
-    )
-    
-    img_base64 = plot(X_new,num_range, width=10, height=3)
-    
-    return jsonify({'numbers': top_hit_numbers.tolist(), 'image': img_base64, 'metrics': metrics, 'feature_importance': feature_importance_json })     
+    X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version)
 
+    if X_new is None:        
+        X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
+        
+        if X_train is None or y_train is None or X_test is None or y_test is None:
+            return jsonify({'error': 'Data preprocessing failed.'}), 500
+        
+        result = train_pipeline_model(X_train, y_train, model_config)
+        predict_pipeline = result["predict_pipeline"]
+        metrics = result["metrics"]
+        feature_importance = result["feature_importance"]
+        
+        X_new, top_hit_numbers = predict_lottery_draw(predict_pipeline, X_test)
+    
+        save_prediction_to_db(lotto_id, to_draw_number, version, X_new, 
+                              top_hit_numbers, 
+                              feature_importance, metrics)
+        top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
+    
+    img_base64 = plot(X_new, num_range, width=10, height=3)
+    if top_hit_numbers is None :
+        top_hit_numbers = []
+        
+    
+    return jsonify({'numbers': list(top_hit_numbers),  'image': img_base64, 'metrics': metrics, 'feature_importance': feature_importance })     
 
 
 @app.route('/api/train_scikit_learn_model', methods=['GET'])
@@ -269,24 +305,38 @@ def train_LSTM_model():
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
     to_draw_number = int(request.args.get('drawNumber', 1))
+    version = 1   # ← change when retraining logic changes
         
-    X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
+    X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version)
+
+    if X_new is None:    
+        X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
         
-    X_new, numbers = training_LSTM_model(
-        X_train, 
-        X_test,
-        y_train, 
-        y_test,
-        lookback_window=100, 
-        epochs=20
-    )
-    
+        if X_train is None or y_train is None or X_test is None or y_test is None:
+            return jsonify({'error': 'Data preprocessing failed.'}), 500
+
+            
+        X_new, top_hit_numbers = training_LSTM_model(
+            X_train, 
+            X_test,
+            y_train, 
+            y_test,
+            lookback_window=100, 
+            epochs=20
+        )
+
+        save_prediction_to_db(lotto_id, to_draw_number, version, X_new, 
+                              top_hit_numbers, 
+                              feature_importance, metrics)
+        
+    top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
+
     # save the result to Plot image
     img_base64 = plot(X_new, num_range, width=10, height=3)
     img_base64_2 = plot_seaborn(X_new, num_range, width=10, height=3)
     
     # Send the base64 image as JSON
-    return jsonify({'numbers': numbers.tolist(), 'image': img_base64, 'image2': img_base64_2})
+    return jsonify({'numbers':  list(top_hit_numbers), 'image': img_base64, 'image2': img_base64_2})
         
 
 
@@ -466,7 +516,7 @@ def get_lotto_number_range(lotto_name):
     if lotto_name in [1, 2, 4]:
         return 49
     elif lotto_name == 3:
-        return 50
+        return 52
 
     else:
         return 7  # for DailyGrand_GrandNumber

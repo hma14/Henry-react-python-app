@@ -2,7 +2,7 @@ import os
 import requests
 from datetime import datetime, timezone
 from flask import current_app
-from database import SessionLocal
+from db.database import SessionLocal
 from models.models import ImageMetadata
 
 def save_ai_image_from_url(image_url: str, prompt: str):

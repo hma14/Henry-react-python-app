@@ -10,7 +10,7 @@ from datetime import datetime
 from lightgbm import LGBMClassifier
 import numpy as np
 import tensorflow as tf
-from database import Database
+from db.database import Database
 from sklearn.metrics import accuracy_score, roc_auc_score
 
 
@@ -60,6 +60,7 @@ def preprocess_data(table_name, lotto_name, to_draw_number, from_draw_number = 1
         df = df.fillna(0)  
     else:
         print("Error: df is None!")
+        return None, None, None, None   
 
     
     

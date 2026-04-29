@@ -1,7 +1,7 @@
 
 from dotenv import load_dotenv
 import base64
-from database import SessionLocal, IMAGE_FOLDER  # DB session + image folder
+from db.database import SessionLocal, IMAGE_FOLDER  # DB session + image folder
 from models.models import ImageMetadata    # your SQLAlchemy model
 import requests
 import uuid

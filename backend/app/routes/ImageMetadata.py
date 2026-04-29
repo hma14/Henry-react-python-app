@@ -13,7 +13,7 @@ import mimetypes
 from openai import OpenAI
 
 from models.models import ImageMetadata    # your SQLAlchemy model
-from database import SessionLocal, IMAGE_FOLDER  # DB session + image folder
+from db.database import SessionLocal, IMAGE_FOLDER  # DB session + image folder
 import base64
 from dotenv import load_dotenv
 

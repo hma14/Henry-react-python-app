@@ -46,8 +46,8 @@ import {
   Button,
 } from "@mui/material";
 
-//export const BASE_URL = "http://127.0.0.1:5001";
-export const BASE_URL = "http://ep.lottotry.com:5001";
+export const BASE_URL = "http://127.0.0.1:5001";
+//export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -266,7 +266,7 @@ const Dashboard = () => {
         setPotentialColumns(6);
         return setLottoColumns(7);
       case "LottoMax":
-        setNumberRange(50);
+        setNumberRange(52);
         setPotentialColumns(7);
         return setLottoColumns(8);
       case "DailyGrand":

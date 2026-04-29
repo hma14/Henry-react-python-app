@@ -10,7 +10,7 @@ from datetime import datetime
 from lightgbm import LGBMClassifier
 import numpy as np
 import tensorflow as tf
-from database import Database
+from db.database import Database
 from sklearn.metrics import accuracy_score, roc_auc_score
 import lightgbm as lgb
 from ai_preprocess_data.data_preprocess import save_training_data
@@ -90,4 +90,4 @@ def train_ai_model_LightGBM (table_name, lotto_name, to_draw_number, from_draw_n
         
    
             
-    return X_train, top_hit_numbers
+    return X_train, top_hit_numbers, model

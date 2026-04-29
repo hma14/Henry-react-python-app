@@ -78,8 +78,8 @@ class Database:
         if not self.connection:
             raise ValueError("Database connection is not established.")
 
-        cwd_dir = Path(__file__).resolve().parent
-        query_path = cwd_dir / 'ai_preprocess_data' / 'saved_training_data' / query_file
+        root_dir = Path(__file__).resolve().parent.parent
+        query_path = root_dir / 'ai_preprocess_data' / 'saved_training_data' / query_file
 
         try:
             with open(query_path, "r") as file:
