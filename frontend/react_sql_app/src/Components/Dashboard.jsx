@@ -334,7 +334,7 @@ const Dashboard = () => {
     dragdrop_upload_image: "Drag & Drop Upload",
     image_gallery: "AI Image Gallery",
     edit_image: "Edit image (Inpaint)",
-    kaia_countdown: "Kaia Birth Date Countdown",
+    kaia_countdown: "Kaia age counting",
   };
 
   const handleChange2 = (value) => {
