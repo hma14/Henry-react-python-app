@@ -152,7 +152,7 @@ def ai_predict_next_draw_lgbm():
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
     
-    X_new, top_hit_numbers = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
+    X_new, top_hit_numbers, model = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
     
     img_base64 = plot(X_new, num_range, width=10, height=3)
     
