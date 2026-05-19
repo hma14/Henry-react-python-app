@@ -11,7 +11,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
 
-
 load_dotenv(override=True)
 
 pwd = os.getenv("DB_PWD")

@@ -44,6 +44,8 @@ from routes.ImageMetadata import image_bp
 from dotenv import load_dotenv
 from db.get_prediction_from_db import get_prediction_from_db
 from db.save_trainings_to_db import save_prediction_to_db
+from db.training_type import TrainingType
+
 
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -100,13 +102,6 @@ lotto_table_map = {
 }
 
 
-training_type = {
-    1: 'LightGBM',  
-    2: 'Pipeline',
-    3: 'LSTM'
-}
-
-
 def get_table_name(lotto_id):
     lotto_table_map = {
         1: 'BC49',
@@ -151,12 +146,23 @@ def ai_predict_next_draw_lgbm():
     to_draw_number = int(request.args.get('drawNumber', 1))
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
+    version = 1   # ← change when retraining logic changes
     
-    X_new, top_hit_numbers, model = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
+    # Check if prediction exists in DB
+    X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version, TrainingType.LIGHTGBM.value)
+    
+    if X_new is None:            
+        X_new, top_hit_numbers, model = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
+        save_prediction_to_db(lotto_id, to_draw_number, version, X_new, 
+                              top_hit_numbers, 
+                              feature_importance, metrics,
+                              TrainingType.LIGHTGBM.value)
+        top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
     
     img_base64 = plot(X_new, num_range, width=10, height=3)
-    
-    return jsonify({'image': img_base64, 'numbers': top_hit_numbers.tolist() })     
+    if top_hit_numbers is None :
+        top_hit_numbers = []
+    return jsonify({'image': img_base64, 'numbers': list(top_hit_numbers)})     
 
     
 
@@ -239,7 +245,7 @@ def train_lottery_model():
         'sampling_ratio': 0.5
     }
     
-    X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version)
+    X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version, TrainingType.PIPELINE.value)
 
     if X_new is None:        
         X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
@@ -256,7 +262,8 @@ def train_lottery_model():
     
         save_prediction_to_db(lotto_id, to_draw_number, version, X_new, 
                               top_hit_numbers, 
-                              feature_importance, metrics)
+                              feature_importance, metrics,
+                              TrainingType.PIPELINE.value)
         top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
     
     img_base64 = plot(X_new, num_range, width=10, height=3)
@@ -307,7 +314,7 @@ def train_LSTM_model():
     to_draw_number = int(request.args.get('drawNumber', 1))
     version = 1   # ← change when retraining logic changes
         
-    X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version)
+    X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version, TrainingType.LSTM.value)
 
     if X_new is None:    
         X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
@@ -327,7 +334,8 @@ def train_LSTM_model():
 
         save_prediction_to_db(lotto_id, to_draw_number, version, X_new, 
                               top_hit_numbers, 
-                              feature_importance, metrics)
+                              feature_importance, metrics,
+                              TrainingType.LSTM.value)
         
     top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
 
