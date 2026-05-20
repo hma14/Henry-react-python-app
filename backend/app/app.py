@@ -26,7 +26,8 @@ from ai_preprocess_data.data_preprocess import preprocess_data
 from ai_preprocess_data.gen_lotto_draws import *
 
 from ai_model_training.scikit_learn_training import train_scikit_learn_model
-from ai_model_training.train_ai_model_lstm import training_LSTM_model 
+from ai_model_training.train_ai_model_lstm import training_LSTM_model
+ 
 from ai_prediction.ai_predict_next_draw import predict_next_draw
 from ai_model_training.train_pipeline_model import train_pipeline_model    
 from ai_model_training.train_ai_model_pipeline import training_lottery_model_Pipeline
@@ -136,19 +137,8 @@ def proxy(path):
     )
     return response.content, response.status_code
 
-
-
-@app.route('/api/predict_next_draw_lgbm', methods=['GET'])
-def ai_predict_next_draw_lgbm():
-    
-    # Load the preprocessed data
-    lotto_id = int(request.args.get('lotto_name', 1))
-    to_draw_number = int(request.args.get('drawNumber', 1))
-    num_range = get_lotto_number_range(lotto_name=lotto_id)
+def training_model_lgbm(lotto_id, to_draw_number, version):
     table_name = get_table_name(lotto_id)
-    version = 1   # ← change when retraining logic changes
-    
-    # Check if prediction exists in DB
     X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version, TrainingType.LIGHTGBM.value)
     
     if X_new is None:            
@@ -159,10 +149,24 @@ def ai_predict_next_draw_lgbm():
                               TrainingType.LIGHTGBM.value)
         top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
     
+    return X_new, top_hit_numbers
+
+
+@app.route('/api/predict_next_draw_lgbm', methods=['GET'])
+def ai_predict_next_draw_lgbm():
+    
+    # Load the preprocessed data
+    lotto_id = int(request.args.get('lotto_name', 1))
+    to_draw_number = int(request.args.get('drawNumber', 1))
+    num_range = get_lotto_number_range(lotto_name=lotto_id)
+    version = 1   # ← change when retraining logic changes
+    
+    X_new, top_hit_numbers = training_model_lgbm(lotto_id, to_draw_number, version)
     img_base64 = plot(X_new, num_range, width=10, height=3)
     if top_hit_numbers is None :
         top_hit_numbers = []
-    return jsonify({'image': img_base64, 'numbers': list(top_hit_numbers)})     
+    return jsonify({'image': img_base64, 'numbers': list(top_hit_numbers)})  
+
 
     
 
@@ -173,56 +177,37 @@ def train_multi_models():
     to_draw_number = int(request.args.get('drawNumber', 1)) 
     num_range = get_lotto_number_range(lotto_name=lotto_id)
     table_name = get_table_name(lotto_id)
+    version = 1   # ← change when retraining logic changes
 
-    model_config = {
-        'class_weight': 'balanced_subsample',
-        'n_estimators': 200,
-        'max_depth': 10,
-        'sampling_ratio': 0.5
-    }
+
+    # Pipeline model
+    X_new, top_hit_numbers_pipeline, metrics, feature_importance  = training_Model_pipeline(lotto_id, to_draw_number, version)
     
-    X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
-    
-    predict_pipeline, metrics, feature_importance_json = train_pipeline_model(X_train, y_train, model_config)
-    
-    X_new, top_hit_numbers = predict_lottery_draw(predict_pipeline, X_test)
-    
-    # Train Pipleline model
-    metrics, feature_importance_json, X_new, top_hit_numbers_pipeline = training_lottery_model_Pipeline(
-        X_train, 
-        y_train, 
-        model_config
-    )
-    
+    # save the result to Plot image
     img_base64_pipeline = plot(X_new,num_range, width=10, height=2)
     
-        
-    X_new, nutop_hit_numbers_lstm = training_LSTM_model(
-        X_train, 
-        X_test,
-        y_train, 
-        y_test,
-        lookback_window=100, 
-        epochs=20
-    )
+    #LSTM model
+    X_new, top_hit_numbers_lstm = training_model_lstm(lotto_id, to_draw_number, version)   
     
     # save the result to Plot image
     img_base64_lstm = plot(X_new, num_range, width=10, height=2)
     
-
-    X_new, top_hit_numbers_lgbm = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
+    #LightGBM model
+    #X_new, top_hit_numbers_lgbm = train_ai_model_LightGBM(table_name, lotto_id, to_draw_number)
+    
+    X_new, top_hit_numbers_lgbm = training_model_lgbm(lotto_id, to_draw_number, version)
     
     img_base64_lgbm = plot(X_new, num_range, width=10, height=2)
     
     full_range = set(range(1, num_range + 1))
-    top_hit_numbers = [top_hit_numbers_pipeline.tolist(), nutop_hit_numbers_lstm.tolist(), top_hit_numbers_lgbm.tolist()]
+    top_hit_numbers = [top_hit_numbers_pipeline, top_hit_numbers_lstm, top_hit_numbers_lgbm]
     missed_numbers = sorted(full_range - {num for sublist in top_hit_numbers for num in sublist}, reverse=False)
     
     images = [img_base64_pipeline, img_base64_lstm, img_base64_lgbm]
     
     model_names = ['Pipeline', 'LSTM', 'LightGBM']
     
-    return jsonify({'numbers': top_hit_numbers, 'images': images, 'metrics': metrics, 'feature_importance': feature_importance_json, 'missed_numbers':  missed_numbers, 'model_names': model_names})     
+    return jsonify({'numbers': top_hit_numbers, 'images': images, 'metrics': metrics, 'feature_importance': feature_importance, 'missed_numbers':  missed_numbers, 'model_names': model_names})     
     
 
 def to_py(v):
@@ -230,14 +215,9 @@ def to_py(v):
         return int(v)
     return float(v) if isinstance(v, (np.floating,)) else v
 
-@app.route('/api/train_lottery_model', methods=['GET'])
-def train_lottery_model():
-    lotto_id = int(request.args.get('lotto_name', 1))
-    to_draw_number = int(request.args.get('drawNumber', 1)) 
-    num_range = get_lotto_number_range(lotto_name=lotto_id)
-    table_name = get_table_name(lotto_id)
-    version = 1   # ← change when retraining logic changes
 
+def training_Model_pipeline(lotto_id, to_draw_number, version):
+    table_name = get_table_name(lotto_id)
     model_config = {
         'class_weight': 'balanced_subsample',
         'n_estimators': 200,
@@ -251,7 +231,7 @@ def train_lottery_model():
         X_train, X_test, y_train, y_test = preprocess_data(table_name, lotto_id, to_draw_number)
         
         if X_train is None or y_train is None or X_test is None or y_test is None:
-            return jsonify({'error': 'Data preprocessing failed.'}), 500
+            return jsonify({'error': 'Data preprocessing failed.'}), 500, None, None
         
         result = train_pipeline_model(X_train, y_train, model_config)
         predict_pipeline = result["predict_pipeline"]
@@ -259,19 +239,30 @@ def train_lottery_model():
         feature_importance = result["feature_importance"]
         
         X_new, top_hit_numbers = predict_lottery_draw(predict_pipeline, X_test)
-    
         save_prediction_to_db(lotto_id, to_draw_number, version, X_new, 
                               top_hit_numbers, 
                               feature_importance, metrics,
                               TrainingType.PIPELINE.value)
         top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
+        
+    return X_new, top_hit_numbers, metrics, feature_importance
+
+
+@app.route('/api/train_lottery_model', methods=['GET'])
+def train_lottery_model():
+    lotto_id = int(request.args.get('lotto_name', 1))
+    to_draw_number = int(request.args.get('drawNumber', 1)) 
+    num_range = get_lotto_number_range(lotto_name=lotto_id)
+    version = 1   # ← change when retraining logic changes
+    
+    X_new, top_hit_numbers, metrics, feature_importance  = training_Model_pipeline(lotto_id, to_draw_number, version)
     
     img_base64 = plot(X_new, num_range, width=10, height=3)
     if top_hit_numbers is None :
         top_hit_numbers = []
         
     
-    return jsonify({'numbers': list(top_hit_numbers),  'image': img_base64, 'metrics': metrics, 'feature_importance': feature_importance })     
+    return jsonify({'numbers': top_hit_numbers,  'image': img_base64, 'metrics': metrics, 'feature_importance': feature_importance })     
 
 
 @app.route('/api/train_scikit_learn_model', methods=['GET'])
@@ -306,14 +297,9 @@ def scikit_learn_training_model():
     
     return jsonify(response)
 
-@app.route('/api/lstm_predict_next_draw', methods=['GET'])
-def train_LSTM_model():
-    lotto_id = int(request.args.get('lotto_name', 1))
-    num_range = get_lotto_number_range(lotto_name=lotto_id)
-    table_name = get_table_name(lotto_id)
-    to_draw_number = int(request.args.get('drawNumber', 1))
-    version = 1   # ← change when retraining logic changes
-        
+def training_model_lstm(lotto_id, to_draw_number, version):
+    
+    table_name = get_table_name(lotto_id)   
     X_new, top_hit_numbers, metrics, feature_importance = get_prediction_from_db(lotto_id, to_draw_number, version, TrainingType.LSTM.value)
 
     if X_new is None:    
@@ -321,8 +307,7 @@ def train_LSTM_model():
         
         if X_train is None or y_train is None or X_test is None or y_test is None:
             return jsonify({'error': 'Data preprocessing failed.'}), 500
-
-            
+         
         X_new, top_hit_numbers = training_LSTM_model(
             X_train, 
             X_test,
@@ -338,13 +323,25 @@ def train_LSTM_model():
                               TrainingType.LSTM.value)
         
     top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
+    return X_new, top_hit_numbers
 
+
+
+@app.route('/api/lstm_predict_next_draw', methods=['GET'])
+def train_LSTM_model():
+    lotto_id = int(request.args.get('lotto_name', 1))
+    to_draw_number = int(request.args.get('drawNumber', 1))
+    version = 1   # ← change when retraining logic changes
+    num_range = get_lotto_number_range(lotto_name=lotto_id)
+
+    X_new, top_hit_numbers = training_model_lstm(lotto_id, to_draw_number, version)
+    
     # save the result to Plot image
     img_base64 = plot(X_new, num_range, width=10, height=3)
     img_base64_2 = plot_seaborn(X_new, num_range, width=10, height=3)
     
     # Send the base64 image as JSON
-    return jsonify({'numbers':  list(top_hit_numbers), 'image': img_base64, 'image2': img_base64_2})
+    return jsonify({'numbers':  top_hit_numbers, 'image': img_base64, 'image2': img_base64_2})
         
 
 

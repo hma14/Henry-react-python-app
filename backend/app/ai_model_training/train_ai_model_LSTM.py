@@ -20,6 +20,10 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import os
 
+def to_py(v):
+    if isinstance(v, (np.integer,)):
+        return int(v)
+    return float(v) if isinstance(v, (np.floating,)) else v
 
 def create_sequences(X, y, lookback):
     Xs, ys = [], []
@@ -83,6 +87,8 @@ def training_LSTM_model(X_train, X_test, y_train, y_test, lookback_window=10, ep
 
         # Extract top hit numbers
         top_hit_numbers = X_train_df.sort_values("Probability", ascending=False)["Number"].unique()[:12]
+        
+        top_hit_numbers = [to_py(x) for x in top_hit_numbers] if top_hit_numbers is not None else []
         
         return X_train_df, top_hit_numbers
 
