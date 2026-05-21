@@ -314,7 +314,7 @@ def training_model_lstm(lotto_id, to_draw_number, version):
             y_train, 
             y_test,
             lookback_window=100, 
-            epochs=20
+            epochs=5
         )
 
         save_prediction_to_db(lotto_id, to_draw_number, version, X_new, 

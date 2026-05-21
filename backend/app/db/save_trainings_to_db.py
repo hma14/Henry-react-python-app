@@ -8,7 +8,8 @@ def save_prediction_to_db(lotto_id, draw_number, version, X_new, top_hit_numbers
     cursor = conn.cursor()
 
     train_result_json = X_new.to_json(orient="records")
-    top_hit_json = json.dumps(top_hit_numbers.tolist())    
+    top_hit_numbers = [int(x) for x in top_hit_numbers]
+    top_hit_json = json.dumps(top_hit_numbers)
     metrics_json = json.dumps(metrics) if metrics else None
     feature_importance_json = json.dumps(feature_importance) if feature_importance else None
 
