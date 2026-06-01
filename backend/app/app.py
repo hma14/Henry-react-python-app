@@ -692,7 +692,8 @@ def get_past_draws(lotto_name, page_size, number_range, start_index, drawNumber)
 
     
     
-
+from typing import cast
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 def get_target_draw_number(lotto_name):
     last_draw = (
         LottoType.query.join(
@@ -700,10 +701,12 @@ def get_target_draw_number(lotto_name):
         )  # Adjust the join condition based on your actual model
         .filter(LottoType.LottoName == lotto_name)
         .options(
-            joinedload(LottoType.numbers)
-        )  # Adjust based on your actual relationships
+            joinedload(cast(InstrumentedAttribute, LottoType.numbers))
+       )  
+       
+       # Adjust based on your actual relationships
         .order_by(desc(LottoType.DrawNumber))
-        .first()
+        .first_or_404()
     )
     return last_draw.DrawNumber
 

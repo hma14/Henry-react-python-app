@@ -4,11 +4,13 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Float
 from datetime import datetime
 from db.database import engine
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
+
 
 
 db = SQLAlchemy()
@@ -169,19 +171,16 @@ class DailyGrand_GrandNumber(db.Model):
         
 class Numbers(db.Model):
     __tablename__ = 'Numbers'
-    Id = db.Column(db.String, primary_key=True, unique=True)
-    #Id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    Value = db.Column(db.Integer, nullable=False)
-    Distance = db.Column(db.Integer, nullable=False)
-    IsHit = db.Column(db.Boolean)
-    NumberOfDrawsWhenHit = db.Column(db.Integer, nullable=False)
-    IsBonusNumber = db.Column(db.Boolean)
-    TotalHits = db.Column(db.Integer, nullable=False)
+    Id: Mapped[str] = mapped_column(String(50), primary_key=True, unique=True)
+    Value: Mapped[int] = mapped_column(Integer, nullable=False)
+    Distance: Mapped[int] = mapped_column(Integer, nullable=False)
+    IsHit: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    NumberOfDrawsWhenHit: Mapped[int] = mapped_column(Integer, nullable=False)
+    IsBonusNumber: Mapped[bool] = mapped_column(Boolean)
+    TotalHits: Mapped[int] = mapped_column(Integer, nullable=False)
     Probability = db.Column(db.Integer, nullable=False)
-    
-    LottoTypeId = db.Column(UUID(as_uuid=True), db.ForeignKey('LottoTypes.Id'), nullable=False)
-    LottoType = db.relationship('LottoType')
-    #LottoType = db.relationship("LottoType", back_populates="Numbers")
+    LottoTypeId: Mapped[str] = mapped_column(db.ForeignKey("LottoTypes.Id"))
+    LottoType: Mapped["LottoType"] = relationship(back_populates="numbers")
 
     # Extra fields not related to the database table
     NumberOfAppearing = 0
@@ -209,16 +208,20 @@ class Numbers(db.Model):
         self.TotalHits = TotalHits
         self.Probability = Probability
         self.NumberOfAppearing = NumberOfAppearing
-        
+  
+      
 class LottoType(db.Model):
     __tablename__ = 'LottoTypes'
 
-    Id = db.Column(db.String, primary_key=True, unique=True)
-    LottoName = db.Column(db.String, nullable=False)
-    DrawNumber = db.Column(db.Integer, nullable=False)
-    DrawDate = db.Column(db.DateTime, nullable=False)
-    NumberRange = db.Column(db.Integer, nullable=False)
-    numbers = db.relationship('Numbers')
+    #Id = db.Column(db.String, primary_key=True, unique=True)
+    Id: Mapped[str] = mapped_column(String(50), primary_key=True)
+    LottoName: Mapped[str] = mapped_column(String(50), nullable=False)
+    DrawNumber: Mapped[int] = mapped_column(Integer, nullable=False)
+    DrawDate: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    NumberRange: Mapped[int] = mapped_column(Integer, nullable=False)
+    numbers: Mapped[list["Numbers"]] = relationship(
+        back_populates="LottoType", cascade="all, delete-orphan"
+    )
     
         
         
