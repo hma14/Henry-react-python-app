@@ -369,7 +369,8 @@ def get_data_5():
     drawNumber = int(request.args.get('drawNumber', 1))
     page_size = 1
     start_index = 0
-    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    numbers = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    return numbers, 200
 
 
 @app.route('/api/openai', methods=['GET'])
@@ -429,10 +430,23 @@ def matching_target_draw():
     #number_range = get_lotto_number_range(lotto_name)
     target_draw = get_target_draw(lotto_name, draw_number)
     
-    result = search_matching_tickets(tickets, num_matches, target_draw)
+    matched = search_matching_tickets(tickets, num_matches, target_draw)
+    
+    """     
+    matched_dict = {
+        number.Value: {
+            "distance": number.Distance,
+            "isHit": number.IsHit,
+            "totalHits": number.TotalHits,
+            "probability": number.Probability
+        }
+        for number in numbers
+        if number.Value in matched
+    }
+    """
     
     # process result
-    return jsonify({'matching_results': result})
+    return jsonify({'matching_results': matched})
     
     
 

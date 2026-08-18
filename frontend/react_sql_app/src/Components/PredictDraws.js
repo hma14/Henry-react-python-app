@@ -25,6 +25,7 @@ const PredictDraws = (props) => {
   const [missing, setMissing] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [numMatches, setNumMatches] = useState(3);
+  const [matchedDic, setMatchedDic] = useState({});
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -76,18 +77,18 @@ const PredictDraws = (props) => {
 
       const response = await axios.post(endpoint3, requestData);
       setMatched(response.data.matching_results);
+
+      const matchingDic = createMatchedDic(
+        numbers,
+        response.data.matching_results.matches,
+      );
+
+      setMatchedDic(matchingDic);
+      //setMatched(response.data.matching_results);
     } catch (error) {
       console.error("Error fetching matched numbers:", error);
     }
-  }, [
-    //endpoint2,
-    endpoint3,
-    lottoName,
-    drawNumber,
-    numMatches,
-    //numbers,
-    predicts,
-  ]);
+  }, [endpoint3, lottoName, drawNumber, numMatches, predicts]);
 
   // Get predictions
   useEffect(() => {
@@ -244,6 +245,30 @@ const PredictDraws = (props) => {
     }
   */
 
+  const createMatchedDic = (allNumbers, matchedNumbers) => {
+    // Build matchedDict here
+    const matchedDict = {};
+
+    const tickets = matchedNumbers.map((item) =>
+      item.ticket.split(/\s+/).map(Number),
+    );
+    tickets.forEach((ticket) => {
+      ticket.forEach((value) => {
+        const number = allNumbers.find((x) => x.Value === value);
+
+        if (number) {
+          matchedDict[value] = {
+            Value: number.Value,
+            Distance: number.Distance,
+            TotalHits: number.TotalHits,
+            Probability: number.Probability,
+          };
+        }
+      });
+    });
+    return matchedDict;
+  };
+
   const getHeader = () => {
     return (
       <thead className="table-danger text-center">
@@ -290,7 +315,11 @@ const PredictDraws = (props) => {
       <thead className="table-danger text-center">
         <tr>
           <th className="text-warning bg-primary">#</th>
-          <th className="text-warning bg-success fst-italic">Tickets</th>
+          {arr.map((no) => (
+            <th key={no} className="text-warning bg-success fst-italic">
+              {no + 1}
+            </th>
+          ))}
           <th className="text-warning bg-success fst-italic">Matches</th>
           <th className="text-warning bg-success fst-italic">Match Numbers</th>
         </tr>
@@ -455,7 +484,7 @@ const PredictDraws = (props) => {
                 <td className="bg-color3 text-primary fs-5 fst-italic">
                   {index + 1}
                 </td>
-                {row.map((number) => getTD(number))}
+                {row.map((number) => getTD(number))},
               </tr>
             ))}
           </tbody>
@@ -473,7 +502,7 @@ const PredictDraws = (props) => {
       <h2 className="text-danger fst-italic mt-4 text-center">
         {matched.target_draw}
       </h2>
-      <div className="mt-1 margin-left margin-right fw-bold mb-2 d-flex justify-content-end">
+      <div className="mt-2  fw-bold mb-2 d-flex justify-content-end">
         <label className="text-success ps-3 fw-bold mr-2">
           Minimum Matches:
         </label>
@@ -495,16 +524,17 @@ const PredictDraws = (props) => {
       matched.matches.length > 0 &&
       !isLoading ? (
         <Table bordered hover responsive className="table-light mb-2" size="lg">
-          {getHeader_4()}
+          {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
           <tbody className="fw-bold align-middle">
             {matched.matches.map((row, index) => (
               <tr key={index}>
                 <td className="bg-color3 text-primary fs-5 fst-italic">
                   {index + 1}
                 </td>
-                <td className="bg-color20 text-center text-success fs-4 fw-bold px-2">
-                  {row.ticket}
-                </td>
+                {row.ticket
+                  .split(/\s+/)
+                  .map(Number)
+                  .map((number) => getTD(matchedDic[number]))}
                 <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
                   {row.matches}
                 </td>
@@ -514,13 +544,25 @@ const PredictDraws = (props) => {
               </tr>
             ))}
           </tbody>
-          {getHeader_4()}
+          {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
         </Table>
       ) : (
         <p className="text-danger text-center fst-italic fs-5 mt-4">
           No matched draws found.
         </p>
       )}
+      <div className="d-flex justify-content-end">
+        <button
+          type="button"
+          onClick={() => fetchData()}
+          className="btn btn-info text-white fw-bold mb-2 three-d-button"
+          fullWidth
+          disabled={isLoading}
+        >
+          Generate Potential Draws
+        </button>
+      </div>
+
       <h4 className="text-success fst-italic mt-4 text-center">
         Numbers were hit above
       </h4>
