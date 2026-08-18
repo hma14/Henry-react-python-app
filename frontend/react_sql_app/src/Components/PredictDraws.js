@@ -8,13 +8,23 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Slider from "./Slider";
 
 const PredictDraws = (props) => {
-  const { endpoint, endpoint2, columns, rows, drawNumber } = props;
+  const {
+    endpoint,
+    endpoint2,
+    endpoint3,
+    columns,
+    rows,
+    drawNumber,
+    lottoName,
+  } = props;
 
+  const [matched, setMatched] = useState([]);
   const [numbers, setNumbers] = useState();
   const [predicts, setPredicts] = useState([]);
   const [hitting, setHitting] = useState([]);
   const [missing, setMissing] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [numMatches, setNumMatches] = useState(3);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -55,11 +65,42 @@ const PredictDraws = (props) => {
     }
   }, [endpoint]);
 
+  const getMatched = useCallback(async () => {
+    try {
+      const requestData = {
+        lotto_name: lottoName,
+        draw_number: drawNumber,
+        num_matches: numMatches,
+        tickets: predicts.map((row) => row.map((number) => number.Value)),
+      };
+
+      const response = await axios.post(endpoint3, requestData);
+      setMatched(response.data.matching_results);
+    } catch (error) {
+      console.error("Error fetching matched numbers:", error);
+    }
+  }, [
+    //endpoint2,
+    endpoint3,
+    lottoName,
+    drawNumber,
+    numMatches,
+    //numbers,
+    predicts,
+  ]);
+
+  // Get predictions
   useEffect(() => {
     fetchData();
     getNumbers();
-  }, [fetchData, getNumbers, columns, endpoint, endpoint2, rows]);
+  }, [fetchData, getNumbers]);
 
+  // Match tickets whenever predictions change
+  useEffect(() => {
+    if (predicts.length > 0) {
+      getMatched();
+    }
+  }, [predicts, getMatched]);
   /*
     const getPredicts = (cols) => {
   
@@ -244,6 +285,18 @@ const PredictDraws = (props) => {
       </thead>
     );
   };
+  const getHeader_4 = (arr) => {
+    return (
+      <thead className="table-danger text-center">
+        <tr>
+          <th className="text-warning bg-primary">#</th>
+          <th className="text-warning bg-success fst-italic">Tickets</th>
+          <th className="text-warning bg-success fst-italic">Matches</th>
+          <th className="text-warning bg-success fst-italic">Match Numbers</th>
+        </tr>
+      </thead>
+    );
+  };
 
   const getRow = (start, end) => {
     return (
@@ -258,7 +311,7 @@ const PredictDraws = (props) => {
                 className={classNames(
                   "txt-color",
                   { "my-color-4 fs-5": number.Distance === 0 },
-                  { "text-danger fs-5": number.Distance > 10 }
+                  { "text-danger fs-5": number.Distance > 10 },
                 )}
               >
                 {number.Value}
@@ -267,7 +320,7 @@ const PredictDraws = (props) => {
                 className={classNames(
                   "txt-color",
                   { "fst-italic my-color-1 fs-6": number.Distance > 10 },
-                  { "fst-italic text-success fs-6": number.Distance <= 10 }
+                  { "fst-italic text-success fs-6": number.Distance <= 10 },
                 )}
               >
                 ({number.Distance})
@@ -279,7 +332,7 @@ const PredictDraws = (props) => {
                 className={classNames(
                   "txt-color",
                   { "red-indigo fst-italic fs-6": number.Probability > 0 },
-                  { "teal-indigo fst-italic fs-6": number.Probability === 0 }
+                  { "teal-indigo fst-italic fs-6": number.Probability === 0 },
                 )}
               >
                 ({number.Probability})
@@ -287,7 +340,7 @@ const PredictDraws = (props) => {
             </td>
           ) : (
             ""
-          )
+          ),
         )}
       </tr>
     );
@@ -300,7 +353,7 @@ const PredictDraws = (props) => {
           className={classNames(
             "txt-color",
             { "my-color-4 fs-4": number.Distance === 0 },
-            { "text-danger fs-4": number.Distance > 10 }
+            { "text-danger fs-4": number.Distance > 10 },
           )}
         >
           {number.Value}
@@ -310,7 +363,7 @@ const PredictDraws = (props) => {
           className={classNames(
             "txt-color",
             { "fst-italic my-color-1 fs-6": number.Distance > 10 },
-            { "fst-italic text-success fs-6": number.Distance <= 10 }
+            { "fst-italic text-success fs-6": number.Distance <= 10 },
           )}
         >
           ({number.Distance})
@@ -324,7 +377,7 @@ const PredictDraws = (props) => {
           className={classNames(
             "txt-color",
             { "red-indigo fst-italic fs-6": number.Probability > 0 },
-            { "teal-indigo fst-italic fs-6": number.Probability === 0 }
+            { "teal-indigo fst-italic fs-6": number.Probability === 0 },
           )}
         >
           ({number.Probability})
@@ -412,6 +465,61 @@ const PredictDraws = (props) => {
         <div className="loader-container">
           <CircularProgress size={120} />
         </div>
+      )}
+      <h4 className="text-success fst-italic mt-4 text-center">
+        Predict draws are matched to the past target draw, if target draw is not
+        a future draw.
+      </h4>
+      <h2 className="text-danger fst-italic mt-4 text-center">
+        {matched.target_draw}
+      </h2>
+      <div className="mt-1 margin-left margin-right fw-bold mb-2 d-flex justify-content-end">
+        <label className="text-success ps-3 fw-bold mr-2">
+          Minimum Matches:
+        </label>
+        <select
+          className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
+          fullWidth
+          style={{ width: "200px" }}
+          value={numMatches}
+          onChange={(e) => setNumMatches(Number(e.target.value))}
+        >
+          {Array.from({ length: columns - 1 }, (_, i) => i + 2).map((col) => (
+            <option key={col} value={col}>
+              {col}
+            </option>
+          ))}
+        </select>
+      </div>
+      {Array.isArray(matched.matches) &&
+      matched.matches.length > 0 &&
+      !isLoading ? (
+        <Table bordered hover responsive className="table-light mb-2" size="lg">
+          {getHeader_4()}
+          <tbody className="fw-bold align-middle">
+            {matched.matches.map((row, index) => (
+              <tr key={index}>
+                <td className="bg-color3 text-primary fs-5 fst-italic">
+                  {index + 1}
+                </td>
+                <td className="bg-color20 text-center text-success fs-4 fw-bold px-2">
+                  {row.ticket}
+                </td>
+                <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
+                  {row.matches}
+                </td>
+                <td className="bg-color6 text-center text-success fs-4 fw-bold px-2">
+                  {row.matched_numbers}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          {getHeader_4()}
+        </Table>
+      ) : (
+        <p className="text-danger text-center fst-italic fs-5 mt-4">
+          No matched draws found.
+        </p>
       )}
       <h4 className="text-success fst-italic mt-4 text-center">
         Numbers were hit above

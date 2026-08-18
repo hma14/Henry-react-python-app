@@ -416,6 +416,43 @@ def potential_draws():
     return [arr for arr in data if arr]
 
 
+@app.route('/api/lotto/matching_target_draw', methods=['POST'])
+def matching_target_draw():  
+    
+    data = request.get_json()
+
+    lotto_name = int(data.get('lotto_name', 1))
+    draw_number = int(data.get('draw_number', 1))
+    num_matches = int(data.get('num_matches', 3))
+    tickets = data.get('tickets', [])
+
+    #number_range = get_lotto_number_range(lotto_name)
+    target_draw = get_target_draw(lotto_name, draw_number)
+    
+    result = search_matching_tickets(tickets, num_matches, target_draw)
+    
+    # process result
+    return jsonify({'matching_results': result})
+    
+    
+
+def search_matching_tickets(tickets, num_matches, target_draw):
+    results = []
+    target_set = set(target_draw)
+
+    for ticket in tickets:
+        matched = set(ticket) & target_set
+
+        if len(matched) >= num_matches:
+            results.append({
+                "ticket":  " ".join(f"{n:02d}" for n in ticket),
+                "matches": len(matched),
+                "matched_numbers": " ".join(f"{n:02d}" for n in sorted(matched))
+            })
+    
+    return {"target_draw": " ".join(f"{n:02d}" for n in target_draw), "matches": results}
+
+
 @app.route('/api/lotto/potential_numbers', methods=['POST'])
 def potential_numbers():
     lotto_name = int(request.args.get('lotto_name', 1))
@@ -690,7 +727,82 @@ def get_past_draws(lotto_name, page_size, number_range, start_index, drawNumber)
     
     return data #jsonify({'data': data})
 
+
+def get_target_draw(lotto_name, drawNumber) -> Response:
     
+    Table_Mapping = {
+        1: BC49,
+        2: Lotto649,
+        3: LottoMax,
+        4: DailyGrand,
+        5: DailyGrand_GrandNumber,
+    }
+    
+    Column_Mapping = {
+        1: 6,
+        2: 6,
+        3: 7,
+        4: 5,
+        5: 1,
+    }
+    
+    # Validate lotto_name
+    if lotto_name not in Table_Mapping:
+        return jsonify({'message': 'Invalid lotto name'})
+
+    # Get the model class
+    model = Table_Mapping[lotto_name]
+    number_range = Column_Mapping[lotto_name]
+    
+    number_columns = [
+        getattr(model, f"Number{i}")
+        for i in range(1, number_range + 1)
+    ]
+    if not (
+        data := (
+                model.query
+                .with_entities(*number_columns)
+                .filter(model.DrawNumber == drawNumber)
+                .all()
+            )
+    ):
+        return jsonify({'message': 'No data found'})
+    
+    
+    return data[0] #jsonify({'data': data[0]})
+
+def get_draws(lotto_name, start_draw, target_draw) -> Response:
+    
+    Table_Mapping = {
+        1: BC49,
+        2: Lotto649,
+        3: LottoMax,
+        4: DailyGrand,
+        5: DailyGrand_GrandNumber,
+    }
+    
+    # Validate lotto_name
+    if lotto_name not in Table_Mapping:
+        return jsonify({'message': 'Invalid lotto name'})
+
+    # Get the model class
+    model = Table_Mapping[lotto_name]
+    
+    if not (
+        data := (
+            model.query
+            .filter(
+                model.DrawNumber >= start_draw,
+                model.DrawNumber <= target_draw
+            )
+        )
+    ):
+        return jsonify({'message': 'No data found'})
+    
+    
+    return data #jsonify({'data': data})
+
+
     
 from typing import cast
 from sqlalchemy.orm.attributes import InstrumentedAttribute

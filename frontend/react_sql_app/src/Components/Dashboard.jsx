@@ -46,8 +46,8 @@ import {
   Button,
 } from "@mui/material";
 
-//export const BASE_URL = "http://127.0.0.1:5001";
-export const BASE_URL = "http://ep.lottotry.com:5001";
+export const BASE_URL = "http://127.0.0.1:5001";
+//export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -225,6 +225,8 @@ const Dashboard = () => {
   const url32 = `${BASE_URL}/images/uploads`;
   const url33 = `${BASE_URL}/images`;
 
+  const url34 = `${BASE_URL}/api/lotto/matching_target_draw`;
+
   useEffect(() => {
     const getCurrentDrawNumber = async () => {
       try {
@@ -377,9 +379,11 @@ const Dashboard = () => {
           <PredictDraws
             endpoint={url5}
             endpoint2={url9}
+            endpoint3={url34}
             columns={potentialColumns}
             rows={pageSize}
             drawNumber={drawNumber}
+            lottoName={lottoName}
           />
         );
       case "potentialNumbers":
