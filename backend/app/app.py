@@ -426,27 +426,19 @@ def matching_target_draw():
     draw_number = int(data.get('draw_number', 1))
     num_matches = int(data.get('num_matches', 3))
     tickets = data.get('tickets', [])
+    
+    last_draw_number = get_last_draw(lotto_name)
+    canMatch = draw_number < last_draw_number
+    if (not canMatch):
+        return jsonify({'matching_results': [], 'canMatch': canMatch})
 
     #number_range = get_lotto_number_range(lotto_name)
     target_draw = get_target_draw(lotto_name, draw_number)
     
     matched = search_matching_tickets(tickets, num_matches, target_draw)
     
-    """     
-    matched_dict = {
-        number.Value: {
-            "distance": number.Distance,
-            "isHit": number.IsHit,
-            "totalHits": number.TotalHits,
-            "probability": number.Probability
-        }
-        for number in numbers
-        if number.Value in matched
-    }
-    """
-    
     # process result
-    return jsonify({'matching_results': matched})
+    return jsonify({'matching_results': matched, 'canMatch': canMatch})
     
     
 
@@ -784,6 +776,35 @@ def get_target_draw(lotto_name, drawNumber) -> Response:
     
     
     return data[0] #jsonify({'data': data[0]})
+
+def get_last_draw(lotto_name) -> int:
+    
+    Table_Mapping = {
+        1: BC49,
+        2: Lotto649,
+        3: LottoMax,
+        4: DailyGrand,
+        5: DailyGrand_GrandNumber,
+    }
+        
+    # Validate lotto_name
+    if lotto_name not in Table_Mapping:
+        return 0
+
+    # Get the model class
+    model = Table_Mapping[lotto_name]
+    return (
+        data.DrawNumber
+        if (
+            data := (
+                model.query
+                .order_by(model.DrawNumber.desc())
+                .first()
+            )
+        )
+        else 0
+    )
+
 
 def get_draws(lotto_name, start_draw, target_draw) -> Response:
     

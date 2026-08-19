@@ -76,12 +76,16 @@ const PredictDraws = (props) => {
       };
 
       const response = await axios.post(endpoint3, requestData);
-      setMatched(response.data.matching_results);
 
-      const matchingDic = createMatchedDic(
-        numbers,
-        response.data.matching_results.matches,
-      );
+      const { canMatch, matching_results } = response.data;
+
+      if (!canMatch) {
+        document.getElementById("matchingResult").style.display = "none";
+        return;
+      }
+      setMatched(matching_results);
+
+      const matchingDic = createMatchedDic(numbers, matching_results.matches);
 
       setMatchedDic(matchingDic);
       //setMatched(response.data.matching_results);
@@ -495,74 +499,81 @@ const PredictDraws = (props) => {
           <CircularProgress size={120} />
         </div>
       )}
-      <h4 className="text-success fst-italic mt-4 text-center">
-        Predict draws are matched to the past target draw, if target draw is not
-        a future draw.
-      </h4>
-      <h2 className="text-danger fst-italic mt-4 text-center">
-        {matched.target_draw}
-      </h2>
-      <div className="mt-2  fw-bold mb-2 d-flex justify-content-end">
-        <label className="text-success ps-3 fw-bold mr-2">
-          Minimum Matches:
-        </label>
-        <select
-          className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
-          fullWidth
-          style={{ width: "200px" }}
-          value={numMatches}
-          onChange={(e) => setNumMatches(Number(e.target.value))}
-        >
-          {Array.from({ length: columns - 1 }, (_, i) => i + 2).map((col) => (
-            <option key={col} value={col}>
-              {col}
-            </option>
-          ))}
-        </select>
-      </div>
-      {Array.isArray(matched.matches) &&
-      matched.matches.length > 0 &&
-      !isLoading ? (
-        <Table bordered hover responsive className="table-light mb-2" size="lg">
-          {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
-          <tbody className="fw-bold align-middle">
-            {matched.matches.map((row, index) => (
-              <tr key={index}>
-                <td className="bg-color3 text-primary fs-5 fst-italic">
-                  {index + 1}
-                </td>
-                {row.ticket
-                  .split(/\s+/)
-                  .map(Number)
-                  .map((number) => getTD(matchedDic[number]))}
-                <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
-                  {row.matches}
-                </td>
-                <td className="bg-color6 text-center text-success fs-4 fw-bold px-2">
-                  {row.matched_numbers}
-                </td>
-              </tr>
+      <div id="matchingResult">
+        <h4 className="text-success fst-italic mt-4 text-center">
+          Predict draws are matched to the past target draw, if target draw is
+          not a future draw.
+        </h4>
+        <h2 className="text-danger fst-italic mt-4 text-center">
+          {matched.target_draw}
+        </h2>
+        <div className="mt-2  fw-bold mb-2 d-flex justify-content-end">
+          <label className="text-success ps-3 fw-bold mr-2">
+            Minimum Matches:
+          </label>
+          <select
+            className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
+            fullWidth
+            style={{ width: "200px" }}
+            value={numMatches}
+            onChange={(e) => setNumMatches(Number(e.target.value))}
+          >
+            {Array.from({ length: columns - 1 }, (_, i) => i + 2).map((col) => (
+              <option key={col} value={col}>
+                {col}
+              </option>
             ))}
-          </tbody>
-          {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
-        </Table>
-      ) : (
-        <p className="text-danger text-center fst-italic fs-5 mt-4">
-          No matched draws found.
-        </p>
-      )}
-      <div className="d-flex justify-content-end">
-        <button
-          type="button"
-          onClick={() => fetchData()}
-          className="btn btn-info text-white fw-bold mb-2 three-d-button"
-          fullWidth
-          disabled={isLoading}
-        >
-          Generate Potential Draws
-        </button>
+          </select>
+        </div>
+        {Array.isArray(matched.matches) &&
+        matched.matches.length > 0 &&
+        !isLoading ? (
+          <Table
+            bordered
+            hover
+            responsive
+            className="table-light mb-2"
+            size="lg"
+          >
+            {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
+            <tbody className="fw-bold align-middle">
+              {matched.matches.map((row, index) => (
+                <tr key={index}>
+                  <td className="bg-color3 text-primary fs-5 fst-italic">
+                    {index + 1}
+                  </td>
+                  {row.ticket
+                    .split(/\s+/)
+                    .map(Number)
+                    .map((number) => getTD(matchedDic[number]))}
+                  <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
+                    {row.matches}
+                  </td>
+                  <td className="bg-color6 text-center text-success fs-4 fw-bold px-2">
+                    {row.matched_numbers}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
+          </Table>
+        ) : (
+          <p className="text-danger text-center fst-italic fs-5 mt-4">
+            No matched draws found.
+          </p>
+        )}
+        <div className="d-flex justify-content-end">
+          <button
+            type="button"
+            onClick={() => fetchData()}
+            className="btn btn-info text-white fw-bold mb-2 three-d-button"
+            fullWidth
+            disabled={isLoading}
+          >
+            Generate Potential Draws
+          </button>
+        </div>
       </div>
-
       <h4 className="text-success fst-italic mt-4 text-center">
         Numbers were hit above
       </h4>
