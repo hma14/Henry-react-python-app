@@ -429,3 +429,9 @@ thead {
   color: #b2ea6e;
   font-weight: bold;
 }
+
+.ticketHeader {
+  width: 80%;
+  margin: 0 auto 10px auto;
+  text-align: center;
+}

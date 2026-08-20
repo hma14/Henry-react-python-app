@@ -428,12 +428,17 @@ def matching_target_draw():
     tickets = data.get('tickets', [])
     
     last_draw_number = get_last_draw(lotto_name)
-    canMatch = draw_number < last_draw_number
+    canMatch = True
+    if(draw_number + 1 > last_draw_number):
+        canMatch = False
+    else:
+        target_draw = get_target_draw(lotto_name, draw_number + 1)
+
     if (not canMatch):
         return jsonify({'matching_results': [], 'canMatch': canMatch})
 
     #number_range = get_lotto_number_range(lotto_name)
-    target_draw = get_target_draw(lotto_name, draw_number)
+    
     
     matched = search_matching_tickets(tickets, num_matches, target_draw)
     

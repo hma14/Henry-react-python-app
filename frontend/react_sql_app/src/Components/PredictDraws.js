@@ -26,6 +26,9 @@ const PredictDraws = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [numMatches, setNumMatches] = useState(3);
   const [matchedDic, setMatchedDic] = useState({});
+  const [targetDrawDic, setTargetDrawDic] = useState({});
+  const [maxMatches, setMaxMatches] = useState(0);
+  const [targetNumber, setTargetNumber] = useState([]);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -78,21 +81,39 @@ const PredictDraws = (props) => {
       const response = await axios.post(endpoint3, requestData);
 
       const { canMatch, matching_results } = response.data;
+      setMatched(matching_results.matches);
+      setTargetNumber(matching_results.target_draw.split(/\s+/).map(Number));
 
+      console.log("targetNumber:", targetNumber);
+      console.log(
+        "targetNumber: ",
+        matching_results.target_draw.split(/\s+/).map(Number),
+      );
       if (!canMatch) {
         document.getElementById("matchingResult").style.display = "none";
         return;
       }
-      setMatched(matching_results);
 
-      const matchingDic = createMatchedDic(numbers, matching_results.matches);
+      const maxM = Math.max(
+        0,
+        ...matching_results.matches.map((x) => x.matches),
+      );
 
-      setMatchedDic(matchingDic);
-      //setMatched(response.data.matching_results);
+      setMaxMatches(maxM);
+
+      const { matchedDic, targetDrawDic } = createMatchedDic(
+        numbers,
+        matching_results.matches,
+        //matching_results.target_draw,
+        matching_results.target_draw.split(/\s+/).map(Number),
+      );
+
+      setMatchedDic(matchedDic);
+      setTargetDrawDic(targetDrawDic);
     } catch (error) {
       console.error("Error fetching matched numbers:", error);
     }
-  }, [endpoint3, lottoName, drawNumber, numMatches, predicts]);
+  }, [endpoint2, endpoint3, lottoName, drawNumber, numMatches, predicts]);
 
   // Get predictions
   useEffect(() => {
@@ -105,7 +126,8 @@ const PredictDraws = (props) => {
     if (predicts.length > 0) {
       getMatched();
     }
-  }, [predicts, getMatched]);
+  }, [endpoint2, predicts, drawNumber, lottoName, numMatches]);
+
   /*
     const getPredicts = (cols) => {
   
@@ -249,9 +271,10 @@ const PredictDraws = (props) => {
     }
   */
 
-  const createMatchedDic = (allNumbers, matchedNumbers) => {
-    // Build matchedDict here
-    const matchedDict = {};
+  const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
+    // Build matchedDic here
+    const matchedDic = {};
+    const targetDrawDic = {};
 
     const tickets = matchedNumbers.map((item) =>
       item.ticket.split(/\s+/).map(Number),
@@ -261,7 +284,7 @@ const PredictDraws = (props) => {
         const number = allNumbers.find((x) => x.Value === value);
 
         if (number) {
-          matchedDict[value] = {
+          matchedDic[value] = {
             Value: number.Value,
             Distance: number.Distance,
             TotalHits: number.TotalHits,
@@ -270,7 +293,21 @@ const PredictDraws = (props) => {
         }
       });
     });
-    return matchedDict;
+    targetDraw
+      /*  .split(/\s+/)
+      .map(Number) */
+      .forEach((value) => {
+        const number = allNumbers.find((x) => x.Value === value);
+        if (number) {
+          targetDrawDic[value] = {
+            Value: number.Value,
+            Distance: number.Distance,
+            TotalHits: number.TotalHits,
+            Probability: number.Probability,
+          };
+        }
+      });
+    return { matchedDic, targetDrawDic };
   };
 
   const getHeader = () => {
@@ -314,7 +351,7 @@ const PredictDraws = (props) => {
       </thead>
     );
   };
-  const getHeader_4 = (arr) => {
+  const getHeader_4 = (arr, matchedNumbers_length) => {
     return (
       <thead className="table-danger text-center">
         <tr>
@@ -324,8 +361,27 @@ const PredictDraws = (props) => {
               {no + 1}
             </th>
           ))}
-          <th className="text-warning bg-success fst-italic">Matches</th>
-          <th className="text-warning bg-success fst-italic">Match Numbers</th>
+          <th className="text-warning bg-danger fst-italic">Matches</th>
+          <th
+            colSpan={matchedNumbers_length}
+            className="text-warning bg-primary fst-italic"
+          >
+            Match Numbers
+          </th>
+        </tr>
+      </thead>
+    );
+  };
+  const getHeader_5 = (arr) => {
+    return (
+      <thead className="table-danger text-center">
+        <tr>
+          <th className="text-warning bg-success">Target Draw NUmber</th>
+          {arr.map((no) => (
+            <th key={no} className="text-warning bg-success fst-italic">
+              {no + 1}
+            </th>
+          ))}
         </tr>
       </thead>
     );
@@ -504,9 +560,24 @@ const PredictDraws = (props) => {
           Predict draws are matched to the past target draw, if target draw is
           not a future draw.
         </h4>
-        <h2 className="text-danger fst-italic mt-4 text-center">
-          {matched.target_draw}
-        </h2>
+
+        <div className="text-danger ticketHeader fst-italic mt-4 text-center">
+          {targetNumber != null && !isLoading ? (
+            <Table bordered className="table-light mb-2" size="lg">
+              {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
+              <tbody className="fw-bold align-middle">
+                <tr>
+                  <td className="text-danger bg-color19 fs-4 fw-bold">
+                    {drawNumber + 1}
+                  </td>
+                  {targetNumber.map((number) => getTD(targetDrawDic[number]))}
+                </tr>
+              </tbody>
+            </Table>
+          ) : (
+            " "
+          )}
+        </div>
         <div className="mt-2  fw-bold mb-2 d-flex justify-content-end">
           <label className="text-success ps-3 fw-bold mr-2">
             Minimum Matches:
@@ -525,8 +596,9 @@ const PredictDraws = (props) => {
             ))}
           </select>
         </div>
-        {Array.isArray(matched.matches) &&
-        matched.matches.length > 0 &&
+        {Array.isArray(matched) &&
+        matched.length > 0 &&
+        matchedDic &&
         !isLoading ? (
           <Table
             bordered
@@ -535,9 +607,12 @@ const PredictDraws = (props) => {
             className="table-light mb-2"
             size="lg"
           >
-            {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
+            {getHeader_4(
+              Array.from({ length: columns }, (_, i) => i),
+              maxMatches,
+            )}
             <tbody className="fw-bold align-middle">
-              {matched.matches.map((row, index) => (
+              {matched.map((row, index) => (
                 <tr key={index}>
                   <td className="bg-color3 text-primary fs-5 fst-italic">
                     {index + 1}
@@ -555,7 +630,10 @@ const PredictDraws = (props) => {
                 </tr>
               ))}
             </tbody>
-            {getHeader_4(Array.from({ length: columns }, (_, i) => i))}
+            {getHeader_4(
+              Array.from({ length: columns }, (_, i) => i),
+              maxMatches,
+            )}
           </Table>
         ) : (
           <p className="text-danger text-center fst-italic fs-5 mt-4">
