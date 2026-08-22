@@ -45,8 +45,8 @@ function LottoDraws(props) {
                 </th>
               ) : (
                 ""
-              )
-            )
+              ),
+            ),
           )}
         </tr>
       </thead>
@@ -69,13 +69,13 @@ function LottoDraws(props) {
                   (a, b) =>
                     b.IsBonusNumber === true &&
                     a.IsBonusNumber === false &&
-                    b.Value - a.Value
+                    b.Value - a.Value,
                 )
                   .sort(
                     (a, b) =>
                       a.IsBonusNumber === false &&
                       b.IsBonusNumber === false &&
-                      a.Value - b.Value
+                      a.Value - b.Value,
                   )
                   .map((no) =>
                     no.IsHit === true ? (
@@ -96,11 +96,14 @@ function LottoDraws(props) {
                         <span className="text-secondary fst-italic">
                           {no.TotalHits}
                         </span>
+                        <span className="text-danger fst-italic">
+                          {no.Frequency}
+                        </span>
                         )
                       </td>
                     ) : (
                       ""
-                    )
+                    ),
                   )}
               </tr>
             ))}

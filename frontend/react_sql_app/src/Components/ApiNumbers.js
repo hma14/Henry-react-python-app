@@ -154,7 +154,7 @@ const ApiNumbers = (props) => {
                 <th key={no.Value} className={getHeaderBgColor(no)}>
                   {no.Value}
                 </th>
-              ))
+              )),
           )}
         </tr>
       </thead>
@@ -169,7 +169,7 @@ const ApiNumbers = (props) => {
             "bg-color",
             { "my-color-1 bg-color12": number.IsBonusNumber },
             { "my-color-1 bg-color1": !number.IsBonusNumber },
-            { "bg-color5": number.IsNextPotentialHit === true }
+            { "bg-color5": number.IsNextPotentialHit === true },
           )}
         >
           {number.Value}
@@ -183,7 +183,7 @@ const ApiNumbers = (props) => {
               {
                 "text-danger fst-italic fs-7":
                   number.NumberOfDrawsWhenHit <= 10,
-              }
+              },
             )}
           >
             {number.NumberOfDrawsWhenHit}
@@ -193,11 +193,13 @@ const ApiNumbers = (props) => {
             {number.TotalHits}
           </span>
           ) (
+          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
+          ) (
           <span
             className={classNames(
               "txt-color",
               { "red-indigo fst-italic fs-7": number.Probability > 0 },
-              { "teal-indigo fst-italic fs-7": number.Probability === 0 }
+              { "teal-indigo fst-italic fs-7": number.Probability === 0 },
             )}
           >
             {number.Probability}
@@ -215,7 +217,7 @@ const ApiNumbers = (props) => {
             className={classNames(
               "txt-color",
               { "fst-italic my-color-1 fs-7": number.Distance > 10 },
-              { "fst-italic text-success fs-7": number.Distance <= 10 }
+              { "fst-italic text-success fs-7": number.Distance <= 10 },
             )}
           >
             {number.Distance}
@@ -225,11 +227,13 @@ const ApiNumbers = (props) => {
             {number.TotalHits}
           </span>
           ) (
+          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
+          ) (
           <span
             className={classNames(
               "txt-color",
               { "red-indigo fst-italic fs-7": number.Probability > 0 },
-              { "cyan-indigo fst-italic fs-7": number.Probability === 0 }
+              { "cyan-indigo fst-italic fs-7": number.Probability === 0 },
             )}
           >
             {number.Probability}
@@ -268,7 +272,7 @@ const ApiNumbers = (props) => {
                     .sort((a, b) =>
                       a[sortProperty] === b[sortProperty]
                         ? a.value - b.value
-                        : a[sortProperty] - b[sortProperty]
+                        : a[sortProperty] - b[sortProperty],
                     )
                     .map((no) => getColors(no))}
                 </tr>

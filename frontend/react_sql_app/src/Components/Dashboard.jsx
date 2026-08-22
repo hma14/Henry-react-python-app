@@ -129,6 +129,8 @@ const Dashboard = () => {
     lottoName +
     "&columns=" +
     lottoColumns +
+    "&page_size=" +
+    pageSize +
     "&drawNumber=" +
     drawNumber;
 

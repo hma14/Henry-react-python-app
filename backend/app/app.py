@@ -358,8 +358,11 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber), 200
+    result = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+        
+    data = getNumberFrequency(result)
     
+    return jsonify({'data': data}), 200
 
 
 @app.route('/api/lotto/predict', methods=['GET'])
@@ -367,9 +370,11 @@ def get_data_5():
     lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
     drawNumber = int(request.args.get('drawNumber', 1))
-    page_size = 1
+    page_size = int(request.args.get('page_size', 10))
     start_index = 0
-    numbers = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    numbers = getNumberFrequency(data)
+    
     return numbers, 200
 
 
@@ -382,6 +387,43 @@ def get_from_openai():
 
     return get_string_response()
 
+
+def getNumberFrequency(alist):
+
+    json_obj = alist.get_json()
+    jdata = json_obj['data']
+    
+    # Oldest -> newest
+    sorted_list = sorted(
+        jdata,
+        key=lambda x: x['DrawNumber']
+    )
+
+    number_stats = {}
+
+    for da in sorted_list:
+
+        for d in da['Numbers']:
+            number = d['Value']
+
+            # If this number has not been seen yet
+            if number not in number_stats:
+                number_stats[number] = 0
+
+            # Increase frequency if the number was hit
+            if d['IsHit']:
+                number_stats[number] += 1
+
+            # Frequency as of THIS draw
+            d['Frequency'] = number_stats[number]
+
+    # Return newest -> oldest
+    return sorted(
+        sorted_list,
+        key=lambda x: x['DrawNumber'],
+        reverse=True
+    )
+   
 
 @app.route('/api/lotto/potential_draws', methods=['POST'])
 def potential_draws():
@@ -397,16 +439,14 @@ def potential_draws():
     start_index = 0
 
     result = retrieve_data(
-        lotto_name, total_page_size, number_range, start_index, drawNumber
+        lotto_name, page_size, number_range, start_index, drawNumber
     )
 
-    json_obj = result.get_json()
-    draws = json_obj['data']
+    draws = getNumberFrequency(result)
     
     columns = int(request.args.get('columns', 6))
-
     potential_draws = PotentialDraws(draws, columns, page_size)
-
+    
     data = potential_draws.next_potential_draws()
     #logging.debug(f"Data received: {data}")
     for da in data:
@@ -432,7 +472,8 @@ def matching_target_draw():
     if(draw_number + 1 > last_draw_number):
         canMatch = False
     else:
-        target_draw = get_target_draw(lotto_name, draw_number + 1)
+        target_draw = get_target_draw(lotto_name, draw_number + 1)        
+    
 
     if (not canMatch):
         return jsonify({'matching_results': [], 'canMatch': canMatch})
@@ -479,7 +520,7 @@ def potential_numbers():
     start_index = 0
 
     result = retrieve_data(
-        lotto_name, total_page_size, number_range, start_index, drawNumber
+        lotto_name, page_size, number_range, start_index, drawNumber
     )
 
     # Decode the byte string to a regular string
@@ -664,6 +705,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
                 'TotalHits': number.TotalHits,
                 'Probability': number.Probability,
                 'NumberOfAppearing': number.NumberOfAppearing,
+                'Frequency': number.Frequency,
             }
         )
         if len(numbers_dict[number.LottoType.DrawNumber]) == number_range:
@@ -809,6 +851,7 @@ def get_last_draw(lotto_name) -> int:
         )
         else 0
     )
+
 
 
 def get_draws(lotto_name, start_draw, target_draw) -> Response:

@@ -184,6 +184,7 @@ class Numbers(db.Model):
 
     # Extra fields not related to the database table
     NumberOfAppearing = 0
+    Frequency = 0
     
     def __init__(
         self,
@@ -196,7 +197,8 @@ class Numbers(db.Model):
         IsBonusNumber,
         TotalHits,
         Probability,
-        NumberOfAppearing
+        NumberOfAppearing,
+        Frequency
     ):
         self.Id = Id
         self.Value = Value
@@ -208,6 +210,7 @@ class Numbers(db.Model):
         self.TotalHits = TotalHits
         self.Probability = Probability
         self.NumberOfAppearing = NumberOfAppearing
+        self.Frequency = Frequency
   
       
 class LottoType(db.Model):

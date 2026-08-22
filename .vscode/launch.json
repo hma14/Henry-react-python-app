@@ -15,7 +15,7 @@
       "jinja": true
     },
     {
-      "name": "Launch MS Edge against localhost",
+      "name": "React Frontend",
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:3000",
@@ -33,7 +33,7 @@
   "compounds": [
     {
       "name": "Debug Both Frontend and Backend",
-      "configurations": ["Python: Flask", "Launch MS Edge against localhost"]
+      "configurations": ["Python: Flask", "React Frontend"]
     }
   ]
 }

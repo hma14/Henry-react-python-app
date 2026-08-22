@@ -63,7 +63,7 @@ const PredictDraws = (props) => {
   const getNumbers = useCallback(async () => {
     try {
       const response = await axios(endpoint);
-      setNumbers(response.data.data[0]?.Numbers);
+      setNumbers(response.data[0]?.Numbers);
     } catch (error) {
       console.error("Error fetching draw number:", error);
     }
@@ -289,6 +289,7 @@ const PredictDraws = (props) => {
             Distance: number.Distance,
             TotalHits: number.TotalHits,
             Probability: number.Probability,
+            Frequency: number.Frequency,
           };
         }
       });
@@ -304,6 +305,7 @@ const PredictDraws = (props) => {
             Distance: number.Distance,
             TotalHits: number.TotalHits,
             Probability: number.Probability,
+            Frequency: number.Frequency,
           };
         }
       });
@@ -461,11 +463,14 @@ const PredictDraws = (props) => {
         <span className="text-primary fst-italic fs-6">
           ({number.TotalHits})
         </span>{" "}
+        <span className="text-danger fst-italic fs-6">
+          ({number.Frequency})
+        </span>{" "}
         {n >= 2 ? <br /> : null}
         <span
           className={classNames(
             "txt-color",
-            { "red-indigo fst-italic fs-6": number.Probability > 0 },
+            { "yellow-indigo fst-italic fs-6": number.Probability > 0 },
             { "teal-indigo fst-italic fs-6": number.Probability === 0 },
           )}
         >
