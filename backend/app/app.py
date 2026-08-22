@@ -425,6 +425,20 @@ def getNumberFrequency(alist):
     )
    
 
+def getNumberOfAppearing(alist):
+    
+    appearing_stats = {}
+    for da in alist:
+        for d in da:
+            number = d['Value']
+            if number not in appearing_stats:
+                appearing_stats[number] = 0
+                
+            appearing_stats[number] += 1
+            d['NumberOfAppearing'] = appearing_stats[number] 
+                
+    return [arr for arr in alist if arr]
+
 @app.route('/api/lotto/potential_draws', methods=['POST'])
 def potential_draws():
     lotto_name = int(request.args.get('lotto_name', 1))
@@ -448,13 +462,8 @@ def potential_draws():
     potential_draws = PotentialDraws(draws, columns, page_size)
     
     data = potential_draws.next_potential_draws()
-    #logging.debug(f"Data received: {data}")
-    for da in data:
-        for d in da:
-            d['NumberOfAppearing'] += 1
 
-    #logging.debug(f"Final data: {data}")
-    return [arr for arr in data if arr]
+    return getNumberOfAppearing(data)
 
 
 @app.route('/api/lotto/matching_target_draw', methods=['POST'])

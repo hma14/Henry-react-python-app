@@ -471,7 +471,7 @@ const PredictDraws = (props) => {
         >
           ({number.Probability})
         </span>{" "}
-        {n !== 3 ? (
+        {n !== 3 && n !== 0 ? (
           <span className="my-color-5 fs-7">
             {" "}
             [{number.NumberOfAppearing - 1}]
@@ -562,7 +562,7 @@ const PredictDraws = (props) => {
         </h4>
 
         <div className="text-danger ticketHeader fst-italic mt-4 text-center">
-          {targetNumber != null && !isLoading ? (
+          {targetNumber != null && targetNumber.length > 0 && !isLoading ? (
             <Table bordered className="table-light mb-2" size="lg">
               {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
               <tbody className="fw-bold align-middle">
@@ -570,7 +570,9 @@ const PredictDraws = (props) => {
                   <td className="text-danger bg-color19 fs-4 fw-bold">
                     {drawNumber + 1}
                   </td>
-                  {targetNumber.map((number) => getTD(targetDrawDic[number]))}
+                  {targetNumber.map((number) =>
+                    getTD(targetDrawDic[number], 0),
+                  )}
                 </tr>
               </tbody>
             </Table>
@@ -620,7 +622,7 @@ const PredictDraws = (props) => {
                   {row.ticket
                     .split(/\s+/)
                     .map(Number)
-                    .map((number) => getTD(matchedDic[number]))}
+                    .map((number) => getTD(matchedDic[number], 0))}
                   <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
                     {row.matches}
                   </td>
