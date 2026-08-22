@@ -81,19 +81,14 @@ const PredictDraws = (props) => {
       const response = await axios.post(endpoint3, requestData);
 
       const { canMatch, matching_results } = response.data;
-      setMatched(matching_results.matches);
-      setTargetNumber(matching_results.target_draw.split(/\s+/).map(Number));
 
-      console.log("targetNumber:", targetNumber);
-      console.log(
-        "targetNumber: ",
-        matching_results.target_draw.split(/\s+/).map(Number),
-      );
       if (!canMatch) {
         document.getElementById("matchingResult").style.display = "none";
         return;
+      } else {
+        setMatched(matching_results.matches);
+        setTargetNumber(matching_results.target_draw.split(/\s+/).map(Number));
       }
-
       const maxM = Math.max(
         0,
         ...matching_results.matches.map((x) => x.matches),
@@ -475,7 +470,7 @@ const PredictDraws = (props) => {
           )}
         >
           ({number.Probability})
-        </span>
+        </span>{" "}
         {n !== 3 ? (
           <span className="my-color-5 fs-7">
             {" "}

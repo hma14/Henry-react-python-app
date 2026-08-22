@@ -192,9 +192,9 @@ const ApiNumbers = (props) => {
           <span className="text-secondary fst-italic fs-7">
             {number.TotalHits}
           </span>
-          ) (
+          )<br /> (
           <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
-          ) (
+          ) <br />(
           <span
             className={classNames(
               "txt-color",
@@ -226,9 +226,9 @@ const ApiNumbers = (props) => {
           <span className="text-primary fst-italic fs-7">
             {number.TotalHits}
           </span>
-          ) (
+          ) <br />(
           <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
-          ) (
+          )<br /> (
           <span
             className={classNames(
               "txt-color",

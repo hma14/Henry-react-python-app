@@ -88,14 +88,15 @@ function LottoDraws(props) {
                         ) : (
                           <span className="fs-5 text-primary">{no.Value}</span>
                         )}
-                        (
+                        <br />(
                         <span className="text-danger fst-italic">
                           {no.NumberOfDrawsWhenHit}
                         </span>
-                        ) (
+                        <br />) (
                         <span className="text-secondary fst-italic">
                           {no.TotalHits}
                         </span>
+                        <br />
                         <span className="text-danger fst-italic">
                           {no.Frequency}
                         </span>
