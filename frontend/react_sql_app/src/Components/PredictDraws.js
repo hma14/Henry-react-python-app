@@ -562,7 +562,10 @@ const PredictDraws = (props) => {
         </h4>
 
         <div className="text-danger ticketHeader fst-italic mt-4 text-center">
-          {targetNumber != null && targetNumber.length > 0 && !isLoading ? (
+          {targetDrawDic &&
+          targetNumber != null &&
+          targetNumber.length > 0 &&
+          !isLoading ? (
             <Table bordered className="table-light mb-2" size="lg">
               {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
               <tbody className="fw-bold align-middle">
