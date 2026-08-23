@@ -89,20 +89,25 @@ const PredictDraws = (props) => {
         setMatched(matching_results.matches);
         setTargetNumber(matching_results.target_draw.split(/\s+/).map(Number));
       }
+      const targetNumbers = matching_results.target_draw
+        .split(/\s+/)
+        .map(Number);
+
       const maxM = Math.max(
         0,
         ...matching_results.matches.map((x) => x.matches),
       );
 
-      setMaxMatches(maxM);
-
       const { matchedDic, targetDrawDic } = createMatchedDic(
         numbers,
         matching_results.matches,
-        //matching_results.target_draw,
-        matching_results.target_draw.split(/\s+/).map(Number),
+        targetNumbers,
       );
 
+      // Now update the states
+      setMatched(matching_results.matches);
+      setTargetNumber(targetNumbers);
+      setMaxMatches(maxM);
       setMatchedDic(matchedDic);
       setTargetDrawDic(targetDrawDic);
     } catch (error) {
@@ -562,10 +567,10 @@ const PredictDraws = (props) => {
         </h4>
 
         <div className="text-danger ticketHeader fst-italic mt-4 text-center">
-          {Array.isArray(targetNumber) &&
+          {!isLoading &&
+          Array.isArray(targetNumber) &&
           targetNumber.length > 0 &&
-          targetDrawDic != undefined &&
-          !isLoading ? (
+          targetDrawDic != undefined ? (
             <Table bordered className="table-light mb-2" size="lg">
               {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
               <tbody className="fw-bold align-middle">
@@ -575,10 +580,6 @@ const PredictDraws = (props) => {
                   </td>
                   {targetNumber.map((number) => {
                     const value = targetDrawDic[number];
-
-                    console.log("number:", number);
-                    console.log("value:", value);
-
                     return value ? getTD(value, 0) : null;
                   })}
                 </tr>
