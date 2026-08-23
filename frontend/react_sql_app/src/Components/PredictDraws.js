@@ -563,6 +563,7 @@ const PredictDraws = (props) => {
 
         <div className="text-danger ticketHeader fst-italic mt-4 text-center">
           {targetDrawDic &&
+          Array.isArray(targetNumber) &&
           targetNumber != null &&
           targetNumber.length > 0 &&
           !isLoading ? (
@@ -573,7 +574,7 @@ const PredictDraws = (props) => {
                   <td className="text-danger bg-color19 fs-4 fw-bold">
                     {drawNumber + 1}
                   </td>
-                  {targetNumber.map((number) =>
+                  {targetNumber?.map((number) =>
                     getTD(targetDrawDic[number], 0),
                   )}
                 </tr>
