@@ -315,6 +315,7 @@ const Dashboard = () => {
   const lottoStatisticsOptionLabels = {
     number: "Lotto Numbers",
     distance: "Number Distance",
+    frequency: "Frequency per Page Size",
     totalHits: "Number's Total Hits",
     lottoDraws: "Lotto Draw History",
     numberDraws: "Hit Numbers in Number Category",

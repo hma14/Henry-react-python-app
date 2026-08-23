@@ -8,8 +8,9 @@ import "../App.scss";
 import classNames from "classnames";
 
 const types = {
-  number: "number",
+  number: "Value",
   distance: "Distance",
+  frequency: "Frequency",
   totalHits: "TotalHits",
 };
 
@@ -271,7 +272,7 @@ const ApiNumbers = (props) => {
                   {[...draw.Numbers]
                     .sort((a, b) =>
                       a[sortProperty] === b[sortProperty]
-                        ? a.value - b.value
+                        ? a.Value - b.Value
                         : a[sortProperty] - b[sortProperty],
                     )
                     .map((no) => getColors(no))}
