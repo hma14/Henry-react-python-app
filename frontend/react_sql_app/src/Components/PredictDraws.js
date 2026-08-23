@@ -562,7 +562,7 @@ const PredictDraws = (props) => {
         </h4>
 
         <div className="text-danger ticketHeader fst-italic mt-4 text-center">
-          {targetDrawDic &&
+          {targetDrawDic != undefined &&
           Array.isArray(targetNumber) &&
           targetNumber != null &&
           targetNumber.length > 0 &&
