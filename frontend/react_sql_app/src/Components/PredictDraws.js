@@ -562,10 +562,9 @@ const PredictDraws = (props) => {
         </h4>
 
         <div className="text-danger ticketHeader fst-italic mt-4 text-center">
-          {targetDrawDic != undefined &&
-          Array.isArray(targetNumber) &&
-          targetNumber != null &&
+          {Array.isArray(targetNumber) &&
           targetNumber.length > 0 &&
+          targetDrawDic != undefined &&
           !isLoading ? (
             <Table bordered className="table-light mb-2" size="lg">
               {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
@@ -574,9 +573,14 @@ const PredictDraws = (props) => {
                   <td className="text-danger bg-color19 fs-4 fw-bold">
                     {drawNumber + 1}
                   </td>
-                  {targetNumber?.map((number) =>
-                    getTD(targetDrawDic[number], 0),
-                  )}
+                  {targetNumber.map((number) => {
+                    const value = targetDrawDic[number];
+
+                    console.log("number:", number);
+                    console.log("value:", value);
+
+                    return value ? getTD(value, 0) : null;
+                  })}
                 </tr>
               </tbody>
             </Table>
