@@ -7,6 +7,67 @@ import classNames from "classnames";
 import CircularProgress from "@mui/material/CircularProgress";
 import Slider from "./Slider";
 
+export const getTD = (number, n = 1) => {
+  return (
+    <td className={getBgColors(number)} key={number.Value}>
+      <span
+        className={classNames(
+          "txt-color",
+          { "my-color-4 fs-4": number.Distance === 0 },
+          { "text-danger fs-4": number.Distance > 10 },
+        )}
+      >
+        {number.Value}
+      </span>{" "}
+      {n >= 2 ? <br /> : null}
+      <span
+        className={classNames(
+          "txt-color",
+          { "fst-italic my-color-1 fs-6": number.Distance > 10 },
+          { "fst-italic text-success fs-6": number.Distance <= 10 },
+        )}
+      >
+        ({number.Distance})
+      </span>{" "}
+      {n >= 2 ? <br /> : null}
+      <span className="text-primary fst-italic fs-6">
+        ({number.TotalHits})
+      </span>{" "}
+      <span className="text-danger fst-italic fs-6">({number.Frequency})</span>{" "}
+      {n >= 2 ? <br /> : null}
+      <span
+        className={classNames(
+          "txt-color",
+          { "yellow-indigo fst-italic fs-6": number.Probability > 0 },
+          { "teal-indigo fst-italic fs-6": number.Probability === 0 },
+        )}
+      >
+        ({number.Probability})
+      </span>{" "}
+      {n !== 3 && n !== 0 ? (
+        <span className="my-color-5 fs-7">
+          {" "}
+          [{number.NumberOfAppearing - 1}]
+        </span>
+      ) : null}
+    </td>
+  );
+};
+
+const getBgColors = (number) => {
+  if (number.Value < 10) {
+    return "bg-color20 text-center text-success fs-4 fw-bold px-2";
+  } else if (number.Value < 20) {
+    return "bg-color19 text-center text-success fs-4 fw-bold px-2";
+  } else if (number.Value < 30) {
+    return "bg-color6 text-center text-success fs-4 fw-bold px-2";
+  } else if (number.Value < 40) {
+    return "bg-color3 text-center text-success fs-4 fw-bold px-2";
+  } else {
+    return "bg-color10 text-center text-success fs-4 fw-bold px-2";
+  }
+};
+
 const PredictDraws = (props) => {
   const {
     endpoint,
@@ -435,69 +496,6 @@ const PredictDraws = (props) => {
         )}
       </tr>
     );
-  };
-
-  const getTD = (number, n = 1) => {
-    return (
-      <td className={getBgColors(number)} key={number.Value}>
-        <span
-          className={classNames(
-            "txt-color",
-            { "my-color-4 fs-4": number.Distance === 0 },
-            { "text-danger fs-4": number.Distance > 10 },
-          )}
-        >
-          {number.Value}
-        </span>{" "}
-        {n >= 2 ? <br /> : null}
-        <span
-          className={classNames(
-            "txt-color",
-            { "fst-italic my-color-1 fs-6": number.Distance > 10 },
-            { "fst-italic text-success fs-6": number.Distance <= 10 },
-          )}
-        >
-          ({number.Distance})
-        </span>{" "}
-        {n >= 2 ? <br /> : null}
-        <span className="text-primary fst-italic fs-6">
-          ({number.TotalHits})
-        </span>{" "}
-        <span className="text-danger fst-italic fs-6">
-          ({number.Frequency})
-        </span>{" "}
-        {n >= 2 ? <br /> : null}
-        <span
-          className={classNames(
-            "txt-color",
-            { "yellow-indigo fst-italic fs-6": number.Probability > 0 },
-            { "teal-indigo fst-italic fs-6": number.Probability === 0 },
-          )}
-        >
-          ({number.Probability})
-        </span>{" "}
-        {n !== 3 && n !== 0 ? (
-          <span className="my-color-5 fs-7">
-            {" "}
-            [{number.NumberOfAppearing - 1}]
-          </span>
-        ) : null}
-      </td>
-    );
-  };
-
-  const getBgColors = (number) => {
-    if (number.Value < 10) {
-      return "bg-color20 text-center text-success fs-4 fw-bold px-2";
-    } else if (number.Value < 20) {
-      return "bg-color19 text-center text-success fs-4 fw-bold px-2";
-    } else if (number.Value < 30) {
-      return "bg-color6 text-center text-success fs-4 fw-bold px-2";
-    } else if (number.Value < 40) {
-      return "bg-color3 text-center text-success fs-4 fw-bold px-2";
-    } else {
-      return "bg-color10 text-center text-success fs-4 fw-bold px-2";
-    }
   };
 
   return (

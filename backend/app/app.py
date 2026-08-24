@@ -432,7 +432,7 @@ def getNumberOfAppearing(alist):
         for d in da:
             number = d['Value']
             if number not in appearing_stats:
-                appearing_stats[number] = 0
+                appearing_stats[number] = 1
                 
             appearing_stats[number] += 1
             d['NumberOfAppearing'] = appearing_stats[number] 
@@ -568,7 +568,10 @@ def get_data_7():
 
     # Calculate the start and end indices for the current page
     start_index = (page_number - 1) * page_size
-    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    result = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    
+    data  = getNumberFrequency(result)
+    return jsonify({'data': data}), 200
 
 @app.route('/api/lotto/pastDraws', methods=['GET'])
 def get_data_8():
@@ -649,12 +652,12 @@ def ai_analysis():
     
     hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
     
-    generated_draws = generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, sliderMax)
+    result = generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, sliderMax)
     
-    for da in generated_draws:
-        for d in da:
-            d['NumberOfAppearing'] += 1
-        
+    #gen_draws = getNumberFrequency(result)
+    
+    generated_draws = getNumberOfAppearing(result)
+    
     ai_generated_draws = None
     if analyze:
         ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws, ai_model, max_tokens)
