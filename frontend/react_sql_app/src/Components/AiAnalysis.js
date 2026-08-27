@@ -341,7 +341,7 @@ const AiAnalysis = (props) => {
                         <td className="text-light bg-info text-center fw-bold fs-9">
                           {index + 1}
                         </td>
-                        {row.map((d) => getTD(d))},
+                        {row.map((d) => getTD(d))}
                       </tr>
                     ))}
                   </tbody>

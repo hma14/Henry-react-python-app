@@ -457,14 +457,14 @@ const PredictDraws = (props) => {
         {numbers.map((number) =>
           number.Value > start && number.Value <= end ? (
             <td
-              className="bg-color1 text-center text-success fs-5 fw-bold px-2"
+              className="bg-color1 text-center text-success fs-4 fw-bold px-2"
               key={number.Value}
             >
               <span
                 className={classNames(
                   "txt-color",
-                  { "my-color-4 fs-5": number.Distance === 0 },
-                  { "text-danger fs-5": number.Distance > 10 },
+                  { "my-color-4 fs-4": number.Distance === 0 },
+                  { "text-danger fs-4": number.Distance > 10 },
                 )}
               >
                 {number.Value}
@@ -550,7 +550,7 @@ const PredictDraws = (props) => {
                 <td className="bg-color3 text-primary fs-5 fst-italic">
                   {index + 1}
                 </td>
-                {row.map((number) => getTD(number))},
+                {row.map((number) => getTD(number))}
               </tr>
             ))}
           </tbody>
