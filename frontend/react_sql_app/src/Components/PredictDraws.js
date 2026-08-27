@@ -481,11 +481,13 @@ const PredictDraws = (props) => {
               <span className="text-primary fst-italic fs-6">
                 ({number.TotalHits})
               </span>
+              <span className="text-danger fst-italic fs-6">
+                ({number.Frequency})
+              </span>
               <span
                 className={classNames(
                   "txt-color",
-                  { "red-indigo fst-italic fs-6": number.Probability > 0 },
-                  { "teal-indigo fst-italic fs-6": number.Probability === 0 },
+                  "teal-indigo fst-italic fs-6",
                 )}
               >
                 ({number.Probability})
