@@ -223,6 +223,7 @@ const PredictDraws = (props) => {
         document.getElementById("matchingResult").style.display = "none";
         return;
       } else {
+        document.getElementById("matchingResult").style.display = "";
         setMatched(matching_results.matches);
         setTargetNumber(matching_results.target_draw.split(/\s+/).map(Number));
       }
@@ -256,7 +257,7 @@ const PredictDraws = (props) => {
   useEffect(() => {
     fetchData();
     getNumbers();
-  }, [fetchData, getNumbers]);
+  }, [fetchData, getNumbers, drawNumber]);
 
   // Match tickets whenever predictions change
   useEffect(() => {
