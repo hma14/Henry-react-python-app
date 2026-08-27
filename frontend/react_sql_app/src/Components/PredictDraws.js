@@ -54,6 +54,83 @@ export const getTD = (number, n = 1) => {
   );
 };
 
+export const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
+  // Build matchedDic here
+  const matchedDic = {};
+  const targetDrawDic = {};
+
+  const tickets = matchedNumbers.map((item) =>
+    item.ticket.split(/\s+/).map(Number),
+  );
+  tickets.forEach((ticket) => {
+    ticket.forEach((value) => {
+      const number = allNumbers.find((x) => x.Value === value);
+
+      if (number) {
+        matchedDic[value] = {
+          Value: number.Value,
+          Distance: number.Distance,
+          TotalHits: number.TotalHits,
+          Probability: number.Probability,
+          Frequency: number.Frequency,
+        };
+      }
+    });
+  });
+  targetDraw
+    /*  .split(/\s+/)
+      .map(Number) */
+    .forEach((value) => {
+      const number = allNumbers.find((x) => x.Value === value);
+      if (number) {
+        targetDrawDic[value] = {
+          Value: number.Value,
+          Distance: number.Distance,
+          TotalHits: number.TotalHits,
+          Probability: number.Probability,
+          Frequency: number.Frequency,
+        };
+      }
+    });
+  return { matchedDic, targetDrawDic };
+};
+
+export const getHeader_4 = (arr, matchedNumbers_length) => {
+  return (
+    <thead className="table-danger text-center">
+      <tr>
+        <th className="text-warning bg-primary">#</th>
+        {arr.map((no) => (
+          <th key={no} className="text-warning bg-success fst-italic">
+            {no + 1}
+          </th>
+        ))}
+        <th className="text-warning bg-danger fst-italic">Matches</th>
+        <th
+          colSpan={matchedNumbers_length}
+          className="text-warning bg-primary fst-italic"
+        >
+          Match Numbers
+        </th>
+      </tr>
+    </thead>
+  );
+};
+export const getHeader_5 = (arr) => {
+  return (
+    <thead className="table-danger text-center">
+      <tr>
+        <th className="text-warning bg-success">Target Draw NUmber</th>
+        {arr.map((no) => (
+          <th key={no} className="text-warning bg-success fst-italic">
+            {no + 1}
+          </th>
+        ))}
+      </tr>
+    </thead>
+  );
+};
+
 const getBgColors = (number) => {
   if (number.Value < 10) {
     return "bg-color20 text-center text-success fs-4 fw-bold px-2";
@@ -74,7 +151,6 @@ const PredictDraws = (props) => {
     endpoint2,
     endpoint3,
     columns,
-    rows,
     drawNumber,
     lottoName,
   } = props;
@@ -332,47 +408,6 @@ const PredictDraws = (props) => {
     }
   */
 
-  const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
-    // Build matchedDic here
-    const matchedDic = {};
-    const targetDrawDic = {};
-
-    const tickets = matchedNumbers.map((item) =>
-      item.ticket.split(/\s+/).map(Number),
-    );
-    tickets.forEach((ticket) => {
-      ticket.forEach((value) => {
-        const number = allNumbers.find((x) => x.Value === value);
-
-        if (number) {
-          matchedDic[value] = {
-            Value: number.Value,
-            Distance: number.Distance,
-            TotalHits: number.TotalHits,
-            Probability: number.Probability,
-            Frequency: number.Frequency,
-          };
-        }
-      });
-    });
-    targetDraw
-      /*  .split(/\s+/)
-      .map(Number) */
-      .forEach((value) => {
-        const number = allNumbers.find((x) => x.Value === value);
-        if (number) {
-          targetDrawDic[value] = {
-            Value: number.Value,
-            Distance: number.Distance,
-            TotalHits: number.TotalHits,
-            Probability: number.Probability,
-            Frequency: number.Frequency,
-          };
-        }
-      });
-    return { matchedDic, targetDrawDic };
-  };
-
   const getHeader = () => {
     return (
       <thead className="table-danger text-center">
@@ -406,41 +441,6 @@ const PredictDraws = (props) => {
       <thead className="table-danger text-center">
         <tr>
           {Array.from(Array(arr.length).keys()).map((no) => (
-            <th key={no} className="text-warning bg-success fst-italic">
-              {no + 1}
-            </th>
-          ))}
-        </tr>
-      </thead>
-    );
-  };
-  const getHeader_4 = (arr, matchedNumbers_length) => {
-    return (
-      <thead className="table-danger text-center">
-        <tr>
-          <th className="text-warning bg-primary">#</th>
-          {arr.map((no) => (
-            <th key={no} className="text-warning bg-success fst-italic">
-              {no + 1}
-            </th>
-          ))}
-          <th className="text-warning bg-danger fst-italic">Matches</th>
-          <th
-            colSpan={matchedNumbers_length}
-            className="text-warning bg-primary fst-italic"
-          >
-            Match Numbers
-          </th>
-        </tr>
-      </thead>
-    );
-  };
-  const getHeader_5 = (arr) => {
-    return (
-      <thead className="table-danger text-center">
-        <tr>
-          <th className="text-warning bg-success">Target Draw NUmber</th>
-          {arr.map((no) => (
             <th key={no} className="text-warning bg-success fst-italic">
               {no + 1}
             </th>
@@ -568,7 +568,8 @@ const PredictDraws = (props) => {
           {!isLoading &&
           Array.isArray(targetNumber) &&
           targetNumber.length > 0 &&
-          targetDrawDic != undefined ? (
+          targetDrawDic &&
+          Object.keys(targetDrawDic).length > 0 ? (
             <Table bordered className="table-light mb-2" size="lg">
               {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
               <tbody className="fw-bold align-middle">
@@ -608,6 +609,7 @@ const PredictDraws = (props) => {
         {Array.isArray(matched) &&
         matched.length > 0 &&
         matchedDic &&
+        Object.keys(matchedDic).length > 0 &&
         !isLoading ? (
           <Table
             bordered

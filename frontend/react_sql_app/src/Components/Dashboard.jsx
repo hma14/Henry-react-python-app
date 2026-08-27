@@ -207,6 +207,8 @@ const Dashboard = () => {
     lottoName +
     "&drawNumber=" +
     drawNumber +
+    "&page_size=" +
+    pageSize +
     "&analyze=";
 
   const url28 =
@@ -384,7 +386,6 @@ const Dashboard = () => {
             endpoint2={url9}
             endpoint3={url34}
             columns={potentialColumns}
-            rows={pageSize}
             drawNumber={drawNumber}
             lottoName={lottoName}
           />
@@ -395,7 +396,6 @@ const Dashboard = () => {
             endpoint={url5}
             endpoint2={url26}
             columns={potentialColumns}
-            rows={pageSize}
             drawNumber={drawNumber}
           />
         );
@@ -403,8 +403,13 @@ const Dashboard = () => {
         return (
           <AiAnalysis
             endpoint={url27}
-            sortType={sortType}
+            endpoint3={url34}
+            endpoint4={url5}
+            //sortType={sortType}
             lottoName={lottoName}
+            rows={pageSize}
+            drawNumber={drawNumber}
+            columns={potentialColumns}
           />
         );
       case "generate_image":

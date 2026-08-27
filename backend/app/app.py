@@ -358,11 +358,9 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    result = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
-        
-    data = getNumberFrequency(result)
-    
-    return jsonify({'data': data}), 200
+    data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+            
+    return data
 
 
 @app.route('/api/lotto/predict', methods=['GET'])
@@ -373,9 +371,9 @@ def get_data_5():
     page_size = int(request.args.get('page_size', 10))
     start_index = 0
     data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
-    numbers = getNumberFrequency(data)
-    
-    return numbers, 200
+    json_obj = data.get_json()
+    jdata = json_obj['data']
+    return jdata, 200
 
 
 @app.route('/api/openai', methods=['GET'])
@@ -423,6 +421,36 @@ def getNumberFrequency(alist):
         key=lambda x: x['DrawNumber'],
         reverse=True
     )
+    
+def getNumberFrequency2(alist):
+    
+    sorted_list = sorted(
+        alist,
+        key=lambda x: x.LottoType.DrawNumber
+    )
+    number_stats = {}
+
+    for d in sorted_list:
+        number = d.Value #d['Value']
+
+        # If this number has not been seen yet
+        if number not in number_stats:
+            number_stats[number] = 0
+
+        # Increase frequency if the number was hit
+        if d.IsHit:
+            number_stats[number] += 1
+
+        # Frequency as of THIS draw
+        d.Frequency = number_stats[number]
+    # Return newest -> oldest
+    return sorted(
+        sorted_list,
+        key=lambda x: x.LottoType.DrawNumber,
+        reverse=True
+    )
+        
+
    
 
 def getNumberOfAppearing(alist):
@@ -452,19 +480,22 @@ def potential_draws():
     total_page_size = 200
     start_index = 0
 
-    result = retrieve_data(
+    draws = retrieve_data(
         lotto_name, page_size, number_range, start_index, drawNumber
     )
-
-    draws = getNumberFrequency(result)
     
     columns = int(request.args.get('columns', 6))
-    potential_draws = PotentialDraws(draws, columns, page_size)
+    
+    json_obj = draws.get_json()
+    jdata = json_obj['data']
+    potential_draws = PotentialDraws(jdata, columns, page_size)
     
     data = potential_draws.next_potential_draws()
 
     return getNumberOfAppearing(data)
 
+def canMatching(lotto_name, draw_number):
+    return (draw_number + 1 <= get_last_draw(lotto_name))
 
 @app.route('/api/lotto/matching_target_draw', methods=['POST'])
 def matching_target_draw():  
@@ -476,11 +507,8 @@ def matching_target_draw():
     num_matches = int(data.get('num_matches', 3))
     tickets = data.get('tickets', [])
     
-    last_draw_number = get_last_draw(lotto_name)
-    canMatch = True
-    if(draw_number + 1 > last_draw_number):
-        canMatch = False
-    else:
+    canMatch = canMatching(lotto_name, draw_number)
+    if(canMatch):
         target_draw = get_target_draw(lotto_name, draw_number + 1)        
     
 
@@ -568,10 +596,9 @@ def get_data_7():
 
     # Calculate the start and end indices for the current page
     start_index = (page_number - 1) * page_size
-    result = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
-    
-    data  = getNumberFrequency(result)
-    return jsonify({'data': data}), 200
+    data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+ 
+    return data
 
 @app.route('/api/lotto/pastDraws', methods=['GET'])
 def get_data_8():
@@ -640,7 +667,7 @@ def get_current_draw_number():
 
 @app.route('/api/AiAnalysis', methods=['GET'])
 def ai_analysis():
-    lotto_id = int(request.args.get('lotto_name', 1))
+    lotto_name = int(request.args.get('lotto_name', 1))
     to_draw_number = int(request.args.get('drawNumber', 1)) 
     analyze = request.args.get('analyze', 'false').lower() == 'true'
     sliderMin = request.args.get('sliderMin', 1)
@@ -648,19 +675,18 @@ def ai_analysis():
     ai_model = request.args.get('aiModel', 'deepseek_chat')
     max_tokens = int(request.args.get('maxTokens', 100))
     count = int(request.args.get('count', 1))
+    page_size = int(request.args.get('page_size', 10))
+    start_draw_number = to_draw_number - page_size
     
+    hot, cold, neutral = get_lotto_data(lotto_name, start_draw_number, to_draw_number)
     
-    hot, cold, neutral = get_lotto_data(lotto_id, to_draw_number)
-    
-    result = generate_multiple_draws(lotto_id, hot, cold, neutral, count, sliderMin, sliderMax)
-    
-    #gen_draws = getNumberFrequency(result)
+    result = generate_multiple_draws(lotto_name, hot, cold, neutral, count, sliderMin, sliderMax)
     
     generated_draws = getNumberOfAppearing(result)
-    
+       
     ai_generated_draws = None
     if analyze:
-        ai_generated_draws = ask_model_to_analyze_draws(lotto_id, hot, cold, neutral, generated_draws, ai_model, max_tokens)
+        ai_generated_draws = ask_model_to_analyze_draws(lotto_name, hot, cold, neutral, generated_draws, ai_model, max_tokens)
         
     return [hot, cold, neutral, generated_draws, ai_generated_draws]
 
@@ -704,6 +730,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
     drawNumber_dict = {}
     drawDate_dict = {}
 
+    data = getNumberFrequency2(data)
     for number in data:
         if number.LottoType.DrawNumber not in numbers_dict:
             numbers_dict[number.LottoType.DrawNumber] = []

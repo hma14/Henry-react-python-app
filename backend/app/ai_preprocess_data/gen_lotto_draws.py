@@ -16,25 +16,48 @@ lotto_hit_numbers = {
     4: 5,
 }
 
-def get_lotto_data(lotto_name: int, draw_number: int):
+def get_lotto_data(lotto_name: int, start_draw_number: int, target_draw_number: int):
     connection_string = get_db_connection_string()
      
     query = """
+    
     SELECT 
-        t.NumberRange, t.DrawNumber, 
-        n.Value, n.Distance, n.IsHit, n.NumberofDrawsWhenHit, 
-        n.IsBonusNumber, n.TotalHits, n.Probability,
-        1 AS NumberOfAppearing 
-    FROM [dbo].[LottoTypes] t 
-    INNER JOIN [dbo].[Numbers] n ON t.Id = n.LottoTypeId 
-    WHERE t.LottoName = ? AND t.DrawNumber = ?
-    ORDER BY n.Distance
+        t.NumberRange,
+        t.DrawNumber,
+        n.Value,
+        n.Distance,
+        n.IsHit,
+        n.NumberofDrawsWhenHit,
+        n.IsBonusNumber,
+		n.TotalHits,
+        n.TotalHits - ISNULL(nStart.TotalHits, 0) AS Frequency,
+        n.Probability,
+        1 AS NumberOfAppearing
+
+    FROM [dbo].[LottoTypes] t
+
+    INNER JOIN [dbo].[Numbers] n
+        ON t.Id = n.LottoTypeId
+
+    LEFT JOIN [dbo].[LottoTypes] tStart
+        ON tStart.LottoName = t.LottoName
+        AND tStart.DrawNumber = ?
+
+    LEFT JOIN [dbo].[Numbers] nStart
+        ON nStart.LottoTypeId = tStart.Id
+        AND nStart.Value = n.Value
+
+    WHERE t.LottoName = ?
+      AND t.DrawNumber = ?
+
+    ORDER BY n.Value
+  
     """
 
     # Connect to SQL Server
     with pyodbc.connect(connection_string) as conn:
         cursor = conn.cursor()
-        cursor.execute(query, (lotto_name, draw_number))
+        cursor.execute(query, (start_draw_number, lotto_name, target_draw_number))
         rows = cursor.fetchall()
 
         # Optional: convert result to list of dictionaries

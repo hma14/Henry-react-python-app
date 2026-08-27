@@ -22,8 +22,22 @@ import CircularProgress from "@mui/material/CircularProgress";
 import classNames from "classnames";
 import Slider from "./Slider";
 
+import {
+  createMatchedDic,
+  getTD,
+  getHeader_4,
+  getHeader_5,
+} from "./PredictDraws";
+
 const AiAnalysis = (props) => {
-  const { endpoint, sortType, lottoName } = props;
+  const {
+    endpoint,
+    endpoint3,
+    endpoint4,
+    lottoName,
+    drawNumber,
+    columns,
+  } = props;
   const [hot, setHot] = useState([]);
   const [cold, setCold] = useState([]);
   const [neutral, setNeutral] = useState([]);
@@ -39,8 +53,15 @@ const AiAnalysis = (props) => {
   const [maxValue, setMaxValue] = useState(3);
   const [aiModel, setAiModel] = useState("gpt-5");
   const [maxTokens, setMaxTokens] = useState(100);
+  const [numMatches, setNumMatches] = useState(3);
+  const [matched, setMatched] = useState([]);
+  const [targetNumber, setTargetNumber] = useState([]);
+  const [maxMatches, setMaxMatches] = useState(0);
+  const [matchedDic, setMatchedDic] = useState({});
+  const [targetDrawDic, setTargetDrawDic] = useState({});
+  const [numbers, setNumbers] = useState();
 
-  const numbers = Array.from({ length: 10 }, (_, index) => index + 1);
+  const numbers_select = Array.from({ length: 100 }, (_, index) => index + 1);
 
   // Function to parse arrays from response string
   const parseCombos = (text) => {
@@ -142,11 +163,67 @@ const AiAnalysis = (props) => {
           console.error("Error fetching data:", error);
         });
     },
-    [endpoint]
+    [endpoint],
   );
+
+  const getNumbers = useCallback(async () => {
+    try {
+      const response = await axios(endpoint4);
+      setNumbers(response.data[0]?.Numbers);
+    } catch (error) {
+      console.error("Error fetching draw number:", error);
+    }
+  }, [endpoint]);
+
+  const getMatched = useCallback(async () => {
+    try {
+      const requestData = {
+        lotto_name: lottoName,
+        draw_number: drawNumber,
+        num_matches: numMatches,
+        tickets: generatedDraws.map((row) => row.map((number) => number.Value)),
+      };
+
+      const response = await axios.post(endpoint3, requestData);
+
+      const { canMatch, matching_results } = response.data;
+
+      if (!canMatch) {
+        document.getElementById("matchingResult").style.display = "none";
+        return;
+      } else {
+        setMatched(matching_results.matches);
+        setTargetNumber(matching_results.target_draw.split(/\s+/).map(Number));
+      }
+      const targetNumbers = matching_results.target_draw
+        .split(/\s+/)
+        .map(Number);
+
+      const maxM = Math.max(
+        0,
+        ...matching_results.matches.map((x) => x.matches),
+      );
+
+      const { matchedDic, targetDrawDic } = createMatchedDic(
+        numbers,
+        matching_results.matches,
+        targetNumbers,
+      );
+
+      // Now update the states
+      setMatched(matching_results.matches);
+      setTargetNumber(targetNumbers);
+      setMaxMatches(maxM);
+      setMatchedDic(matchedDic);
+      setTargetDrawDic(targetDrawDic);
+    } catch (error) {
+      console.error("Error fetching matched numbers:", error);
+    }
+  }, [endpoint, endpoint3, lottoName, drawNumber, numMatches, generatedDraws]);
 
   useEffect(() => {
     fetchData(analyze, numberDraws, sliderMin, sliderMax, aiModel, maxTokens);
+    getNumbers();
   }, [
     endpoint,
     analyze,
@@ -167,14 +244,20 @@ const AiAnalysis = (props) => {
     }
   }, [lottoName]);
 
+  useEffect(() => {
+    if (generatedDraws.length > 0) {
+      getMatched();
+    }
+  }, [endpoint, generatedDraws, drawNumber, lottoName, numMatches]);
+
   return (
     <div>
       <React.Fragment>
         <CssBaseline />
         <div className="card">
-          <h2 className="text-info text-center">
+          <h3 className="text-info text-center fst-italic">
             Number Categories and Generated Draws
-          </h2>
+          </h3>
           {hot && hot.length > 0 ? (
             <>
               <div className="table-container">
@@ -193,53 +276,7 @@ const AiAnalysis = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      {hot.map((d) => (
-                        <td className="bg-color1 text-center text-danger fs-5 fw-bold px-2">
-                          {d.Value}
-                          <br />
-                          <span className={"fst-italic text-info fs-7"}>
-                            {d.Distance}
-                          </span>
-                          <br />
-                          <span className="my-color-4 fst-italic fs-7">
-                            {d.TotalHits}
-                          </span>
-                          <br />
-                          <span
-                            className={classNames(
-                              "txt-color",
-                              {
-                                "text-danger fst-italic fs-7":
-                                  d.NumberofDrawsWhenHit > 10,
-                              },
-                              {
-                                "text-success fst-italic fs-7":
-                                  d.NumberofDrawsWhenHit <= 10,
-                              }
-                            )}
-                          >
-                            {d.NumberofDrawsWhenHit !== 0 &&
-                              d.NumberofDrawsWhenHit}
-                          </span>
-                          <br />
-                          <span
-                            className={classNames(
-                              "txt-color",
-                              {
-                                "red-indigo fst-italic fs-7": d.Probability > 0,
-                              },
-                              {
-                                "my-color-1 fst-italic fs-7":
-                                  d.Probability === 0,
-                              }
-                            )}
-                          >
-                            {d.Probability}
-                          </span>
-                        </td>
-                      ))}
-                    </tr>
+                    <tr>{hot.map((d) => getTD(d, 3))}</tr>
                   </tbody>
                 </Table>
                 <h3 className="text-success">Neutral Numbers</h3>
@@ -257,33 +294,7 @@ const AiAnalysis = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      {neutral.map((d) => (
-                        <td className="bg-color1 text-center text-success fs-5 fw-bold px-2">
-                          {d.Value}{" "}
-                          <span className={"fst-italic text-info fs-7"}>
-                            ( {d.Distance} )
-                          </span>
-                          <span className="my-color-4 fst-italic fs-7">
-                            ( {d.TotalHits} )
-                          </span>
-                          <span
-                            className={classNames(
-                              "txt-color",
-                              {
-                                "red-indigo fst-italic fs-7": d.Probability > 0,
-                              },
-                              {
-                                "my-color-1 fst-italic fs-7":
-                                  d.Probability === 0,
-                              }
-                            )}
-                          >
-                            ( {d.Probability} )
-                          </span>
-                        </td>
-                      ))}
-                    </tr>
+                    <tr>{neutral.map((d) => getTD(d, 3))}</tr>
                   </tbody>
                 </Table>
                 <h3 className="text-info">Cold Numbers</h3>
@@ -301,34 +312,7 @@ const AiAnalysis = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      {cold.map((d) => (
-                        <td className="bg-color1 text-info fs-5 fw-bold px-2">
-                          {d.Value}
-                          <br />
-                          <span className={"fst-italic text-info fs-7"}>
-                            ({d.Distance} )
-                          </span>
-                          <span className="my-color-4 fst-italic fs-7">
-                            ( {d.TotalHits} )
-                          </span>
-                          <span
-                            className={classNames(
-                              "txt-color",
-                              {
-                                "red-indigo fst-italic fs-7": d.Probability > 0,
-                              },
-                              {
-                                "my-color-1 fst-italic fs-7":
-                                  d.Probability === 0,
-                              }
-                            )}
-                          >
-                            ( {d.Probability} )
-                          </span>
-                        </td>
-                      ))}
-                    </tr>
+                    <tr>{cold.map((d) => getTD(d, 3))}</tr>
                   </tbody>
                 </Table>
               </div>
@@ -346,73 +330,138 @@ const AiAnalysis = (props) => {
                           >
                             {no + 1}
                           </th>
-                        )
+                        ),
                       )}
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="fw-bold align-middle">
                     {generatedDraws.map((row, index) => (
                       <tr key={index}>
                         <td className="text-light bg-info text-center fw-bold fs-9">
                           {index + 1}
                         </td>
-                        {row.map((d) => (
-                          <td className="bg-color1 text-center text-success fs-5 fw-bold px-2">
-                            <span
-                              key={d.Value}
-                              className={`inline-block px-2 py-1 m-1 rounded ${getCellColor(
-                                d.Value
-                              )}`}
-                            >
-                              {d.Value}
-                            </span>
-                            <span className={"fst-italic text-info fs-7"}>
-                              ( {d.Distance} )
-                            </span>
-                            <span className="my-color-4 fst-italic fs-7">
-                              ( {d.TotalHits} )
-                            </span>
-                            {d.NumberofDrawsWhenHit !== 0 && (
-                              <span
-                                className={classNames(
-                                  "txt-color",
-                                  {
-                                    "text-danger fst-italic fs-7":
-                                      d.NumberofDrawsWhenHit > 10,
-                                  },
-                                  {
-                                    "text-success fst-italic fs-7":
-                                      d.NumberofDrawsWhenHit <= 10,
-                                  }
-                                )}
-                              >
-                                ({d.NumberofDrawsWhenHit})
-                              </span>
-                            )}
-                            <span
-                              className={classNames(
-                                "txt-color",
-                                {
-                                  "red-indigo fst-italic fs-7":
-                                    d.Probability > 0,
-                                },
-                                {
-                                  "my-color-1 fst-italic fs-7":
-                                    d.Probability === 0,
-                                }
-                              )}
-                            >
-                              ( {d.Probability} )
-                            </span>{" "}
-                            <span className="my-color-5 fs-7">
-                              [{d.NumberOfAppearing - 1}]
-                            </span>
-                          </td>
-                        ))}
+                        {row.map((d) => getTD(d))},
                       </tr>
                     ))}
                   </tbody>
                 </Table>
+
+                <div id="matchingResult">
+                  <h4 className="text-success fst-italic mt-4 text-center">
+                    Generated draws are matched to the past target draw, if
+                    target draw is not a future draw.
+                  </h4>
+
+                  <div className="text-danger ticketHeader fst-italic mt-4 text-center">
+                    {!isLoading &&
+                    Array.isArray(targetNumber) &&
+                    targetNumber.length > 0 &&
+                    targetDrawDic != undefined ? (
+                      <Table bordered className="table-light mb-2" size="lg">
+                        {getHeader_5(
+                          Array.from({ length: columns }, (_, i) => i),
+                        )}
+                        <tbody className="fw-bold align-middle">
+                          <tr>
+                            <td className="text-danger bg-color19 fs-4 fw-bold">
+                              {drawNumber + 1}
+                            </td>
+                            {targetNumber.map((number) => {
+                              const value = targetDrawDic[number];
+                              return value ? getTD(value, 0) : null;
+                            })}
+                          </tr>
+                        </tbody>
+                      </Table>
+                    ) : (
+                      " "
+                    )}
+                  </div>
+                  <div className="mt-2  fw-bold mb-2 d-flex justify-content-end">
+                    <label className="text-success ps-3 fw-bold mr-2">
+                      Minimum Matches:
+                    </label>
+                    <select
+                      className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
+                      fullWidth
+                      style={{ width: "200px" }}
+                      value={numMatches}
+                      onChange={(e) => setNumMatches(Number(e.target.value))}
+                    >
+                      {Array.from({ length: columns - 1 }, (_, i) => i + 2).map(
+                        (col) => (
+                          <option key={col} value={col}>
+                            {col}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                  </div>
+                  {Array.isArray(matched) &&
+                  matched.length > 0 &&
+                  matchedDic &&
+                  !isLoading ? (
+                    <Table
+                      bordered
+                      hover
+                      responsive
+                      className="table-light mb-2"
+                      size="lg"
+                    >
+                      {getHeader_4(
+                        Array.from({ length: columns }, (_, i) => i),
+                        maxMatches,
+                      )}
+                      <tbody className="fw-bold align-middle">
+                        {matched.map((row, index) => (
+                          <tr key={index}>
+                            <td className="bg-color3 text-primary fs-5 fst-italic">
+                              {index + 1}
+                            </td>
+                            {row.ticket
+                              .split(/\s+/)
+                              .map(Number)
+                              .map((number) => getTD(matchedDic[number], 0))}
+                            <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
+                              {row.matches}
+                            </td>
+                            <td className="bg-color6 text-center text-success fs-4 fw-bold px-2">
+                              {row.matched_numbers}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      {getHeader_4(
+                        Array.from({ length: columns }, (_, i) => i),
+                        maxMatches,
+                      )}
+                    </Table>
+                  ) : (
+                    <p className="text-danger text-center fst-italic fs-5 mt-4">
+                      No matched draws found.
+                    </p>
+                  )}
+                  <div className="d-flex justify-content-end">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        fetchData(
+                          analyze,
+                          numberDraws,
+                          sliderMin,
+                          sliderMax,
+                          aiModel,
+                          1,
+                        )
+                      }
+                      className="btn btn-info text-white fw-bold mb-2 three-d-button"
+                      fullWidth
+                      disabled={isLoading}
+                    >
+                      Generate Potential Draws
+                    </button>
+                  </div>
+                </div>
               </div>
               <div className="mb-4 flex justify-end items-center space-x-4 mr-4">
                 <div className="slider">
@@ -444,7 +493,7 @@ const AiAnalysis = (props) => {
                     className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder"
                     onChange={(e) => setNumberDraws(e.target.value)}
                   >
-                    {numbers.map((num) => (
+                    {numbers_select.map((num) => (
                       <option key={num} value={num}>
                         {num}
                       </option>
@@ -460,7 +509,7 @@ const AiAnalysis = (props) => {
                       sliderMin,
                       sliderMax,
                       aiModel,
-                      1
+                      1,
                     )
                   }
                   className="btn btn-info text-white fw-bold mt-4 three-d-button"
