@@ -552,8 +552,14 @@ def potential_numbers():
 
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
+        
+    target_draw = []
+    canMatch = canMatching(lotto_name, drawNumber)
+    if(canMatch):
+        target_draw = get_target_draw(lotto_name, drawNumber + 1)   
+        
 
-    total_page_size = 200
+    #total_page_size = 200
     start_index = 0
 
     result = retrieve_data(
@@ -572,15 +578,14 @@ def potential_numbers():
 
     potential_draws = PotentialDraws(numbers, columns, page_size, target_rows)
 
-    data = potential_draws.collect_potential_numbers()
-    #logging.debug(f"Data received: {data}")
-    """     for da in data:
-            for d in da:
-                d['NumberOfAppearing'] += 1
-
-    """    
-    #logging.debug(f"Final data: {data}")
-    return [arr for arr in data if arr]
+    po_numbers = potential_draws.collect_potential_numbers()
+    
+    if target_draw:
+        data = {"target_draw": " ".join(f"{n:02d}" for n in target_draw), "po_numbers": po_numbers}
+    else:
+        data = {"target_draw": target_draw, "po_numbers": po_numbers}
+    
+    return  {"data": data, "canMatch": canMatch}
 
 
 @app.route('/api/lotto/lottoDraws', methods=['GET'])

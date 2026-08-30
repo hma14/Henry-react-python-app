@@ -7,6 +7,12 @@ import "../styles.css";
 import classNames from "classnames";
 import CircularProgress from "@mui/material/CircularProgress";
 import Slider from "./Slider";
+import {
+  createMatchedDic,
+  getTD,
+  getHeader_4,
+  getHeader_5,
+} from "./PredictDraws";
 
 const PotentialNumbers = (props) => {
   const { endpoint, endpoint2, columns, rows, drawNumber } = props;
@@ -16,6 +22,9 @@ const PotentialNumbers = (props) => {
   const [sliderValue, setSliderValue] = useState(15); // Initial slider value
   const [missing, setMissing] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [targetDrawDic, setTargetDrawDic] = useState({});
+  const [targetNumber, setTargetNumber] = useState([]);
+  const [targetNumbers, setTargetNumbers] = useState([]);
 
   const fetchData = useCallback(
     async (sliderVal) => {
@@ -26,42 +35,55 @@ const PotentialNumbers = (props) => {
           const promises = [await axios.post(endpoint3)];
           const responses = await Promise.all(promises);
 
-          // Extract data from each response
-          return responses.map((response) => response.data);
+          const { data, canMatch } = responses[0].data;
+          const { po_numbers, target_draw } = data;
+
+          const response = await axios(endpoint);
+          setNumbers(response.data[0]?.Numbers);
+
+          return { po_numbers, target_draw, canMatch };
         } catch (error) {
           console.error("Error processing next prediction:", error);
         }
       };
 
       try {
-        const result = await processNextPotentialDraws();
-        const data = result[0];
-        const missing = data.pop();
-        const hits = data.pop();
+        const {
+          po_numbers,
+          target_draw,
+          canMatch,
+        } = await processNextPotentialDraws();
+        const missing = po_numbers.pop();
+        const hits = po_numbers.pop();
         setMissing(missing);
         setPredicts(hits);
         setIsLoading(false);
+        if (!canMatch) {
+          document.getElementById("matchingResult").style.display = "none";
+          return;
+        } else {
+          document.getElementById("matchingResult").style.display = "";
+          setTargetNumber(target_draw.split(/\s+/).map(Number));
+          setTargetNumbers(target_draw);
+
+          const { matchedDic, targetDrawDic } = createMatchedDic(
+            numbers,
+            [],
+            target_draw.split(/\s+/).map(Number),
+          );
+          setTargetDrawDic(targetDrawDic);
+        }
       } catch (error) {
         console.error("Error updating predicts:", error);
       }
       console.log("Fetching data...");
     },
-    [endpoint2]
+    [endpoint2, drawNumber],
   );
-
-  const getNumbers = useCallback(async () => {
-    try {
-      const response = await axios(endpoint);
-      setNumbers(response.data.data[0]?.Numbers);
-    } catch (error) {
-      console.error("Error fetching draw number:", error);
-    }
-  }, [endpoint]);
 
   useEffect(() => {
     fetchData(sliderValue);
-    getNumbers();
-  }, [fetchData, columns, endpoint, endpoint2, rows, sliderValue]);
+  }, [fetchData, drawNumber, rows, sliderValue]);
 
   /*
     const getPredicts = (cols) => {
@@ -260,7 +282,7 @@ const PotentialNumbers = (props) => {
                 className={classNames(
                   "txt-color",
                   { "my-color-4 fs-5": number.Distance === 0 },
-                  { "text-danger fs-5": number.Distance > 10 }
+                  { "text-danger fs-5": number.Distance > 10 },
                 )}
               >
                 {number.Value}
@@ -269,7 +291,7 @@ const PotentialNumbers = (props) => {
                 className={classNames(
                   "txt-color",
                   { "fst-italic my-color-1 fs-6": number.Distance > 10 },
-                  { "fst-italic text-success fs-6": number.Distance <= 10 }
+                  { "fst-italic text-success fs-6": number.Distance <= 10 },
                 )}
               >
                 ({number.Distance})
@@ -277,11 +299,13 @@ const PotentialNumbers = (props) => {
               <span className="text-primary fst-italic fs-6">
                 ({number.TotalHits})
               </span>
+              <span className="text-danger fst-italic fs-6">
+                ({number.Frequency})
+              </span>
               <span
                 className={classNames(
                   "txt-color",
-                  { "red-indigo fst-italic fs-6": number.Probability > 0 },
-                  { "teal-indigo fst-italic fs-6": number.Probability === 0 }
+                  "teal-indigo fst-italic fs-6",
                 )}
               >
                 ({number.Probability})
@@ -289,20 +313,20 @@ const PotentialNumbers = (props) => {
             </td>
           ) : (
             ""
-          )
+          ),
         )}
       </tr>
     );
   };
 
-  const getTD = (number, n = 1) => {
+  const getTD_1 = (number, n = 1) => {
     return (
       <td className={getBgColors(number)} key={number.Value}>
         <span
           className={classNames(
             "txt-color",
             { "my-color-4 fs-4": number.Distance === 0 },
-            { "text-danger fs-4": number.Distance > 10 }
+            { "text-danger fs-4": number.Distance > 10 },
           )}
         >
           {number.Value}
@@ -312,7 +336,7 @@ const PotentialNumbers = (props) => {
           className={classNames(
             "txt-color",
             { "fst-italic my-color-1 fs-6": number.Distance > 10 },
-            { "fst-italic text-success fs-6": number.Distance <= 10 }
+            { "fst-italic text-success fs-6": number.Distance <= 10 },
           )}
         >
           ({number.Distance})
@@ -321,13 +345,12 @@ const PotentialNumbers = (props) => {
         <span className="text-primary fst-italic fs-6">
           ({number.TotalHits})
         </span>{" "}
+        <span className="text-danger fst-italic fs-6">
+          ({number.Frequency})
+        </span>{" "}
         <br />
         <span
-          className={classNames(
-            "txt-color",
-            { "red-indigo fst-italic fs-6": number.Probability > 0 },
-            { "teal-indigo fst-italic fs-6": number.Probability === 0 }
-          )}
+          className={classNames("txt-color", "teal-indigo fst-italic fs-6")}
         >
           ({number.Probability})
         </span>
@@ -351,6 +374,37 @@ const PotentialNumbers = (props) => {
 
   return (
     <div>
+      <div
+        id="matchingResult"
+        className="text-danger ticketHeader fst-italic mt-4 text-center"
+      >
+        {!isLoading &&
+        targetDrawDic &&
+        Object.keys(targetDrawDic).length > 0 ? (
+          <div>
+            <h4 className="text-success fst-italic mt-4 text-center">
+              Predict draws are matched to the past target draw, if target draw
+              is not a future draw.
+            </h4>
+            <Table bordered className="table-light mb-2" size="lg">
+              {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
+              <tbody className="fw-bold align-middle">
+                <tr>
+                  <td className="text-danger bg-color19 fs-4 fw-bold">
+                    {drawNumber + 1}
+                  </td>
+                  {targetNumber.map((number) => {
+                    const value = targetDrawDic[number];
+                    return value ? getTD(value, 0) : null;
+                  })}
+                </tr>
+              </tbody>
+            </Table>
+          </div>
+        ) : (
+          " "
+        )}
+      </div>
       {numbers && (
         <Table
           striped
@@ -382,7 +436,7 @@ const PotentialNumbers = (props) => {
         <Table bordered responsive className="table-light mb-2" size="lg">
           {getHeader_2()}
           <tbody className="fw-bold align-middle">
-            <tr>{predicts.map((da, index) => getTD(da))}</tr>
+            <tr>{predicts.map((da, index) => getTD_1(da))}</tr>
           </tbody>
         </Table>
       ) : (
@@ -398,7 +452,7 @@ const PotentialNumbers = (props) => {
           <Table bordered className="mt-2 " size="lg">
             {getHeader_3(missing)}
             <tbody className="fw-bold align-middle">
-              <tr>{missing.map((number) => getTD(number, 3))}</tr>
+              <tr>{missing.map((number) => getTD_1(number, 3))}</tr>
             </tbody>
           </Table>
         </div>

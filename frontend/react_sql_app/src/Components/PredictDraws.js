@@ -77,21 +77,18 @@ export const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
       }
     });
   });
-  targetDraw
-    /*  .split(/\s+/)
-      .map(Number) */
-    .forEach((value) => {
-      const number = allNumbers.find((x) => x.Value === value);
-      if (number) {
-        targetDrawDic[value] = {
-          Value: number.Value,
-          Distance: number.Distance,
-          TotalHits: number.TotalHits,
-          Probability: number.Probability,
-          Frequency: number.Frequency,
-        };
-      }
-    });
+  targetDraw.forEach((value) => {
+    const number = allNumbers.find((x) => x.Value === value);
+    if (number) {
+      targetDrawDic[value] = {
+        Value: number.Value,
+        Distance: number.Distance,
+        TotalHits: number.TotalHits,
+        Probability: number.Probability,
+        Frequency: number.Frequency,
+      };
+    }
+  });
   return { matchedDic, targetDrawDic };
 };
 
