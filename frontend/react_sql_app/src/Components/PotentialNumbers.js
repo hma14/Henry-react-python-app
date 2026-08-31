@@ -32,18 +32,29 @@ const PotentialNumbers = (props) => {
       const processNextPotentialDraws = async () => {
         try {
           const endpoint3 = endpoint2 + sliderVal;
-          const promises = [await axios.post(endpoint3)];
+
+          const promises = [axios.post(endpoint3)];
           const responses = await Promise.all(promises);
 
           const { data, canMatch } = responses[0].data;
+
           const { po_numbers, target_draw } = data;
 
           const response = await axios(endpoint);
+
           setNumbers(response.data[0]?.Numbers);
 
-          return { po_numbers, target_draw, canMatch };
+          const nums = response.data[0]?.Numbers;
+
+          return {
+            po_numbers,
+            target_draw,
+            canMatch,
+            nums,
+          };
         } catch (error) {
           console.error("Error processing next prediction:", error);
+          throw error; // IMPORTANT
         }
       };
 
@@ -52,6 +63,7 @@ const PotentialNumbers = (props) => {
           po_numbers,
           target_draw,
           canMatch,
+          nums,
         } = await processNextPotentialDraws();
         const missing = po_numbers.pop();
         const hits = po_numbers.pop();
@@ -67,7 +79,7 @@ const PotentialNumbers = (props) => {
           setTargetNumbers(target_draw);
 
           const { matchedDic, targetDrawDic } = createMatchedDic(
-            numbers,
+            nums,
             [],
             target_draw.split(/\s+/).map(Number),
           );
@@ -75,10 +87,11 @@ const PotentialNumbers = (props) => {
         }
       } catch (error) {
         console.error("Error updating predicts:", error);
+        throw error;
       }
       console.log("Fetching data...");
     },
-    [endpoint2, drawNumber],
+    [endpoint2],
   );
 
   useEffect(() => {
