@@ -36,6 +36,10 @@ const PotentialNumbers = (props) => {
           const promises = [axios.post(endpoint3)];
           const responses = await Promise.all(promises);
 
+          // for debugging on Server
+          console.log("endpoint3:", endpoint3);
+          console.log("API response:", responses[0].data);
+
           const { data, canMatch } = responses[0].data;
 
           const { po_numbers, target_draw } = data;
@@ -86,8 +90,7 @@ const PotentialNumbers = (props) => {
           setTargetDrawDic(targetDrawDic);
         }
       } catch (error) {
-        console.error("Error updating predicts:", error);
-        throw error;
+        console.error(error);
       }
       console.log("Fetching data...");
     },
