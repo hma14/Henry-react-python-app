@@ -585,7 +585,7 @@ def potential_numbers():
     else:
         data = {"target_draw": target_draw, "po_numbers": po_numbers, "canMatch": canMatch}
     
-    return  jsonify({"data": data})
+    return  jsonify(data)
 
 
 @app.route('/api/lotto/lottoDraws', methods=['GET'])

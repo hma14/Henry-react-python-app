@@ -38,7 +38,7 @@ const PotentialNumbers = (props) => {
 
           //const { data, canMatch } = responses[0].data;
 
-          const { po_numbers, target_draw, canMatch } = responses[0].data.data;
+          const { target_draw, po_numbers, canMatch } = responses[0].data;
 
           // for debugging on Server
           /* console.log("canMatch:", canMatch);
