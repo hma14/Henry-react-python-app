@@ -581,11 +581,11 @@ def potential_numbers():
     po_numbers = potential_draws.collect_potential_numbers()
     
     if target_draw:
-        data = {"target_draw": " ".join(f"{n:02d}" for n in target_draw), "po_numbers": po_numbers}
+        data = {"target_draw": " ".join(f"{n:02d}" for n in target_draw), "po_numbers": po_numbers, "canMatch": canMatch}
     else:
-        data = {"target_draw": target_draw, "po_numbers": po_numbers}
+        data = {"target_draw": target_draw, "po_numbers": po_numbers, "canMatch": canMatch}
     
-    return  {"data": data, "canMatch": canMatch}
+    return  jsonify({"data": data})
 
 
 @app.route('/api/lotto/lottoDraws', methods=['GET'])

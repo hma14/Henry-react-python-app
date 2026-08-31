@@ -36,13 +36,14 @@ const PotentialNumbers = (props) => {
           const promises = [axios.post(endpoint3)];
           const responses = await Promise.all(promises);
 
+          //const { data, canMatch } = responses[0].data;
+
+          const { po_numbers, target_draw, canMatch } = responses[0].data.data;
+
           // for debugging on Server
-          console.log("endpoint3:", endpoint3);
-          console.log("API response:", responses[0].data);
-
-          const { data, canMatch } = responses[0].data;
-
-          const { po_numbers, target_draw } = data;
+          /* console.log("canMatch:", canMatch);
+          console.log("target_draw:", target_draw);
+          console.log("po_numbers:", po_numbers); */
 
           const response = await axios(endpoint);
 
