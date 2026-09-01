@@ -543,7 +543,8 @@ class PotentialDraws:
 
         # 1 hots_cold
         hots_cold = self.get_hots_cold_numbers()
-        self.append_prediction(hots_cold, array, 1)
+        if len(hots_cold) > 0:
+            self.append_prediction(hots_cold, array, 1)
 
         pred = self.remove_duplicates(array)
         while len(pred) < self.columns:

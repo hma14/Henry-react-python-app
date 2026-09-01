@@ -36,16 +36,20 @@ const PotentialNumbers = (props) => {
           const promises = [axios.post(endpoint3)];
           const responses = await Promise.all(promises);
 
-          //const { data, canMatch } = responses[0].data;
-
           const { target_draw, po_numbers, canMatch } = responses[0].data;
 
-          // for debugging on Server
-          /* console.log("canMatch:", canMatch);
-          console.log("target_draw:", target_draw);
-          console.log("po_numbers:", po_numbers); */
-
-          const response = await axios(endpoint);
+          let response = null;
+          if (canMatch) {
+            const nextDrawNumber = drawNumber + 1;
+            response = await axios(
+              endpoint.replace(
+                `drawNumber=${drawNumber}`,
+                `drawNumber=${nextDrawNumber}`,
+              ),
+            );
+          } else {
+            response = await axios(endpoint);
+          }
 
           setNumbers(response.data[0]?.Numbers);
 
@@ -391,57 +395,62 @@ const PotentialNumbers = (props) => {
 
   return (
     <div>
-      <div
-        id="matchingResult"
-        className="text-danger ticketHeader fst-italic mt-4 text-center"
-      >
-        {!isLoading &&
-        targetDrawDic &&
-        Object.keys(targetDrawDic).length > 0 ? (
-          <div>
-            <h4 className="text-success fst-italic mt-4 text-center">
-              Predict draws are matched to the past target draw, if target draw
-              is not a future draw.
-            </h4>
-            <Table bordered className="table-light mb-2" size="lg">
-              {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
-              <tbody className="fw-bold align-middle">
-                <tr>
-                  <td className="text-danger bg-color19 fs-4 fw-bold">
-                    {drawNumber + 1}
-                  </td>
-                  {targetNumber.map((number) => {
-                    const value = targetDrawDic[number];
-                    return value ? getTD(value, 0) : null;
-                  })}
-                </tr>
-              </tbody>
-            </Table>
-          </div>
-        ) : (
-          " "
-        )}
-      </div>
-      {numbers && (
-        <Table
-          striped
-          bordered
-          hover
-          responsive
-          className="table-light mb-2"
-          size="lg"
+      <h4 className="text-success fst-italic mt-4 text-center">
+        Comparing potential numbers against the actual next draw (
+        <span className="fst-italic fw-bold text-danger">{drawNumber + 1}</span>
+        ).
+      </h4>
+      <div className="card bg-color14  mb-2">
+        <div
+          id="matchingResult"
+          className="text-danger ticketHeader fst-italic mt-4 text-center"
         >
-          {getHeader()}
-          <tbody className="fw-bold">
-            {getRow(0, 10)}
-            {getRow(10, 20)}
-            {getRow(20, 30)}
-            {getRow(30, 40)}
-            {getRow(40, 50)}
-          </tbody>
-          {getHeader()}
-        </Table>
-      )}
+          {!isLoading &&
+          targetDrawDic &&
+          Object.keys(targetDrawDic).length > 0 ? (
+            <div>
+              <Table bordered className="table-light mb-2" size="lg">
+                {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
+                <tbody className="fw-bold align-middle">
+                  <tr>
+                    <td className="text-danger bg-color19 fs-4 fw-bold">
+                      {drawNumber + 1}
+                    </td>
+                    {targetNumber.map((number) => {
+                      const value = targetDrawDic[number];
+                      return value ? getTD(value, 0) : null;
+                    })}
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          ) : (
+            " "
+          )}
+        </div>
+        <div>
+          {numbers && (
+            <Table
+              striped
+              bordered
+              hover
+              responsive
+              className="table-light mb-2"
+              size="lg"
+            >
+              {getHeader()}
+              <tbody className="fw-bold">
+                {getRow(0, 10)}
+                {getRow(10, 20)}
+                {getRow(20, 30)}
+                {getRow(30, 40)}
+                {getRow(40, 50)}
+              </tbody>
+              {getHeader()}
+            </Table>
+          )}
+        </div>
+      </div>
       <div className="container">
         <h4 className="text-primary text-center">
           Potential Numbers (Current Draw:{" "}

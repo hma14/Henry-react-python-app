@@ -562,18 +562,22 @@ def potential_numbers():
     #total_page_size = 200
     start_index = 0
 
-    result = retrieve_data(
+    draws = retrieve_data(
         lotto_name, page_size, number_range, start_index, drawNumber
     )
 
+    json_obj = draws.get_json()
+    numbers = json_obj['data']
+    
     # Decode the byte string to a regular string
-    json_str = result.data.decode('utf-8')
+    """   json_str = result.data.decode('utf-8')
 
     # Parse the JSON string
     parsed_data = json.loads(json_str)
 
     # Access the 'data' key, which contains an array
-    numbers = parsed_data['data']
+    numbers = parsed_data['data'] """
+    
     columns = int(request.args.get('columns', 6))
 
     potential_draws = PotentialDraws(numbers, columns, page_size, target_rows)
