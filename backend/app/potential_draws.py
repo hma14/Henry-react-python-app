@@ -291,7 +291,7 @@ class PotentialDraws:
         low = []
         middle = []
         high = []
-        arr = sorted(self.numbers, key=lambda x: x["TotalHits"], reverse=False)
+        arr = sorted(self.numbers, key=lambda x: x["Frequency"], reverse=False)
 
         one_third = int(len(arr) / 3 + 1)
         two_third = int((len(arr) * 2) / 3 + 1)
@@ -432,7 +432,7 @@ class PotentialDraws:
         four_fifth_array = []
         highest_hits_array = []
         array = []
-        arr = sorted(numbers, key=lambda x: x["TotalHits"], reverse=False)
+        arr = sorted(numbers, key=lambda x: x["Frequency"], reverse=False)
 
         one_fifth = int(len(arr) / 5 + 1)
         two_fifth = int((len(arr) * 2) / 5 + 1)

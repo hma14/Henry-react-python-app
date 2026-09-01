@@ -477,7 +477,6 @@ def potential_draws():
     if drawNumber == 1:
         drawNumber = get_target_draw_number(lotto_name)
 
-    total_page_size = 200
     start_index = 0
 
     draws = retrieve_data(

@@ -532,7 +532,6 @@ const PredictDraws = (props) => {
           type="button"
           onClick={() => fetchData()}
           className="btn btn-info text-white fw-bold mb-2 three-d-button"
-          fullWidth
           disabled={isLoading}
         >
           Generate Potential Draws
@@ -594,7 +593,6 @@ const PredictDraws = (props) => {
           </label>
           <select
             className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder"
-            fullWidth
             style={{ width: "200px" }}
             value={numMatches}
             onChange={(e) => setNumMatches(Number(e.target.value))}
@@ -656,7 +654,6 @@ const PredictDraws = (props) => {
             type="button"
             onClick={() => fetchData()}
             className="btn btn-info text-white fw-bold mb-2 three-d-button"
-            fullWidth
             disabled={isLoading}
           >
             Generate Potential Draws
@@ -699,7 +696,6 @@ const PredictDraws = (props) => {
           type="button"
           onClick={() => fetchData()}
           className="btn btn-info text-white fw-bold mb-2 three-d-button"
-          fullWidth
           disabled={isLoading}
         >
           Generate Potential Draws
