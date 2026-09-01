@@ -395,20 +395,21 @@ const PotentialNumbers = (props) => {
 
   return (
     <div>
-      <h4 className="text-success fst-italic mt-4 text-center">
-        Comparing potential numbers against the actual next draw (
-        <span className="fst-italic fw-bold text-danger">{drawNumber + 1}</span>
-        ).
-      </h4>
-      <div className="card bg-color14  mb-2">
+      <div className="card bg-color14 mt-2 mb-4">
         <div
           id="matchingResult"
-          className="text-danger ticketHeader fst-italic mt-4 text-center"
+          className="text-danger ticketHeader fst-italic text-center"
         >
           {!isLoading &&
           targetDrawDic &&
           Object.keys(targetDrawDic).length > 0 ? (
-            <div>
+            <div className="card-body p-0">
+              <h4 className="text-success fst-italic mt-4 text-center">
+                Comparing potential numbers against the actual next draw{" "}
+                <span className="fst-italic fw-bold text-danger">
+                  {drawNumber + 1}
+                </span>
+              </h4>
               <Table bordered className="table-light mb-2" size="lg">
                 {getHeader_5(Array.from({ length: columns }, (_, i) => i))}
                 <tbody className="fw-bold align-middle">
@@ -428,7 +429,7 @@ const PotentialNumbers = (props) => {
             " "
           )}
         </div>
-        <div>
+        <div className="card-body p-0">
           {numbers && (
             <Table
               striped
