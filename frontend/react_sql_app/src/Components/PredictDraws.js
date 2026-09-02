@@ -163,6 +163,7 @@ const PredictDraws = (props) => {
   const [targetDrawDic, setTargetDrawDic] = useState({});
   const [maxMatches, setMaxMatches] = useState(0);
   const [targetNumber, setTargetNumber] = useState([]);
+  const [canMatch, setCanMatch] = useState(false);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -196,7 +197,19 @@ const PredictDraws = (props) => {
 
   const getNumbers = useCallback(async () => {
     try {
-      const response = await axios(endpoint);
+      let response = null;
+      if (canMatch) {
+        const nextDrawNumber = drawNumber + 1;
+        response = await axios(
+          endpoint.replace(
+            `drawNumber=${drawNumber}`,
+            `drawNumber=${nextDrawNumber}`,
+          ),
+        );
+      } else {
+        response = await axios(endpoint);
+      }
+
       setNumbers(response.data[0]?.Numbers);
     } catch (error) {
       console.error("Error fetching draw number:", error);
@@ -215,7 +228,7 @@ const PredictDraws = (props) => {
       const response = await axios.post(endpoint3, requestData);
 
       const { canMatch, matching_results } = response.data;
-
+      setCanMatch(canMatch);
       if (!canMatch) {
         document.getElementById("matchingResult").style.display = "none";
         return;
@@ -262,149 +275,6 @@ const PredictDraws = (props) => {
       getMatched();
     }
   }, [endpoint2, predicts, drawNumber, lottoName, numMatches]);
-
-  /*
-    const getPredicts = (cols) => {
-  
-      var pred = []
-  
-      // take 1 from last hits
-      let lastHits = getLastHitNumbers()
-      var indx = Math.random() * (lastHits.length)
-      pred.push(lastHits[parseInt(indx)])
-  
-      // select 3 groups based on totalHits
-      var flip_coin = Math.random() * 2
-  
-      var arr = flip_coin >= 1 ? getTotalHitsNumbers() : getDistanceNumbers()
-      let low = arr[0]
-      let middle = arr[1]
-      let high = arr[2]
-  
-  
-      // take 1 low
-      indx = Math.random() * low.length
-      pred.push(low[parseInt(indx)].Value)
-  
-  
-      // take 2 middle
-      indx = Math.random() * middle.length
-      pred.push(middle[parseInt(indx)].Value)
-  
-      indx = Math.random() * middle.length
-      pred.push(middle[parseInt(indx)].Value)
-  
-      if (flip_coin < 1) {
-        // add two more
-        indx = Math.random() * middle.length
-        pred.push(middle[parseInt(indx)].Value)
-        indx = Math.random() * middle.length
-        pred.push(middle[parseInt(indx)].Value)
-      }
-  
-      pred = [...new Set(pred)]
-      if (pred.length < 4) {
-        indx = Math.random() * middle.length
-        pred.push(middle[parseInt(indx)].Value)
-      }
-  
-      // take 3 high
-      indx = Math.random() * high.length
-      pred.push(high[parseInt(indx)].Value)
-      if (flip_coin >= 1) {
-        indx = Math.random() * high.length
-        pred.push(high[parseInt(indx)].Value)
-  
-        indx = Math.random() * high.length
-        pred.push(high[parseInt(indx)].Value)
-      }
-  
-      pred = [...new Set(pred)]
-      while (pred.length < cols) {
-        indx = Math.random() * high.length
-        pred.push(high[parseInt(indx)].Value)
-        pred = [...new Set(pred)]
-      }
-      pred.sort((a, b) => a - b)
-  
-      console.log(pred)
-      return pred
-  
-    }
-  
-    const getLastHitNumbers = () => {
-      var arr = []
-      for (var i = 0; i < numbers.length; i++) {
-        if (numbers[i].IsHit === true)
-          arr.push(numbers[i].Value)
-      }
-  
-      return arr.sort((a, b) => a - b)
-    }
-  
-    const getTotalHitsNumbers = () => {
-  
-      var tmp = numbers.sort((a, b) => a.TotalHits > b.TotalHits ? 1 : -1)
-      var low = []
-      var middle = []
-      var high = []
-  
-      var oneThird = parseInt(tmp.length / 3 + 1)
-      var twoThird = parseInt((tmp.length * 2) / 3 + 1)
-  
-      for (var i = 0; i < tmp.length; i++) {
-        if (i < oneThird) {
-          low.push(tmp[i])
-        }
-        else if (i < twoThird) {
-          middle.push(tmp[i])
-        }
-        else {
-          high.push(tmp[i])
-        }
-      }
-  
-      var arr = []
-      arr.push(low)
-      arr.push(middle)
-      arr.push(high)
-  
-      return arr
-    }
-  
-  
-    const getDistanceNumbers = () => {
-  
-      var tmp = numbers.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
-      var low = []
-      var middle = []
-      var high = []
-  
-      var oneThird = parseInt(tmp.length / 3 + 1)
-      var twoThird = parseInt((tmp.length * 2) / 3 + 1)
-  
-      for (var i = 0; i < tmp.length; i++) {
-        if (tmp[i].Distance === 0) continue
-  
-        if (i < oneThird) {
-          low.push(tmp[i])
-        }
-        else if (i < twoThird) {
-          middle.push(tmp[i])
-        }
-        else {
-          high.push(tmp[i])
-        }
-      }
-  
-      var arr = []
-      arr.push(low)
-      arr.push(middle)
-      arr.push(high)
-  
-      return arr
-    }
-  */
 
   const getHeader = () => {
     return (
