@@ -7,7 +7,7 @@ import classNames from "classnames";
 import CircularProgress from "@mui/material/CircularProgress";
 import Slider from "./Slider";
 
-export const getTD = (number, targetLength, n = 1) => {
+export const getTD = (number, rows, n = 1) => {
   return (
     <td className={getBgColors(number)} key={number.Value}>
       <span
@@ -38,7 +38,7 @@ export const getTD = (number, targetLength, n = 1) => {
         ({number.TotalHits})
       </span>{" "} */}
       <span className="text-danger fst-italic fs-6">
-        ({number.Frequency}/{targetLength})
+        ({number.Frequency}/{rows})
       </span>{" "}
       {n >= 2 ? <br /> : null}
       <span
@@ -49,7 +49,8 @@ export const getTD = (number, targetLength, n = 1) => {
         )}
       >
         ({number.Probability})
-      </span>{" "}
+      </span>
+      <br />
       {n !== 3 && n !== 0 ? (
         <span className="my-color-5 fs-7">
           {" "}
@@ -75,6 +76,7 @@ export const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
       if (number) {
         matchedDic[value] = {
           Value: number.Value,
+          IsHit: number.IsHit,
           Distance: number.Distance,
           TotalHits: number.TotalHits,
           NumberofDrawsWhenHit: number.NumberofDrawsWhenHit,
@@ -89,8 +91,10 @@ export const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
     if (number) {
       targetDrawDic[value] = {
         Value: number.Value,
+        IsHit: number.IsHit,
         Distance: number.Distance,
         TotalHits: number.TotalHits,
+        NumberofDrawsWhenHit: number.NumberofDrawsWhenHit,
         Probability: number.Probability,
         Frequency: number.Frequency,
       };
@@ -327,7 +331,7 @@ const PredictDraws = (props) => {
     );
   };
 
-  const getRow = (start, end) => {
+  const getRow = (start, end, rows) => {
     return (
       <tr>
         {numbers.map((number) =>
@@ -352,13 +356,13 @@ const PredictDraws = (props) => {
                   { "fst-italic text-success fs-6": number.Distance <= 10 },
                 )}
               >
-                ({number.Distance})
+                ({number.IsHit ? number.NumberofDrawsWhenHit : number.Distance})
               </span>
               <span className="text-primary fst-italic fs-6">
                 ({number.TotalHits})
               </span>
               <span className="text-danger fst-italic fs-6">
-                ({number.Frequency})
+                ({number.Frequency}/{rows})
               </span>
               <span
                 className={classNames(
@@ -390,11 +394,11 @@ const PredictDraws = (props) => {
         >
           {getHeader()}
           <tbody className="fw-bold">
-            {getRow(0, 10)}
-            {getRow(10, 20)}
-            {getRow(20, 30)}
-            {getRow(30, 40)}
-            {getRow(40, 50)}
+            {getRow(0, 10, rows)}
+            {getRow(10, 20, rows)}
+            {getRow(20, 30, rows)}
+            {getRow(30, 40, rows)}
+            {getRow(40, 50, rows)}
           </tbody>
           {getHeader()}
         </Table>
@@ -436,7 +440,7 @@ const PredictDraws = (props) => {
           <CircularProgress size={120} />
         </div>
       )}
-      <div id="matchingResult" className="card bg-color14 mt-2 mb-4">
+      <div id="matchingResult" className="card bg-color27 mt-2 mb-4">
         <h4 className="text-success fst-italic mt-4 text-center">
           Predict draws are matched to the past target draw, if target draw is
           not a future draw.

@@ -47,6 +47,7 @@ const AiAnalysis = (props) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [analyze, setAnalyze] = useState(false);
+  const [rows, setRows] = useState(0);
   const [numberDraws, setNumberDraws] = useState(5);
   const [sliderMin, setSliderMinValue] = useState(2);
   const [sliderMax, setSliderMaxValue] = useState(4);
@@ -61,7 +62,6 @@ const AiAnalysis = (props) => {
   const [targetDrawDic, setTargetDrawDic] = useState({});
   const [numbers, setNumbers] = useState();
   const [canMatch, setCanMatch] = useState(false);
-  const [rows, setRows] = useState(0);
 
   const numbers_select = Array.from({ length: 100 }, (_, index) => index + 1);
 
@@ -269,98 +269,99 @@ const AiAnalysis = (props) => {
     <div>
       <React.Fragment>
         <CssBaseline />
-        <div className="card">
+        <div>
           <h3 className="text-info text-center fst-italic">
             Number Categories and Generated Draws
           </h3>
           {hot && hot.length > 0 ? (
             <>
-              <div className="table-container">
-                <h3 className="text-danger">Hot Numbers</h3>
-                <Table>
-                  <thead className="table-danger text-center">
-                    <tr>
-                      {Array.from(Array(hot.length).keys()).map((no) => (
-                        <th
-                          key={no}
-                          className="text-warning bg-success fst-italic"
-                        >
-                          {no + 1}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>{hot.map((d) => getTD(d, rows, 3))}</tr>
-                  </tbody>
-                </Table>
-                <h3 className="text-success">Neutral Numbers</h3>
-                <Table>
-                  <thead className="table-danger text-center">
-                    <tr>
-                      {Array.from(Array(neutral.length).keys()).map((no) => (
-                        <th
-                          key={no}
-                          className="text-warning bg-success fst-italic"
-                        >
-                          {no + 1}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>{neutral.map((d) => getTD(d, rows, 3))}</tr>
-                  </tbody>
-                </Table>
-                <h3 className="text-info">Cold Numbers</h3>
-                <Table>
-                  <thead className="table-danger">
-                    <tr>
-                      {Array.from(Array(cold.length).keys()).map((no) => (
-                        <th
-                          key={no}
-                          className="text-warning bg-success fst-italic"
-                        >
-                          {no + 1}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>{cold.map((d) => getTD(d, rows, 3))}</tr>
-                  </tbody>
-                </Table>
-              </div>
-              <div className="mt-4">
-                <h3 className="text-secondary">Generated Draws</h3>
-                <Table>
-                  <thead className="table-danger text-center">
-                    <tr>
-                      <th className="text-light bg-info">#</th>
-                      {Array.from(Array(generatedDraws[0].length).keys()).map(
-                        (no) => (
+              <div className="card bg-color27 mb-4 mr-4 p-4 w-full">
+                <div className="table-container">
+                  <h3 className="text-danger">Hot Numbers</h3>
+                  <Table>
+                    <thead className="table-danger text-center">
+                      <tr>
+                        {Array.from(Array(hot.length).keys()).map((no) => (
                           <th
                             key={no}
                             className="text-warning bg-success fst-italic"
                           >
                             {no + 1}
                           </th>
-                        ),
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody className="fw-bold align-middle">
-                    {generatedDraws.map((row, index) => (
-                      <tr key={index}>
-                        <td className="text-light bg-info text-center fw-bold fs-9">
-                          {index + 1}
-                        </td>
-                        {row.map((d) => getTD(d, rows))}
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-
+                    </thead>
+                    <tbody>
+                      <tr>{hot.map((d) => getTD(d, rows, 3))}</tr>
+                    </tbody>
+                  </Table>
+                  <h3 className="text-success">Neutral Numbers</h3>
+                  <Table>
+                    <thead className="table-danger text-center">
+                      <tr>
+                        {Array.from(Array(neutral.length).keys()).map((no) => (
+                          <th
+                            key={no}
+                            className="text-warning bg-success fst-italic"
+                          >
+                            {no + 1}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>{neutral.map((d) => getTD(d, rows, 3))}</tr>
+                    </tbody>
+                  </Table>
+                  <h3 className="text-info">Cold Numbers</h3>
+                  <Table>
+                    <thead className="table-danger">
+                      <tr>
+                        {Array.from(Array(cold.length).keys()).map((no) => (
+                          <th
+                            key={no}
+                            className="text-warning bg-success fst-italic"
+                          >
+                            {no + 1}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>{cold.map((d) => getTD(d, rows, 3))}</tr>
+                    </tbody>
+                  </Table>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-secondary">Generated Draws</h3>
+                  <Table>
+                    <thead className="table-danger text-center">
+                      <tr>
+                        <th className="text-light bg-info">#</th>
+                        {Array.from(Array(generatedDraws[0].length).keys()).map(
+                          (no) => (
+                            <th
+                              key={no}
+                              className="text-warning bg-success fst-italic"
+                            >
+                              {no + 1}
+                            </th>
+                          ),
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody className="fw-bold align-middle">
+                      {generatedDraws.map((row, index) => (
+                        <tr key={index}>
+                          <td className="text-light bg-info text-center fw-bold fs-9">
+                            {index + 1}
+                          </td>
+                          {row.map((d) => getTD(d, rows))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
                 <div id="matchingResult" className="card bg-color14 mt-2 mb-4">
                   <h4 className="text-success fst-italic mt-4 text-center">
                     Generated draws are matched to the past target draw, if
@@ -538,79 +539,81 @@ const AiAnalysis = (props) => {
                   </button>
                 </div>
               </div>{" "}
-              <div className="mb-4 mt-4 flex justify-end items-center space-x-4 mr-4">
-                <div>
-                  <label className="block text-sm font-medium text-info">
-                    Select AI Model
-                  </label>
-                  <select
-                    labelId="select-number-draws-2-label"
-                    value={aiModel}
-                    id="select-number-draws-2"
-                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder mb-4"
-                    onChange={(e) => setAiModel(e.target.value)}
-                  >
-                    {ai_models.map((m, index) => (
-                      <option key={index} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
+              <div className="card bg-color13 mb-4 mr-4 p-4 w-full">
+                <div className="card-body d-flex align-items-center gap-4 justify-content-between">
+                  <div>
+                    <label className="block text-sm font-medium text-info">
+                      Select AI Model
+                    </label>
+                    <select
+                      labelId="select-number-draws-2-label"
+                      value={aiModel}
+                      id="select-number-draws-2"
+                      className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder mb-4"
+                      onChange={(e) => setAiModel(e.target.value)}
+                    >
+                      {ai_models.map((m, index) => (
+                        <option key={index} value={m}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-info">
+                      Select Max Tokes
+                    </label>
+                    <select
+                      labelId="select-number-draws-3-label"
+                      value={maxTokens}
+                      id="select-number-draws-3"
+                      className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder mb-4"
+                      onChange={(e) => setMaxTokens(e.target.value)}
+                    >
+                      {max_tokens.map((m, index) => (
+                        <option key={index} value={m}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="flex text-sm font-medium text-info">
+                      Request AI Analysis
+                    </label>
+                    <Checkbox
+                      checked={analyze}
+                      onChange={(e) => setAnalyze(e.target.checked)}
+                      size="large"
+                      className="text-info"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-info">
-                    Select Max Tokes
-                  </label>
-                  <select
-                    labelId="select-number-draws-3-label"
-                    value={maxTokens}
-                    id="select-number-draws-3"
-                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder mb-4"
-                    onChange={(e) => setMaxTokens(e.target.value)}
-                  >
-                    {max_tokens.map((m, index) => (
-                      <option key={index} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="flex text-sm font-medium text-info">
-                    Request AI Analysis
-                  </label>
-                  <Checkbox
-                    checked={analyze}
-                    onChange={(e) => setAnalyze(e.target.checked)}
-                    size="large"
-                    className="text-info"
-                  />
-                </div>
+                {analyze && aiGeneratedDraws && !isLoading ? (
+                  <div>
+                    <h2 className="text-info mb-4 text-center">
+                      AI Analyze & Feedback
+                    </h2>
+                    <Box
+                      sx={{
+                        color: "green",
+                        fontWeight: "bold",
+                        fontSize: "22px",
+                        //textAlign: "center",
+                        //fontStyle: "italic",
+                      }}
+                    >
+                      <pre className="ml-4">{aiGeneratedDraws}</pre>
+                    </Box>{" "}
+                  </div>
+                ) : analyze ? (
+                  <div className="loader-container">
+                    <CircularProgress size={120} />
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
-              {analyze && aiGeneratedDraws && !isLoading ? (
-                <div>
-                  <h2 className="text-info mb-4 text-center">
-                    AI Analyze & Feedback
-                  </h2>
-                  <Box
-                    sx={{
-                      color: "green",
-                      fontWeight: "bold",
-                      fontSize: "22px",
-                      //textAlign: "center",
-                      //fontStyle: "italic",
-                    }}
-                  >
-                    <pre className="ml-4">{aiGeneratedDraws}</pre>
-                  </Box>{" "}
-                </div>
-              ) : analyze ? (
-                <div className="loader-container">
-                  <CircularProgress size={120} />
-                </div>
-              ) : (
-                ""
-              )}
             </>
           ) : (
             <Box

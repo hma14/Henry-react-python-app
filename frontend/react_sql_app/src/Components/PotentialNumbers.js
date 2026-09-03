@@ -15,7 +15,7 @@ import {
 } from "./PredictDraws";
 
 const PotentialNumbers = (props) => {
-  const { endpoint, endpoint2, columns, rows, drawNumber } = props;
+  const { endpoint, endpoint2, columns, drawNumber } = props;
 
   const [numbers, setNumbers] = useState();
   const [predicts, setPredicts] = useState([]);
@@ -24,7 +24,7 @@ const PotentialNumbers = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [targetDrawDic, setTargetDrawDic] = useState({});
   const [targetNumber, setTargetNumber] = useState([]);
-  const [targetNumbers, setTargetNumbers] = useState([]);
+  const [rows, setRows] = useState(0);
 
   const fetchData = useCallback(
     async (sliderVal) => {
@@ -52,6 +52,7 @@ const PotentialNumbers = (props) => {
           }
 
           setNumbers(response.data[0]?.Numbers);
+          setRows(response.data.length);
 
           const nums = response.data[0]?.Numbers;
 
@@ -85,7 +86,6 @@ const PotentialNumbers = (props) => {
         } else {
           document.getElementById("matchingResult").style.display = "";
           setTargetNumber(target_draw.split(/\s+/).map(Number));
-          setTargetNumbers(target_draw);
 
           const { matchedDic, targetDrawDic } = createMatchedDic(
             nums,
@@ -104,7 +104,7 @@ const PotentialNumbers = (props) => {
 
   useEffect(() => {
     fetchData(sliderValue);
-  }, [fetchData, drawNumber, rows, sliderValue]);
+  }, [fetchData, drawNumber, columns, sliderValue]);
 
   /*
     const getPredicts = (cols) => {
@@ -290,7 +290,7 @@ const PotentialNumbers = (props) => {
     );
   };
 
-  const getRow = (start, end) => {
+  const getRow = (start, end, rows) => {
     return (
       <tr>
         {numbers.map((number) =>
@@ -302,8 +302,8 @@ const PotentialNumbers = (props) => {
               <span
                 className={classNames(
                   "txt-color",
-                  { "my-color-4 fs-5": number.Distance === 0 },
-                  { "text-danger fs-5": number.Distance > 10 },
+                  { "my-color-3 fs-4": number.Distance === 0 },
+                  { "my-color-5 fs-5": number.Distance > 10 },
                 )}
               >
                 {number.Value}
@@ -315,13 +315,13 @@ const PotentialNumbers = (props) => {
                   { "fst-italic text-success fs-6": number.Distance <= 10 },
                 )}
               >
-                ({number.Distance})
+                ({number.IsHit ? number.NumberofDrawsWhenHit : number.Distance})
               </span>
               <span className="text-primary fst-italic fs-6">
                 ({number.TotalHits})
               </span>
               <span className="text-danger fst-italic fs-6">
-                ({number.Frequency})
+                ({number.Frequency}/{rows})
               </span>
               <span
                 className={classNames(
@@ -340,14 +340,14 @@ const PotentialNumbers = (props) => {
     );
   };
 
-  const getTD_1 = (number, n = 1) => {
+  const getTD_1 = (number, rows, n = 1) => {
     return (
       <td className={getBgColors(number)} key={number.Value}>
         <span
           className={classNames(
             "txt-color",
-            { "my-color-4 fs-4": number.Distance === 0 },
-            { "text-danger fs-4": number.Distance > 10 },
+            { "my-color-3 fs-4": number.Distance === 0 },
+            { "my-color-5 fs-4": number.Distance > 10 },
           )}
         >
           {number.Value}
@@ -367,7 +367,7 @@ const PotentialNumbers = (props) => {
           ({number.TotalHits})
         </span>{" "}
         <span className="text-danger fst-italic fs-6">
-          ({number.Frequency})
+          ({number.Frequency}/{rows})
         </span>{" "}
         <br />
         <span
@@ -395,7 +395,7 @@ const PotentialNumbers = (props) => {
 
   return (
     <div>
-      <div className="card bg-color14 mt-2 mb-4">
+      <div className="card bg-color27 mt-2 mb-4">
         <div
           id="matchingResult"
           className="text-danger ticketHeader fst-italic text-center"
@@ -403,7 +403,7 @@ const PotentialNumbers = (props) => {
           {!isLoading &&
           targetDrawDic &&
           Object.keys(targetDrawDic).length > 0 ? (
-            <div className="card-body p-0">
+            <div>
               <h4 className="text-success fst-italic mt-4 text-center">
                 Comparing potential numbers against the actual next draw{" "}
                 <span className="fst-italic fw-bold text-danger">
@@ -419,7 +419,7 @@ const PotentialNumbers = (props) => {
                     </td>
                     {targetNumber.map((number) => {
                       const value = targetDrawDic[number];
-                      return value ? getTD(value, 0) : null;
+                      return value ? getTD(value, rows, 0) : null;
                     })}
                   </tr>
                 </tbody>
@@ -441,11 +441,11 @@ const PotentialNumbers = (props) => {
             >
               {getHeader()}
               <tbody className="fw-bold">
-                {getRow(0, 10)}
-                {getRow(10, 20)}
-                {getRow(20, 30)}
-                {getRow(30, 40)}
-                {getRow(40, 50)}
+                {getRow(0, 10, rows)}
+                {getRow(10, 20, rows)}
+                {getRow(20, 30, rows)}
+                {getRow(30, 40, rows)}
+                {getRow(40, 50, rows)}
               </tbody>
               {getHeader()}
             </Table>
@@ -463,7 +463,7 @@ const PotentialNumbers = (props) => {
         <Table bordered responsive className="table-light mb-2" size="lg">
           {getHeader_2()}
           <tbody className="fw-bold align-middle">
-            <tr>{predicts.map((da, index) => getTD_1(da))}</tr>
+            <tr>{predicts.map((da, index) => getTD(da, rows, 3))}</tr>
           </tbody>
         </Table>
       ) : (
@@ -479,12 +479,12 @@ const PotentialNumbers = (props) => {
           <Table bordered className="mt-2 " size="lg">
             {getHeader_3(missing)}
             <tbody className="fw-bold align-middle">
-              <tr>{missing.map((number) => getTD_1(number, 3))}</tr>
+              <tr>{missing.map((number) => getTD(number, rows, 3))}</tr>
             </tbody>
           </Table>
         </div>
       )}
-      <div className="adjust-container">
+      <div className="card bg-color27 mb-4 mr-4 p-4 w-full adjust-container">
         <Slider
           value={sliderValue}
           setValue={setSliderValue}
