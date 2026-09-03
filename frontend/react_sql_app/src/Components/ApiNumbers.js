@@ -87,12 +87,14 @@ export const getBgColors = (sortType, number) => {
 const ApiNumbers = (props) => {
   const { endpoint, sortType } = props;
   const [data, setData] = useState([]);
+  const [rows, setRows] = useState(0);
 
   useEffect(() => {
     axios
       .get(endpoint)
       .then((response) => {
         setData(response.data.data);
+        setRows(response.data.data.length);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -179,22 +181,24 @@ const ApiNumbers = (props) => {
             className={classNames(
               "txt-color",
               {
-                "my-color-3 fst-italic fs-7": number.NumberOfDrawsWhenHit > 10,
+                "my-color-3 fst-italic fs-7": number.NumberofDrawsWhenHit > 10,
               },
               {
                 "text-danger fst-italic fs-7":
-                  number.NumberOfDrawsWhenHit <= 10,
+                  number.NumberofDrawsWhenHit <= 10,
               },
             )}
           >
-            {number.NumberOfDrawsWhenHit}
+            {number.NumberofDrawsWhenHit}
           </span>
           )<br />(
           <span className="text-secondary fst-italic fs-7">
             {number.TotalHits}
           </span>
           )<br /> (
-          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
+          <span className="red-indigo fst-italic fs-7">
+            {number.Frequency}/{rows}
+          </span>
           ) <br />(
           <span
             className={classNames(
@@ -228,7 +232,9 @@ const ApiNumbers = (props) => {
             {number.TotalHits}
           </span>
           ) <br />(
-          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
+          <span className="red-indigo fst-italic fs-7">
+            {number.Frequency}/{rows}
+          </span>
           )<br /> (
           <span
             className={classNames(

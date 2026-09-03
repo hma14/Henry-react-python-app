@@ -747,11 +747,11 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
                 'Value': number.Value,
                 'Distance': number.Distance,
                 'IsHit': number.IsHit,
-                'NumberOfDrawsWhenHit': number.NumberOfDrawsWhenHit,  # The line ` 'IsBonusNumber':
+                'NumberofDrawsWhenHit': number.NumberofDrawsWhenHit,  # The line ` 'IsBonusNumber':
                 'IsBonusNumber': number.IsBonusNumber,
                 'TotalHits': number.TotalHits,
                 'Probability': number.Probability,
-                'NumberOfAppearing': number.NumberOfAppearing,
+                'NumberOfAppearing': number.NumberofAppearing,
                 'Frequency': number.Frequency,
             }
         )

@@ -7,14 +7,14 @@ import classNames from "classnames";
 import CircularProgress from "@mui/material/CircularProgress";
 import Slider from "./Slider";
 
-export const getTD = (number, n = 1) => {
+export const getTD = (number, targetLength, n = 1) => {
   return (
     <td className={getBgColors(number)} key={number.Value}>
       <span
         className={classNames(
           "txt-color",
-          { "my-color-4 fs-4": number.Distance === 0 },
-          { "text-danger fs-4": number.Distance > 10 },
+          { "my-color-3 fs-4": number.Distance === 0 },
+          { "my-color-5 fs-4": number.Distance > 10 },
         )}
       >
         {number.Value}
@@ -24,16 +24,22 @@ export const getTD = (number, n = 1) => {
         className={classNames(
           "txt-color",
           { "fst-italic my-color-1 fs-6": number.Distance > 10 },
-          { "fst-italic text-success fs-6": number.Distance <= 10 },
+          {
+            "fst-italic text-success fs-6":
+              number.Distance <= 10 && number.Distance > 0,
+          },
+          { "fst-italic text-danger fs-6": number.Distance === 0 },
         )}
       >
-        ({number.Distance})
+        ({number.IsHit ? number.NumberofDrawsWhenHit : number.Distance})
       </span>{" "}
       {n >= 2 ? <br /> : null}
-      <span className="text-primary fst-italic fs-6">
+      {/* <span className="text-primary fst-italic fs-6">
         ({number.TotalHits})
+      </span>{" "} */}
+      <span className="text-danger fst-italic fs-6">
+        ({number.Frequency}/{targetLength})
       </span>{" "}
-      <span className="text-danger fst-italic fs-6">({number.Frequency})</span>{" "}
       {n >= 2 ? <br /> : null}
       <span
         className={classNames(
@@ -71,6 +77,7 @@ export const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
           Value: number.Value,
           Distance: number.Distance,
           TotalHits: number.TotalHits,
+          NumberofDrawsWhenHit: number.NumberofDrawsWhenHit,
           Probability: number.Probability,
           Frequency: number.Frequency,
         };
@@ -164,6 +171,7 @@ const PredictDraws = (props) => {
   const [maxMatches, setMaxMatches] = useState(0);
   const [targetNumber, setTargetNumber] = useState([]);
   const [canMatch, setCanMatch] = useState(false);
+  const [rows, setRows] = useState(0);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -272,6 +280,7 @@ const PredictDraws = (props) => {
   // Match tickets whenever predictions change
   useEffect(() => {
     if (predicts.length > 0) {
+      setRows(predicts.length);
       getMatched();
     }
   }, [endpoint2, predicts, drawNumber, lottoName, numMatches]);
@@ -330,8 +339,8 @@ const PredictDraws = (props) => {
               <span
                 className={classNames(
                   "txt-color",
-                  { "my-color-4 fs-4": number.Distance === 0 },
-                  { "text-danger fs-4": number.Distance > 10 },
+                  { "text-danger fs-4": number.Distance === 0 },
+                  { "my-color-4 fs-4": number.Distance > 10 },
                 )}
               >
                 {number.Value}
@@ -339,7 +348,7 @@ const PredictDraws = (props) => {
               <span
                 className={classNames(
                   "txt-color",
-                  { "fst-italic my-color-1 fs-6": number.Distance > 10 },
+                  { "fst-italic my-color-2 fs-6": number.Distance > 10 },
                   { "fst-italic text-success fs-6": number.Distance <= 10 },
                 )}
               >
@@ -416,7 +425,7 @@ const PredictDraws = (props) => {
                 <td className="bg-color3 text-primary fs-5 fst-italic">
                   {index + 1}
                 </td>
-                {row.map((number) => getTD(number))}
+                {row.map((number) => getTD(number, rows, 0))}
               </tr>
             ))}
           </tbody>
@@ -427,7 +436,7 @@ const PredictDraws = (props) => {
           <CircularProgress size={120} />
         </div>
       )}
-      <div id="matchingResult">
+      <div id="matchingResult" className="card bg-color14 mt-2 mb-4">
         <h4 className="text-success fst-italic mt-4 text-center">
           Predict draws are matched to the past target draw, if target draw is
           not a future draw.
@@ -448,7 +457,7 @@ const PredictDraws = (props) => {
                   </td>
                   {targetNumber.map((number) => {
                     const value = targetDrawDic[number];
-                    return value ? getTD(value, 0) : null;
+                    return value ? getTD(value, rows, 0) : null;
                   })}
                 </tr>
               </tbody>
@@ -499,7 +508,7 @@ const PredictDraws = (props) => {
                   {row.ticket
                     .split(/\s+/)
                     .map(Number)
-                    .map((number) => getTD(matchedDic[number], 0))}
+                    .map((number) => getTD(matchedDic[number], rows, 0))}
                   <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
                     {row.matches}
                   </td>
@@ -538,7 +547,7 @@ const PredictDraws = (props) => {
           <Table bordered className="mt-2" size="lg">
             {getHeader_3(hitting)}
             <tbody className="fw-bold align-middle">
-              <tr>{hitting.map((number) => getTD(number, 2))}</tr>
+              <tr>{hitting.map((number) => getTD(number, rows, 2))}</tr>
             </tbody>
           </Table>
         </div>
@@ -553,7 +562,7 @@ const PredictDraws = (props) => {
           <Table bordered className="mt-2 " size="lg">
             {getHeader_3(missing)}
             <tbody className="fw-bold align-middle">
-              <tr>{missing.map((number) => getTD(number, 3))}</tr>
+              <tr>{missing.map((number) => getTD(number, rows, 3))}</tr>
             </tbody>
           </Table>
         </div>

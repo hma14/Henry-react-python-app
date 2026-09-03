@@ -175,7 +175,7 @@ class Numbers(db.Model):
     Value: Mapped[int] = mapped_column(Integer, nullable=False)
     Distance: Mapped[int] = mapped_column(Integer, nullable=False)
     IsHit: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    NumberOfDrawsWhenHit: Mapped[int] = mapped_column(Integer, nullable=False)
+    NumberofDrawsWhenHit: Mapped[int] = mapped_column(Integer, nullable=False)
     IsBonusNumber: Mapped[bool] = mapped_column(Boolean)
     TotalHits: Mapped[int] = mapped_column(Integer, nullable=False)
     Probability = db.Column(db.Integer, nullable=False)
@@ -183,7 +183,7 @@ class Numbers(db.Model):
     LottoType: Mapped["LottoType"] = relationship(back_populates="numbers")
 
     # Extra fields not related to the database table
-    NumberOfAppearing = 0
+    NumberofAppearing = 0
     Frequency = 0
     
     def __init__(
@@ -193,7 +193,7 @@ class Numbers(db.Model):
         LottoTypeId,
         Distance,
         IsHit,
-        NumberOfDrawsWhenHit,
+        NumberofDrawsWhenHit,
         IsBonusNumber,
         TotalHits,
         Probability,
@@ -205,7 +205,7 @@ class Numbers(db.Model):
         self.LottoTypeId = LottoTypeId
         self.Distance = Distance
         self.IsHit = IsHit
-        self.NumberOfDrawsWhenHit = NumberOfDrawsWhenHit
+        self.NumberOfDrawsWhenHit = NumberofDrawsWhenHit
         self.IsBonusNumber = IsBonusNumber
         self.TotalHits = TotalHits
         self.Probability = Probability

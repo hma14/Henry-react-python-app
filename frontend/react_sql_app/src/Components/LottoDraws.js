@@ -8,6 +8,7 @@ import { getTD } from "./PredictDraws";
 function LottoDraws(props) {
   const { endpoint, page_number, columns } = props;
   const [lottoData, setData] = useState([]);
+  const [rows, setRows] = useState(0);
 
   useEffect(() => {
     // Fetch data from the specified endpoint
@@ -15,6 +16,7 @@ function LottoDraws(props) {
       .get(endpoint)
       .then((response) => {
         setData(response.data.data);
+        setRows(response.data.data.length);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -78,7 +80,7 @@ function LottoDraws(props) {
                       b.IsBonusNumber === false &&
                       a.Value - b.Value,
                   )
-                  .map((no) => (no.IsHit === true ? getTD(no, 0) : ""))}
+                  .map((no) => (no.IsHit === true ? getTD(no, rows, 0) : ""))}
               </tr>
             ))}
           </tbody>

@@ -60,6 +60,8 @@ const AiAnalysis = (props) => {
   const [matchedDic, setMatchedDic] = useState({});
   const [targetDrawDic, setTargetDrawDic] = useState({});
   const [numbers, setNumbers] = useState();
+  const [canMatch, setCanMatch] = useState(false);
+  const [rows, setRows] = useState(0);
 
   const numbers_select = Array.from({ length: 100 }, (_, index) => index + 1);
 
@@ -156,6 +158,7 @@ const AiAnalysis = (props) => {
           setCold(coldData);
           setNeutral(neutralData);
           setGeneratedDraws(generatedDrawsData);
+          setRows(generatedDrawsData.length);
           setAiGeneratedDraws(aiGeneratedDrawsData);
           setIsLoading(false);
         })
@@ -168,7 +171,18 @@ const AiAnalysis = (props) => {
 
   const getNumbers = useCallback(async () => {
     try {
-      const response = await axios(endpoint4);
+      let response = null;
+      if (canMatch) {
+        const nextDrawNumber = drawNumber + 1;
+        response = await axios(
+          endpoint4.replace(
+            `drawNumber=${drawNumber}`,
+            `drawNumber=${nextDrawNumber}`,
+          ),
+        );
+      } else {
+        response = await axios(endpoint4);
+      }
       setNumbers(response.data[0]?.Numbers);
     } catch (error) {
       console.error("Error fetching draw number:", error);
@@ -187,7 +201,7 @@ const AiAnalysis = (props) => {
       const response = await axios.post(endpoint3, requestData);
 
       const { canMatch, matching_results } = response.data;
-
+      setCanMatch(canMatch);
       if (!canMatch) {
         document.getElementById("matchingResult").style.display = "none";
         return;
@@ -277,7 +291,7 @@ const AiAnalysis = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>{hot.map((d) => getTD(d, 3))}</tr>
+                    <tr>{hot.map((d) => getTD(d, rows, 3))}</tr>
                   </tbody>
                 </Table>
                 <h3 className="text-success">Neutral Numbers</h3>
@@ -295,7 +309,7 @@ const AiAnalysis = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>{neutral.map((d) => getTD(d, 3))}</tr>
+                    <tr>{neutral.map((d) => getTD(d, rows, 3))}</tr>
                   </tbody>
                 </Table>
                 <h3 className="text-info">Cold Numbers</h3>
@@ -313,7 +327,7 @@ const AiAnalysis = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>{cold.map((d) => getTD(d, 3))}</tr>
+                    <tr>{cold.map((d) => getTD(d, rows, 3))}</tr>
                   </tbody>
                 </Table>
               </div>
@@ -341,13 +355,13 @@ const AiAnalysis = (props) => {
                         <td className="text-light bg-info text-center fw-bold fs-9">
                           {index + 1}
                         </td>
-                        {row.map((d) => getTD(d))}
+                        {row.map((d) => getTD(d, rows))}
                       </tr>
                     ))}
                   </tbody>
                 </Table>
 
-                <div id="matchingResult">
+                <div id="matchingResult" className="card bg-color14 mt-2 mb-4">
                   <h4 className="text-success fst-italic mt-4 text-center">
                     Generated draws are matched to the past target draw, if
                     target draw is not a future draw.
@@ -464,62 +478,66 @@ const AiAnalysis = (props) => {
                   </div>
                 </div>
               </div>
-              <div className="mb-4 flex justify-end items-center space-x-4 mr-4">
-                <div className="slider">
-                  <Slider
-                    value={sliderMin}
-                    setValue={setSliderMinValue}
-                    title="Min HOT Range"
-                    start={1}
-                    end={3}
-                  />
-                </div>
-                <div className="slider">
-                  <Slider
-                    value={sliderMax}
-                    setValue={setSliderMaxValue}
-                    title="Max HOT Range"
-                    start={4}
-                    end={maxValue}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-info">
-                    Select Number of Draws
-                  </label>
-                  <select
-                    labelId="select-number-draws-label"
-                    value={numberDraws}
-                    id="select-number-draws"
-                    className="dropdown dropdown-width-2  btn bg-info text-white dropdown-toggle margin-right fw-bolder"
-                    onChange={(e) => setNumberDraws(e.target.value)}
+              <div className="card bg-color12 mb-4 mr-4 p-4 w-full">
+                <div className="card-body d-flex align-items-center gap-4 justify-content-between">
+                  <div className="slider">
+                    <Slider
+                      value={sliderMin}
+                      setValue={setSliderMinValue}
+                      title="Min HOT Range"
+                      start={1}
+                      end={3}
+                    />
+                  </div>
+
+                  <div className="slider">
+                    <Slider
+                      value={sliderMax}
+                      setValue={setSliderMaxValue}
+                      title="Max HOT Range"
+                      start={4}
+                      end={maxValue}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-info">
+                      Select Number of Draws
+                    </label>
+
+                    <select
+                      value={numberDraws}
+                      id="select-number-draws"
+                      className="dropdown dropdown-width-2 btn bg-info text-white dropdown-toggle margin-right fw-bolder"
+                      onChange={(e) => setNumberDraws(e.target.value)}
+                    >
+                      {numbers_select.map((num) => (
+                        <option key={num} value={num}>
+                          {num}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      fetchData(
+                        analyze,
+                        numberDraws,
+                        sliderMin,
+                        sliderMax,
+                        aiModel,
+                        1,
+                      )
+                    }
+                    className="btn btn-info text-white fw-bold mt-4 three-d-button"
+                    disabled={isLoading}
                   >
-                    {numbers_select.map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </select>
+                    Generate Potential Draws
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    fetchData(
-                      analyze,
-                      numberDraws,
-                      sliderMin,
-                      sliderMax,
-                      aiModel,
-                      1,
-                    )
-                  }
-                  className="btn btn-info text-white fw-bold mt-4 three-d-button"
-                  fullWidth
-                  disabled={isLoading}
-                >
-                  Generate Potential Draws
-                </button>
-              </div>
+              </div>{" "}
               <div className="mb-4 mt-4 flex justify-end items-center space-x-4 mr-4">
                 <div>
                   <label className="block text-sm font-medium text-info">
