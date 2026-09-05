@@ -196,9 +196,7 @@ const ApiNumbers = (props) => {
             {number.TotalHits}
           </span>
           )<br /> (
-          <span className="red-indigo fst-italic fs-7">
-            {number.Frequency}/{rows}
-          </span>
+          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
           ) <br />(
           <span
             className={classNames(
@@ -232,9 +230,7 @@ const ApiNumbers = (props) => {
             {number.TotalHits}
           </span>
           ) <br />(
-          <span className="red-indigo fst-italic fs-7">
-            {number.Frequency}/{rows}
-          </span>
+          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
           )<br /> (
           <span
             className={classNames(

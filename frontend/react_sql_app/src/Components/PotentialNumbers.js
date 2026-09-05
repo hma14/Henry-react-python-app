@@ -321,7 +321,7 @@ const PotentialNumbers = (props) => {
                 ({number.TotalHits})
               </span>
               <span className="text-danger fst-italic fs-6">
-                ({number.Frequency}/{rows})
+                ({number.Frequency})
               </span>
               <span
                 className={classNames(
