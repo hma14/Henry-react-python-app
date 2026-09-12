@@ -26,6 +26,7 @@ import ImageEditor from "./ImageEditor";
 import ImageUpload from "./UploadImage";
 import DragDropUpload from "./DragDropUpload";
 import ImageGallery from "./ImageGallery";
+import RandomGeneratedDraws from "./RandomGeneratedDraws";
 
 import {
   AppBar,
@@ -322,6 +323,7 @@ const Dashboard = () => {
     lottoDraws: "Lotto Draw History",
     numberDraws: "Hit Numbers in Number Category",
     predictDraws: "Predict Next Draw",
+    randomGeneratedDraws: "Random Generated Draws",
     potentialNumbers: "Get Potential Hit Numbers for Next Draw",
     AiAnalysis: "Gen Draws & AI Analysis",
     pastDraws: "Past Draws Distribution",
@@ -388,6 +390,17 @@ const Dashboard = () => {
             columns={potentialColumns}
             drawNumber={drawNumber}
             lottoName={lottoName}
+          />
+        );
+      case "randomGeneratedDraws":
+        return (
+          <RandomGeneratedDraws
+            endpoint={url5}
+            endpoint2={url34}
+            columns={potentialColumns}
+            drawNumber={drawNumber}
+            lottoName={lottoName}
+            pageSize={pageSize}
           />
         );
       case "potentialNumbers":
