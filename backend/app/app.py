@@ -386,7 +386,7 @@ def get_from_openai():
     return get_string_response()
 
 
-def getNumberFrequency(alist):
+def getNumberFrequency_2(alist):
 
     json_obj = alist.get_json()
     jdata = json_obj['data']
@@ -422,7 +422,7 @@ def getNumberFrequency(alist):
         reverse=True
     )
     
-def getNumberFrequency2(alist):
+def getNumberFrequency(alist):
     
     sorted_list = sorted(
         alist,
@@ -460,7 +460,7 @@ def getNumberOfAppearing(alist):
         for d in da:
             number = d['Value']
             if number not in appearing_stats:
-                appearing_stats[number] = 1
+                appearing_stats[number] = 0
                 
             appearing_stats[number] += 1
             d['NumberOfAppearing'] = appearing_stats[number] 
@@ -738,7 +738,7 @@ def retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber):
     drawNumber_dict = {}
     drawDate_dict = {}
 
-    data = getNumberFrequency2(data)
+    data = getNumberFrequency(data)
     for number in data:
         if number.LottoType.DrawNumber not in numbers_dict:
             numbers_dict[number.LottoType.DrawNumber] = []

@@ -96,6 +96,7 @@ const RandomGeneratedDraws = (props) => {
   const createRandomNumberDic = (allNumbers, tickets) => {
     // Build matchedDic here
     const ranNumDic = {};
+    const appearingDic = {};
     if (tickets.length === 0) {
       return ranNumDic;
     }
@@ -105,6 +106,10 @@ const RandomGeneratedDraws = (props) => {
         const number = allNumbers.find((x) => x.Value === value);
 
         if (number) {
+          if (!appearingDic[value]) {
+            appearingDic[value] = 1;
+          }
+          appearingDic[value] += 1;
           ranNumDic[value] = {
             Value: number.Value,
             IsHit: number.IsHit,
@@ -113,6 +118,7 @@ const RandomGeneratedDraws = (props) => {
             NumberofDrawsWhenHit: number.NumberofDrawsWhenHit,
             Probability: number.Probability,
             Frequency: number.Frequency,
+            NumberOfAppearing: appearingDic[value],
           };
         }
       });
@@ -137,11 +143,11 @@ const RandomGeneratedDraws = (props) => {
 
       setNumbers(response?.data[0]?.Numbers);
 
-      const randomNumbers = generateLottoTickets(lottoName);
-      setRandomTickets(randomNumbers);
+      const rndTickets = generateLottoTickets(lottoName);
+      setRandomTickets(rndTickets);
       const ranTickets = createRandomNumberDic(
         response.data[0]?.Numbers,
-        randomNumbers,
+        rndTickets,
       );
       setRandomTicketsDic(ranTickets);
     } catch (error) {
@@ -357,7 +363,7 @@ const RandomGeneratedDraws = (props) => {
                 <td className="bg-color3 text-primary fs-5 fst-italic">
                   {index + 1}
                 </td>
-                {row.map((number) => getTD(randomTicketsDic[number], rows, 0))}
+                {row.map((number) => getTD(randomTicketsDic[number], rows))}
               </tr>
             ))}
           </tbody>

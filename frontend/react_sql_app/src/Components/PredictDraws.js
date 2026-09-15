@@ -38,7 +38,7 @@ export const getTD = (number, rows, n = 1) => {
         ({number.TotalHits})
       </span>{" "} */}
       <span className="text-danger fst-italic fs-6">
-        ({number.Frequency}/{rows})
+        [{number.Frequency}/{rows}]
       </span>{" "}
       {n >= 2 ? <br /> : null}
       <span
@@ -50,7 +50,6 @@ export const getTD = (number, rows, n = 1) => {
       >
         ({number.Probability})
       </span>
-      <br />
       {n !== 3 && n !== 0 ? (
         <span className="my-color-5 fs-7">
           {" "}
@@ -176,6 +175,23 @@ const PredictDraws = (props) => {
   const [targetNumber, setTargetNumber] = useState([]);
   const [canMatch, setCanMatch] = useState(false);
   const [rows, setRows] = useState(0);
+
+  const getAppearings = (tickets) => {
+    const appearingDic = {};
+    if (!Array.isArray(tickets) || tickets.length === 0) return tickets;
+
+    tickets.forEach((ticket) => {
+      ticket.forEach((numberObj) => {
+        const number = numberObj["Value"];
+        if (!appearingDic[number]) {
+          appearingDic[number] = 0;
+        }
+        appearingDic[number] += 1;
+        numberObj["NumberOfAppearing"] = appearingDic[number];
+      });
+    });
+    return tickets;
+  };
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
