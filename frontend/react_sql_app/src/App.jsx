@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ClipLoader } from "react-spinners";
 import { useLocation } from "react-router-dom";
+import EmailConfirmation from "./Components/EmailConfirmation";
 
 const App = () => {
   const location = useLocation();
@@ -120,7 +121,10 @@ const App = () => {
             )
           }
         />
-        <Route path="/confirm" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/confirm"
+          element={<EmailConfirmation onSuccess={() => setPage("login")} />}
+        />
         <Route
           path="/"
           element={

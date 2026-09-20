@@ -112,6 +112,13 @@ const Dashboard = () => {
   const [drawNumber, setDrawNumber] = useState(1);
   const [error, setError] = useState(null);
   const [redirect, setRedirect] = useState(false);
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || "",
+  );
+  const [role, setRole] = useState(localStorage.getItem("role") || "");
+
+  //const allowedUsers = ["henryma14@gmail.com"];
+  const allowedRoles = ["Admin"];
 
   const url10 =
     `${BASE_URL}/api/lotto/getCurrentDrawNumber?lotto_name=` + lottoName;
@@ -519,26 +526,28 @@ const Dashboard = () => {
                         </select>
                       </div>
                     </li>
-                    <li className="nav-item">
-                      <div className="mt-1 margin-left margin-right fw-bold">
-                        <select
-                          className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
-                          value={selectedAiOption}
-                          onChange={(e) => handleChange2(e.target.value)}
-                        >
-                          <option value="" disabled hidden>
-                            Select AI Options
-                          </option>
-                          {Object.keys(aiTrainingOptionLabels).map(
-                            (item, index) => (
-                              <option key={index} value={item}>
-                                {aiTrainingOptionLabels[item]}
-                              </option>
-                            ),
-                          )}
-                        </select>
-                      </div>
-                    </li>
+                    {allowedRoles.includes(role) && (
+                      <li className="nav-item">
+                        <div className="mt-1 margin-left margin-right fw-bold">
+                          <select
+                            className="dropdown btn bg-info text-white dropdown-toggle ps-4 fw-bolder margin-right"
+                            value={selectedAiOption}
+                            onChange={(e) => handleChange2(e.target.value)}
+                          >
+                            <option value="" disabled hidden>
+                              Select AI Options
+                            </option>
+                            {Object.keys(aiTrainingOptionLabels).map(
+                              (item, index) => (
+                                <option key={index} value={item}>
+                                  {aiTrainingOptionLabels[item]}
+                                </option>
+                              ),
+                            )}
+                          </select>
+                        </div>
+                      </li>
+                    )}
                     <li className="nav-item">
                       <div className="mt-1 margin-left margin-right fw-bold dropdown-width">
                         <select
@@ -619,10 +628,29 @@ const Dashboard = () => {
                         </select>
                       </div>
                     </li>
+                    <li className="nav-item">
+                      <div className="mt-2 margin-left margin-right fw-bold">
+                        <label
+                          htmlFor="textInput"
+                          className="bg-info text-white fw-bold"
+                        >
+                          Login:{" "}
+                          <span className="fst-italic text-danger fs-5">
+                            {username}
+                          </span>{" "}
+                          (
+                          <span className="my-color-2 fw-bold fs-7">
+                            {role}
+                          </span>
+                          )
+                        </label>
+                      </div>
+                    </li>
                   </ul>
                 </>
               )}
             </Stack>
+
             <Box
               sx={{
                 ml: "auto",

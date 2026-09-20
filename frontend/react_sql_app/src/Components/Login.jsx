@@ -58,6 +58,9 @@ const Login = () => {
       if (response.success) {
         localStorage.setItem("accessToken", response.accessToken);
         localStorage.setItem("refreshToken", response.refreshToken);
+        localStorage.setItem("email", email);
+        localStorage.setItem("username", response.username);
+        localStorage.setItem("role", response.role);
         console.log("Login: Tokens stored, redirecting");
 
         window.location.href = "/";

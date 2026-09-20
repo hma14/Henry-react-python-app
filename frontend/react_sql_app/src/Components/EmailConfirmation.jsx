@@ -1,39 +1,63 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "./Api";
 
-function EmailConfirmation({ onSuccess }) {
-  const [message, setMessage] = useState("Verifying email...");
+const EmailConfirmation = ({ onSuccess }) => {
+  const [message, setMessage] = useState("Confirming your email...");
+  const [error, setError] = useState(false);
+
+  const hasConfirmed = useRef(false);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-    console.log(window.location.search);
-    console.log(token);
-    if (token) {
-      api
-        .confirmEmail(token)
-        .then((response) => {
-          if (response.success) {
-            setMessage("Email confirmed! Redirecting to login...");
-            setTimeout(() => onSuccess(), 2000);
-          } else {
-            setMessage(response.message || "Invalid or expired token");
-          }
-        })
-        .catch(() => setMessage("An error occurred"));
-    } else {
-      setMessage("No confirmation token provided");
+    // Prevent duplicate API calls
+    if (hasConfirmed.current) {
+      return;
     }
+
+    hasConfirmed.current = true;
+
+    const verifyEmail = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+
+        if (!token) {
+          setError(true);
+          setMessage("Confirmation token is missing.");
+          return;
+        }
+
+        console.log("Calling confirmEmail with token:", token);
+
+        //const response = await confirmEmail(token);
+        const response = await api.confirmEmail(token);
+
+        if (response.success) {
+          setMessage(
+            "Your email has been successfully confirmed. You can now log in.",
+          );
+          //setTimeout(() => onSuccess(), 2000);
+        } else {
+          setError(true);
+          setMessage(response.message || "Email confirmation failed.");
+        }
+      } catch (error) {
+        console.error("Email confirmation error:", error);
+
+        setError(true);
+        setMessage(error.message || "Unable to confirm your email.");
+      }
+    };
+
+    verifyEmail();
   }, []);
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Email Confirmation
-      </h2>
-      <p className="text-center">{message}</p>
+    <div className="container mt-5 text-center">
+      <h2>Email Confirmation</h2>
+
+      <p className={error ? "text-danger" : "text-success"}>{message}</p>
     </div>
   );
-}
+};
 
 export default EmailConfirmation;
