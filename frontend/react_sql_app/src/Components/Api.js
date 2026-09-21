@@ -1,6 +1,6 @@
-const AUTH_URL = "https://localhost:5006/api/auth/";
+//const AUTH_URL = "https://localhost:5006/api/auth/";
 
-//const AUTH_URL = "http://api.lottotry.com/api/auth/";
+const AUTH_URL = "http://api.lottotry.com/api/auth/";
 
 async function fetchWithAuth(url, options = {}) {
   let accessToken = localStorage.getItem("accessToken");
