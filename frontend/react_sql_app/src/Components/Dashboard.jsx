@@ -433,7 +433,15 @@ const Dashboard = () => {
           />
         );
       case "generate_image":
-        return <DalleImageGenerator endpoint={url29} />;
+        if (allowedRoles.includes(role)) {
+          return <DalleImageGenerator endpoint={url29} />;
+        } else {
+          return (
+            <p className="text-danger text-center fw-bold fs-3 mt-5">
+              You do not have permission to access this page.
+            </p>
+          );
+        }
       case "upload_image":
         return <ImageUpload endpoint={url31} />;
       case "dragdrop_upload_image":
@@ -441,7 +449,15 @@ const Dashboard = () => {
       case "image_gallery":
         return <ImageGallery endpoint={url33} />;
       case "edit_image":
-        return <ImageEditor endpoint={url30} />;
+        if (allowedRoles.includes(role)) {
+          return <ImageEditor endpoint={url30} />;
+        } else {
+          return (
+            <p className="text-danger text-center fw-bold fs-3 mt-5">
+              You do not have permission to access this page.
+            </p>
+          );
+        }
       default:
         return <ApiNumbers endpoint={url4} sortType={sortType} />;
     }
