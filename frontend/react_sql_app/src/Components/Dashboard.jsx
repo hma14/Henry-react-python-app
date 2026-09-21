@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import ApiNumbers from "./ApiNumbers";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styled from "styled-components";
-import axios from "axios";
+import apiClient from "../apiClient";
 import "../App.css";
 import "../styles.css";
 import LottoTryLogo from "../images/LottoTryLogo.png";
@@ -243,7 +243,7 @@ const Dashboard = () => {
     const getCurrentDrawNumber = async () => {
       try {
         setError(null);
-        const response = await axios(url10);
+        const response = await apiClient.get(url10);
         setDrawNumber(response.data.drawNumber);
       } catch (err) {
         setError(err.message);

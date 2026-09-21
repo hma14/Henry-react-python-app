@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import apiClient from "../apiClient"; // Import the apiClient
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import "../App.css";
@@ -197,7 +197,7 @@ const PredictDraws = (props) => {
     setIsLoading(true);
     const processNextPotentialDraws = async () => {
       try {
-        const promises = [await axios.post(endpoint2)];
+        const promises = [await apiClient.post(endpoint2)];
         const responses = await Promise.all(promises);
 
         // Extract data from each response
@@ -228,14 +228,14 @@ const PredictDraws = (props) => {
       let response = null;
       if (canMatch) {
         const nextDrawNumber = drawNumber + 1;
-        response = await axios(
+        response = await apiClient.get(
           endpoint.replace(
             `drawNumber=${drawNumber}`,
             `drawNumber=${nextDrawNumber}`,
           ),
         );
       } else {
-        response = await axios(endpoint);
+        response = await apiClient.get(endpoint);
       }
 
       setNumbers(response.data[0]?.Numbers);
@@ -253,7 +253,7 @@ const PredictDraws = (props) => {
         tickets: predicts.map((row) => row.map((number) => number.Value)),
       };
 
-      const response = await axios.post(endpoint3, requestData);
+      const response = await apiClient.post(endpoint3, requestData);
 
       const { canMatch, matching_results } = response.data;
       setCanMatch(canMatch);

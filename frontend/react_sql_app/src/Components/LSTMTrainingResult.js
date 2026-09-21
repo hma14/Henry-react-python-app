@@ -1,6 +1,6 @@
 // DisplayDataset.js
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
 import { Table } from "react-bootstrap";
@@ -25,7 +25,7 @@ const LSTMTrainingResult = (props) => {
 
   useEffect(() => {
     // Fetch data from the specified endpoint
-    axios
+    apiClient
       .get(endpoint)
       .then((response) => {
         try {

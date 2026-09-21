@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import { VisuallyHiddenInput, InputFileUpload } from "./FileUpload";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SendIcon from "@mui/icons-material/Send"; // arrow icon
@@ -47,7 +47,7 @@ function ImageEditor(props) {
     formData.append("mask", maskFile);
 
     try {
-      const response = await axios.post(endpoint, formData, {
+      const response = await apiClient.post(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

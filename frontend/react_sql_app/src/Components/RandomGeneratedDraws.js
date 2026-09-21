@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import "../App.css";
@@ -131,14 +131,14 @@ const RandomGeneratedDraws = (props) => {
       let response = null;
       if (canMatch) {
         const nextDrawNumber = drawNumber + 1;
-        response = await axios(
+        response = await apiClient(
           endpoint.replace(
             `drawNumber=${drawNumber}`,
             `drawNumber=${nextDrawNumber}`,
           ),
         );
       } else {
-        response = await axios(endpoint);
+        response = await apiClient(endpoint);
       }
 
       setNumbers(response?.data[0]?.Numbers);
@@ -169,7 +169,7 @@ const RandomGeneratedDraws = (props) => {
         tickets: randomTickets,
       };
 
-      const response = await axios.post(endpoint2, requestData);
+      const response = await apiClient.post(endpoint2, requestData);
 
       const { canMatch, matching_results } = response.data;
       setCanMatch(canMatch);

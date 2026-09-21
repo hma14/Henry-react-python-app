@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import {
   Container,
   Grid,
@@ -49,13 +49,13 @@ export default function ImageUpload({ endpoint }) {
       setLoading(true);
       setMessage("");
 
-      const res = await axios.post(endpoint, formData, {
+      const res = await apiClient.post(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (progressEvent) => {
           const percent = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
+            (progressEvent.loaded * 100) / progressEvent.total,
           );
           setMessage(`Uploading... ${percent}%`);
         },

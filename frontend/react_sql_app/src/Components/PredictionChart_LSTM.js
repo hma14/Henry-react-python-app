@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -11,7 +11,7 @@ const LSTMTrainingResult = (props) => {
 
   useEffect(() => {
     // Fetch data from the specified endpoint
-    axios
+    apiClient
       .get(endpoint)
       .then((response) => {
         try {

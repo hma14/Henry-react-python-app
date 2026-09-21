@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // For making HTTP requests to the backend
+import apiClient from "../apiClient";
 
 const RangeConfig = () => {
   const [minValue, setMinValue] = useState(2); // Default min
@@ -17,7 +17,7 @@ const RangeConfig = () => {
 
     try {
       // Send range to backend
-      const res = await axios.post("http://your-backend-api/random", {
+      const res = await apiClient.post("http://your-backend-api/random", {
         min: minValue,
         max: maxValue,
       });

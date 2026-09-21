@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import SendIcon from "@mui/icons-material/Send"; // arrow icon
 import Spinning_Ai_Logo from "./Spinning_Ai_Logo";
 
@@ -62,11 +62,11 @@ export default function DragDropUpload({ endpoint }) {
       });
       formData.append("prompt", prompt);
 
-      const res = await axios.post(endpoint, formData, {
+      const res = await apiClient.post(endpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           const percent = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
+            (progressEvent.loaded * 100) / progressEvent.total,
           );
           setMessage(`Uploading... ${percent}%`);
         },

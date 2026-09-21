@@ -1,6 +1,5 @@
 // Printout.js
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
 import { Table } from "react-bootstrap";
@@ -28,6 +27,7 @@ import {
   getHeader_4,
   getHeader_5,
 } from "./PredictDraws";
+import apiClient from "../apiClient"; // Import the apiClient
 
 const AiAnalysis = (props) => {
   const {
@@ -143,7 +143,7 @@ const AiAnalysis = (props) => {
         aiModel +
         "&maxTokens=" +
         maxTokens;
-      axios
+      apiClient
         .get(endpoint2)
         .then((response) => {
           const [
@@ -174,14 +174,14 @@ const AiAnalysis = (props) => {
       let response = null;
       if (canMatch) {
         const nextDrawNumber = drawNumber + 1;
-        response = await axios(
+        response = await apiClient.get(
           endpoint4.replace(
             `drawNumber=${drawNumber}`,
             `drawNumber=${nextDrawNumber}`,
           ),
         );
       } else {
-        response = await axios(endpoint4);
+        response = await apiClient.get(endpoint4);
       }
       setNumbers(response.data[0]?.Numbers);
     } catch (error) {
@@ -198,7 +198,7 @@ const AiAnalysis = (props) => {
         tickets: generatedDraws.map((row) => row.map((number) => number.Value)),
       };
 
-      const response = await axios.post(endpoint3, requestData);
+      const response = await apiClient.post(endpoint3, requestData);
 
       const { canMatch, matching_results } = response.data;
       setCanMatch(canMatch);
@@ -384,7 +384,7 @@ const AiAnalysis = (props) => {
                             </td>
                             {targetNumber.map((number) => {
                               const value = targetDrawDic[number];
-                              return value ? getTD(value, 0) : null;
+                              return value ? getTD(value, rows, 0) : null;
                             })}
                           </tr>
                         </tbody>
@@ -437,7 +437,9 @@ const AiAnalysis = (props) => {
                             {row.ticket
                               .split(/\s+/)
                               .map(Number)
-                              .map((number) => getTD(matchedDic[number], 0))}
+                              .map((number) =>
+                                getTD(matchedDic[number], rows, 0),
+                              )}
                             <td className="bg-color19 text-center text-success fs-4 fw-bold px-2">
                               {row.matches}
                             </td>

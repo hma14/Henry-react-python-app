@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import {
   Container,
   Grid,
@@ -26,14 +26,14 @@ const LottoPlot_Multi_Models = (props) => {
   const [modelNames, setModelNames] = useState([]);
 
   useEffect(() => {
-    axios
+    apiClient
       .get(endpoint)
       .then((res) => {
         try {
           const parsedData =
             typeof res.data === "string" ? JSON.parse(res.data) : res.data;
           const base64Images = parsedData.images.map(
-            (img) => `data:image/png;base64,${img}`
+            (img) => `data:image/png;base64,${img}`,
           );
           setImages(base64Images);
           //const nums = parsedData.numbers.map((n) => n);

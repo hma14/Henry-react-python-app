@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import { Table } from "react-bootstrap";
 //import moment   from 'moment'
 import "../App.css";
@@ -33,7 +33,7 @@ function HitNumberDistribution(props) {
 
   useEffect(() => {
     // Fetch data from the specified endpoint
-    axios
+    apiClient
       .get(endpoint)
       .then((response) => {
         setData(response.data);
@@ -89,7 +89,7 @@ function HitNumberDistribution(props) {
                         "text-danger bg-warning  fst-italic":
                           row[2]["1-9"] >= 4,
                       },
-                      { "text-success bg-warning": row[2]["1-9"] < 4 }
+                      { "text-success bg-warning": row[2]["1-9"] < 4 },
                     )}
                   >
                     {row[2]["1-9"]}
@@ -105,7 +105,7 @@ function HitNumberDistribution(props) {
                         "text-danger bg-warning fst-italic":
                           row[2]["10-19"] >= 4,
                       },
-                      { "text-success bg-warning": row[2]["10-19"] < 4 }
+                      { "text-success bg-warning": row[2]["10-19"] < 4 },
                     )}
                   >
                     {row[2]["10-19"]}
@@ -121,7 +121,7 @@ function HitNumberDistribution(props) {
                         "text-danger bg-warning fst-italic":
                           row[2]["20-29"] >= 4,
                       },
-                      { "text-success bg-warning": row[2]["20-29"] < 4 }
+                      { "text-success bg-warning": row[2]["20-29"] < 4 },
                     )}
                   >
                     {row[2]["20-29"]}
@@ -137,7 +137,7 @@ function HitNumberDistribution(props) {
                         "text-danger bg-warning fst-italic":
                           row[2]["30-39"] >= 4,
                       },
-                      { "text-success bg-warning": row[2]["30-39"] < 4 }
+                      { "text-success bg-warning": row[2]["30-39"] < 4 },
                     )}
                   >
                     {row[2]["30-39"]}
@@ -153,7 +153,7 @@ function HitNumberDistribution(props) {
                         "text-danger bg-warning fst-italic":
                           row[2]["40-49"] >= 4,
                       },
-                      { "text-success bg-warning": row[2]["40-49"] < 4 }
+                      { "text-success bg-warning": row[2]["40-49"] < 4 },
                     )}
                   >
                     {row[2]["40-49"]}

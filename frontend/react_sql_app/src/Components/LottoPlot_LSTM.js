@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import {
   Container,
   Grid2 as Grid,
@@ -22,7 +22,7 @@ const LottoPlot_LSTM = (props) => {
   const [image2, setImage2] = useState("");
   const [numbers, setNumbers] = useState("");
   useEffect(() => {
-    axios
+    apiClient
       .get(endpoint)
       .then((res) => {
         try {

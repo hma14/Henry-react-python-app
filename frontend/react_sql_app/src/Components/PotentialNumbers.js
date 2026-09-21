@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import "../App.css";
@@ -33,7 +33,7 @@ const PotentialNumbers = (props) => {
         try {
           const endpoint3 = endpoint2 + sliderVal;
 
-          const promises = [axios.post(endpoint3)];
+          const promises = [apiClient.post(endpoint3)];
           const responses = await Promise.all(promises);
 
           const { target_draw, po_numbers, canMatch } = responses[0].data;
@@ -41,14 +41,14 @@ const PotentialNumbers = (props) => {
           let response = null;
           if (canMatch) {
             const nextDrawNumber = drawNumber + 1;
-            response = await axios(
+            response = await apiClient(
               endpoint.replace(
                 `drawNumber=${drawNumber}`,
                 `drawNumber=${nextDrawNumber}`,
               ),
             );
           } else {
-            response = await axios(endpoint);
+            response = await apiClient(endpoint);
           }
 
           setNumbers(response.data[0]?.Numbers);

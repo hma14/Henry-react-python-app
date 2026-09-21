@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import {
   Container,
   Grid,
@@ -25,7 +25,7 @@ const LottoPlot = (props) => {
   const [featureImportance, setFeatureImportance] = useState([]);
 
   useEffect(() => {
-    axios
+    apiClient
       .get(endpoint)
       .then((res) => {
         try {

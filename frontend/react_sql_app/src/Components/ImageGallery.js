@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient";
 import {
   Box,
   Typography,
@@ -18,7 +18,7 @@ export default function ImageGallery({ endpoint }) {
 
   // Fetch images on load
   useEffect(() => {
-    axios
+    apiClient
       .get(endpoint)
       .then((res) => setImages(res.data))
       .catch((err) => console.error(err));

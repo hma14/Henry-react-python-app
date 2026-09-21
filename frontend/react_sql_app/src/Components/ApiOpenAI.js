@@ -1,6 +1,6 @@
 // ApiOpenAI.js
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient"; // Import the apiClient
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
 import remarkGfm from "remark-gfm";
@@ -20,7 +20,7 @@ const ApiOpenAI = (props) => {
 
   useEffect(() => {
     // Fetch data from the specified endpoint
-    axios
+    apiClient
       .get(endpoint)
       .then((response) => {
         setData(response.data);

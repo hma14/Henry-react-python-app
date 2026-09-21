@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import apiClient from "../apiClient"; // Import the apiClient
 import CircularProgress from "@mui/material/CircularProgress";
 import SendIcon from "@mui/icons-material/Send"; // arrow icon
 import SpinningLogo from "./SpinningLogo";
@@ -52,7 +52,7 @@ function DalleImageGenerator(props) {
       setError("");
       setImageUrl("");
 
-      const response = await axios.post(endpoint, {
+      const response = await apiClient.post(endpoint, {
         prompt: prompt,
       });
       if ("error" in response.data) {

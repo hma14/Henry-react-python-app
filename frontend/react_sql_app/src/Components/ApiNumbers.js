@@ -1,6 +1,6 @@
-// ApiBc49.js
+// ApiNumbers.js
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../apiClient"; // Import the apiClient
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import "../App.css";
@@ -90,7 +90,7 @@ const ApiNumbers = (props) => {
   const [rows, setRows] = useState(0);
 
   useEffect(() => {
-    axios
+    apiClient
       .get(endpoint)
       .then((response) => {
         setData(response.data.data);
