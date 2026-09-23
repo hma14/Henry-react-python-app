@@ -631,7 +631,7 @@ def get_data_8():
             arr = [row.Number1,row.Number2,row.Number3,row.Number4,row.Number5,row.Number6,row.Number7,row.Bonus]
         else:
             arr = [row.Number1,row.Number2,row.Number3,row.Number4,row.Number5,row.Number6, row.Bonus]
-        rows.append([row.DrawNumber, row.DrawDate.strftime('%Y-%m-%d'), categorize_numbers(arr)])
+        rows.append([row.DrawNumber, row.DrawDate.strftime('%Y-%m-%d'), categorize_numbers(lotto_name, arr)])
     return rows
 
 

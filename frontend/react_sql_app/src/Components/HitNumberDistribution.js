@@ -41,7 +41,7 @@ function HitNumberDistribution(props) {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [endpoint]);
+  }, [endpoint, lottoName]);
 
   const getHeader = (lottoName) => {
     return (
@@ -55,7 +55,7 @@ function HitNumberDistribution(props) {
           <th className="text-warning bg-color16">20-29</th>
           <th className="text-warning bg-color16">30-39</th>
           {lottoName === 3 ? (
-            <th className="text-warning bg-color16">40-50</th>
+            <th className="text-warning bg-color16">40-52</th>
           ) : (
             <th className="text-warning bg-color16">40-49</th>
           )}
@@ -145,18 +145,35 @@ function HitNumberDistribution(props) {
                 ) : (
                   <td className="bg-greenyellow wider-td"></td>
                 )}
-                {row[2]["40-49"] > 0 ? (
+                {lottoName !== 3 ? (
+                  row[2]["40-49"] > 0 ? (
+                    <td
+                      className={classNames(
+                        "bg-color",
+                        {
+                          "text-danger bg-warning fst-italic":
+                            row[2]["40-49"] >= 4,
+                        },
+                        { "text-success bg-warning": row[2]["40-49"] < 4 },
+                      )}
+                    >
+                      {row[2]["40-49"]}
+                    </td>
+                  ) : (
+                    <td className="bg-greenyellow wider-td"></td>
+                  )
+                ) : row[2]["40-52"] > 0 ? (
                   <td
                     className={classNames(
                       "bg-color",
                       {
                         "text-danger bg-warning fst-italic":
-                          row[2]["40-49"] >= 4,
+                          row[2]["40-52"] >= 4,
                       },
-                      { "text-success bg-warning": row[2]["40-49"] < 4 },
+                      { "text-success bg-warning": row[2]["40-52"] < 4 },
                     )}
                   >
-                    {row[2]["40-49"]}
+                    {row[2]["40-52"]}
                   </td>
                 ) : (
                   <td className="bg-greenyellow wider-td"></td>
