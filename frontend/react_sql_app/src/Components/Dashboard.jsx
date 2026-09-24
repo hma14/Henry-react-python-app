@@ -39,6 +39,7 @@ import {
   Box,
   FormControl,
   InputLabel,
+  Menu,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -46,6 +47,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { info } from "autoprefixer";
 
 export const BASE_URL = "http://127.0.0.1:5001";
 //export const BASE_URL = "http://ep.lottotry.com:5001";
@@ -104,6 +107,7 @@ const Dashboard = () => {
   const [selectedStatsOption, setSelectedStatsOption] = useState("");
   const [selectedAiOption, setSelectedAiOption] = React.useState(""); // Default empty
   const [selectedOp, setSelectedOp] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
 
   // eslint-disable-next-line no-unused-vars
   const [page, setPage] = useState(1);
@@ -463,6 +467,21 @@ const Dashboard = () => {
     }
   };
 
+  const menuOpen = Boolean(anchorEl);
+
+  const handleUserMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogoutClick = () => {
+    handleUserMenuClose();
+    handleLogout();
+  };
+
   return (
     <Styles>
       {
@@ -644,47 +663,48 @@ const Dashboard = () => {
                         </select>
                       </div>
                     </li>
-                    <li className="nav-item">
-                      <div className="mt-2 margin-left margin-right fw-bold">
-                        <label
-                          htmlFor="textInput"
-                          className="bg-info text-white fw-bold"
-                        >
-                          Login:{" "}
-                          <span className="fst-italic text-danger fs-5">
-                            {username}
-                          </span>{" "}
-                          (
-                          <span className="my-color-2 fw-bold fs-7">
-                            {role}
-                          </span>
-                          )
-                        </label>
-                      </div>
-                    </li>
                   </ul>
                 </>
               )}
             </Stack>
 
-            <Box
+            <Button
+              variant="text"
+              onClick={handleUserMenuClick}
+              endIcon={<ArrowDropDownIcon />}
               sx={{
-                ml: "auto",
-                mr: "10px",
+                color: "white",
+                fontSize: "1.2rem",
+                fontWeight: 800,
+                textTransform: "none",
+                marginLeft: "auto",
+                marginTop: "0.7rem",
               }}
             >
-              <Button
-                variant="contained"
+              Login:
+              <span className="fst-italic text-danger fs-5 mr-2 ml-2">
+                {username}
+              </span>
+              (<span className="fw-bold fs-7">{role}</span>)
+            </Button>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={handleUserMenuClose}
+            >
+              <MenuItem
                 sx={{
-                  backgroundColor: grey[100],
-                  color: red["A700"],
-                  fontWeight: 700,
+                  color: "white",
+                  fontSize: "1.2rem",
+                  fontWeight: 800,
                 }}
-                onClick={handleLogout}
+                className="bg-info"
+                onClick={handleLogoutClick}
               >
                 Logout
-              </Button>
-            </Box>
+              </MenuItem>
+            </Menu>
           </nav>
           <>{renderContent()}</>
         </div>
