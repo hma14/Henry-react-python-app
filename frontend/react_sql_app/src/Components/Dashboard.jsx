@@ -695,11 +695,11 @@ const Dashboard = () => {
             >
               <MenuItem
                 sx={{
-                  color: "white",
+                  color: "#3498db",
                   fontSize: "1.2rem",
-                  fontWeight: 800,
+                  fontWeight: 900,
                 }}
-                className="bg-info"
+                //className="bg-info"
                 onClick={handleLogoutClick}
               >
                 Logout
