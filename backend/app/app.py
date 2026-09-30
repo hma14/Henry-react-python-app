@@ -128,12 +128,18 @@ def login():
 
 @app.route('/api/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def proxy(path):
-    headers = {'Authorization': request.headers.get('Authorization')}
+    headers = {}
+    authorization = request.headers.get("Authorization")
+
+    if authorization:
+        headers["Authorization"] = authorization
+        
     response = requests.request(
         method=request.method,
         url=f'{NET_API_URL}{path}',
+        params=request.args,
         headers=headers,
-        json=request.json or None
+        json=request.get_json(silent=True)
     )
     return response.content, response.status_code
 
@@ -346,6 +352,7 @@ def train_LSTM_model():
 
 
 @app.route('/api/lotto/allNumbers', methods=['GET'])
+
 def get_data_4():
     lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
