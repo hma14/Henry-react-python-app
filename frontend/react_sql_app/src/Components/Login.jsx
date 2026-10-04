@@ -98,7 +98,7 @@ const Login = () => {
           </div>
           <Box component="div" onSubmit={handleSubmit} className="mt-4 w-full">
             <TextField
-              label="email"
+              label="Email (or Username)"
               variant="outlined"
               fullWidth
               margin="normal"

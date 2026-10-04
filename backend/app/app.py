@@ -39,6 +39,7 @@ from ai_model_training.train_ai_model_lgbm import train_ai_model_LightGBM
 
 from utils.categorize_numbers import categorize_numbers
 from utils.save_ai_image_from_url import save_ai_image_from_url
+from utils.require_access_token import require_access_token
 import logging
 from werkzeug.utils import secure_filename
 from routes.ImageMetadata import image_bp
@@ -70,6 +71,7 @@ logging.basicConfig(
     ]
 )
 app.config.from_object(Config)
+#print(app.config)   
 
 PLOT_FOLDER = 'static/plots'
 
@@ -111,8 +113,8 @@ def get_table_name(lotto_id):
     }
     return lotto_table_map.get(lotto_id, 'Unknown')
 
-#NET_API_URL = 'https://localhost:5006/api/' # no need to change in either dev or prod, just for remembering
-NET_API_URL = 'https://api.lottotry.com/api/' 
+NET_API_URL = 'https://localhost:5006/api/' # no need to change in either dev or prod, just for remembering
+#NET_API_URL = 'https://api.lottotry.com/api/' 
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -122,7 +124,7 @@ def signup():
     
 @app.route('/api/login', methods=['POST'])
 def login():
-    response = requests.post(f'{NET_API_URL}auth/signup', json=request.json)
+    response = requests.post(f'{NET_API_URL}auth/login', json=request.json)
     return response.content, response.status_code
 
 
@@ -352,7 +354,7 @@ def train_LSTM_model():
 
 
 @app.route('/api/lotto/allNumbers', methods=['GET'])
-
+@require_access_token
 def get_data_4():
     lotto_name = int(request.args.get('lotto_name', 1))
     number_range = get_lotto_number_range(lotto_name)
@@ -365,9 +367,8 @@ def get_data_4():
         drawNumber = get_target_draw_number(lotto_name)
     start_index = (page_number - 1) * page_size
 
-    data = retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
+    return retrieve_data(lotto_name, page_size, number_range, start_index, drawNumber)
             
-    return data
 
 
 @app.route('/api/lotto/predict', methods=['GET'])

@@ -25,6 +25,8 @@ const App = () => {
   const handleLogout = () => {
     setTimeout(() => {
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("username");
       setIsAuthenticated(false);
       navigate("/login");
     }, 1000); // 1-second delay to show the animation
@@ -49,7 +51,7 @@ const App = () => {
   }, []);
 
   // Idle timeout logic
-  useEffect(() => {
+  /*   useEffect(() => {
     let timeout;
 
     const resetTimer = () => {
@@ -69,7 +71,7 @@ const App = () => {
       clearTimeout(timeout);
     };
   }, [navigate, timeoutDuration]);
-
+ */
   console.log("App: Rendering with isAuthenticated:", isAuthenticated); // Debug
 
   if (isAuthenticated === null) {

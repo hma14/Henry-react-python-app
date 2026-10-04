@@ -196,12 +196,12 @@ const ApiNumbers = (props) => {
             {number.TotalHits}
           </span>
           )<br /> (
-          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
+          <span className="red-indigo fst-italic fs-6">{number.Frequency}</span>
           ) <br />(
           <span
             className={classNames(
               "txt-color",
-              { "red-indigo fst-italic fs-7": number.Probability > 0 },
+              { "orange-indigo fst-italic fs-7": number.Probability > 0 },
               { "teal-indigo fst-italic fs-7": number.Probability === 0 },
             )}
           >
@@ -230,12 +230,12 @@ const ApiNumbers = (props) => {
             {number.TotalHits}
           </span>
           ) <br />(
-          <span className="red-indigo fst-italic fs-7">{number.Frequency}</span>
+          <span className="red-indigo fst-italic fs-6">{number.Frequency}</span>
           )<br /> (
           <span
             className={classNames(
               "txt-color",
-              { "red-indigo fst-italic fs-7": number.Probability > 0 },
+              { "#3498db fst-italic fs-7": number.Probability > 0 },
               { "cyan-indigo fst-italic fs-7": number.Probability === 0 },
             )}
           >

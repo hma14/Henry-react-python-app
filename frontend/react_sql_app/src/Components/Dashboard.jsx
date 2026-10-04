@@ -50,8 +50,8 @@ import {
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { info } from "autoprefixer";
 
-export const BASE_URL = "http://127.0.0.1:5001";
-//export const BASE_URL = "http://ep.lottotry.com:5001";
+//export const BASE_URL = "http://127.0.0.1:5001";
+export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
