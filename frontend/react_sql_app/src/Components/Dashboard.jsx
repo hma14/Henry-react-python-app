@@ -27,6 +27,7 @@ import ImageUpload from "./UploadImage";
 import DragDropUpload from "./DragDropUpload";
 import ImageGallery from "./ImageGallery";
 import RandomGeneratedDraws from "./RandomGeneratedDraws";
+import DrawNumberControl from "./DrawNumberControl ";
 
 import {
   AppBar,
@@ -50,8 +51,8 @@ import {
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { info } from "autoprefixer";
 
-//export const BASE_URL = "http://127.0.0.1:5001";
-export const BASE_URL = "http://ep.lottotry.com:5001";
+export const BASE_URL = "http://127.0.0.1:5001";
+//export const BASE_URL = "http://ep.lottotry.com:5001";
 
 const Styles = styled.div`
   padding: 0rem;
@@ -114,6 +115,7 @@ const Dashboard = () => {
   //const [totalPages, setTotalPages] = useState(1)
   const [pageSize, setPageSize] = useState(10);
   const [drawNumber, setDrawNumber] = useState(1);
+  const [currentDrawNumber, setCurrentDrawNumber] = useState(1);
   const [error, setError] = useState(null);
   const [redirect, setRedirect] = useState(false);
   const [username, setUsername] = useState(
@@ -249,13 +251,12 @@ const Dashboard = () => {
         setError(null);
         const response = await apiClient.get(url10);
         setDrawNumber(response.data.drawNumber);
+        setCurrentDrawNumber(response.data.drawNumber);
       } catch (err) {
         setError(err.message);
       }
     };
-
     getCurrentDrawNumber();
-
     //console.log(drawNumber)
   }, [url10]);
 
@@ -604,7 +605,14 @@ const Dashboard = () => {
                         </span>
                       </div>
                     </li>
-                    <li className="nav-item">
+                    <li>
+                      <DrawNumberControl
+                        drawNumber={drawNumber}
+                        setDrawNumber={setDrawNumber}
+                        currentDrawNumber={currentDrawNumber}
+                      />
+                    </li>
+                    {/* <li className="nav-item">
                       <div className="margin-left mt-1 row  dropdown-width">
                         <div className="col-md-6 mt-1">
                           <label
@@ -637,7 +645,7 @@ const Dashboard = () => {
                           onInput={handleDrawNumberChange}
                         />
                       </div>
-                    </li>
+                    </li> */}
                     <li className="nav-item">
                       <div className="mt-1 margin-left margin-right fw-bold">
                         <select

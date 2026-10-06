@@ -438,3 +438,42 @@ thead {
   margin: 0 auto 10px auto;
   text-align: center;
 }
+
+/* for drawnumber display */
+
+.draw-number-control {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.draw-arrow {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #ced4da;
+  background: #e9ecef;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.draw-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.draw-number-display {
+  min-width: 130px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  font-weight: bold;
+  color: #227ae6;
+  border: 1px solid #ced4da;
+  font-size: 22px;
+}
