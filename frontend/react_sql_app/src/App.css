@@ -451,10 +451,10 @@ thead {
 
 .draw-arrow {
   width: 40px;
-  height: 40px;
+  height: 34px;
   padding: 0;
   border: 1px solid #ced4da;
-  background: #e9ecef;
+  /* background: #e9ecef; */
   cursor: pointer;
   font-size: 15px;
   line-height: 18px;
@@ -466,14 +466,16 @@ thead {
 }
 
 .draw-number-display {
-  min-width: 130px;
-  height: 40px;
+  min-width: 100px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: white;
   font-weight: bold;
-  color: #227ae6;
+  color: #37e1e1;
+  font-style: italic;
+  font-family: "Georgia", serif;
   border: 1px solid #ced4da;
-  font-size: 22px;
+  font-size: 20px;
 }
