@@ -545,13 +545,13 @@ const Dashboard = () => {
                     <li className="nav-item">
                       <div className="mt-1 margin-left margin-right fw-bold">
                         <select
-                          value={selectedStatsOption}
+                          value={selectedOp}
                           className="dropdown btn bg-info text-white dropdown-toggle  fw-bolder"
                           onChange={(e) => setPlayType(e.target.value)}
                         >
-                          <option value="" disabled hidden>
+                          {/*  <option value="" disabled hidden>
                             Select Lotto Statistics
-                          </option>
+                          </option> */}
                           {Object.keys(lottoStatisticsOptionLabels).map(
                             (item) => (
                               <option key={item} value={item}>
@@ -686,11 +686,19 @@ const Dashboard = () => {
                 fontWeight: 800,
                 textTransform: "none",
                 marginLeft: "auto",
+                marginRight: "1rem",
                 marginTop: "0.7rem",
               }}
             >
               Login:
-              <span className="fst-italic text-danger fs-5 mr-2 ml-2">
+              <span
+                className="fst-italic text-warning fs-5 mr-2 ml-2"
+                style={{
+                  fontFamily: "Georgia",
+                  marginLeft: "0.5rem",
+                  marginRight: "0.5rem",
+                }}
+              >
                 {username}
               </span>
               (<span className="fw-bold fs-7">{role}</span>)
