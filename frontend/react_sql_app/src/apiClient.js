@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  //baseURL: "http://localhost:5001",
-  baseURL: "http://ep.lottotry.com:5001",
+  baseURL: "http://localhost:5001",
+  //baseURL: "http://ep.lottotry.com:5001",
 });
 
 apiClient.interceptors.request.use((config) => {

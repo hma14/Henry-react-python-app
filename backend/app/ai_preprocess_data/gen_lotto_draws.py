@@ -50,8 +50,7 @@ def get_lotto_data(lotto_name: int, start_draw_number: int, target_draw_number: 
     WHERE t.LottoName = ?
       AND t.DrawNumber = ?
 
-    ORDER BY n.Value
-  
+    ORDER BY n.Distance ASC  
     """
 
     # Connect to SQL Server
