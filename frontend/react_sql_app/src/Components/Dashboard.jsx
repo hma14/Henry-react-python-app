@@ -333,7 +333,7 @@ const Dashboard = () => {
     frequency: "Frequency per Page Size",
     totalHits: "Number's Total Hits",
     lottoDraws: "Lotto Draw History",
-    numberDraws: "Hit Numbers in Number Category",
+    numberDraws: "Distances When Number Draws",
     predictDraws: "Predict Next Draw",
     randomGeneratedDraws: "Random Generated Draws",
     potentialNumbers: "Get Potential Hit Numbers for Next Draw",

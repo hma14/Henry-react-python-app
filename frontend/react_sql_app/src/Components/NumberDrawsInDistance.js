@@ -30,8 +30,8 @@ function NumberDrawsInDistance(props) {
     lottoData.forEach((row, i) => {
       let arr = new Array(cols).fill(0);
       row.Numbers.forEach((no) => {
-        if (no.IsHit === true && no.NumberOfDrawsWhenHit < cols) {
-          arr[no.NumberOfDrawsWhenHit]++;
+        if (no.IsHit === true && no.NumberofDrawsWhenHit < cols) {
+          arr[no.NumberofDrawsWhenHit]++;
         }
       });
       let sum = arr.reduce((a, b) => a + b, 0);
@@ -41,11 +41,11 @@ function NumberDrawsInDistance(props) {
 
   const getHeader = () => {
     return (
-      <thead className="table-danger text-center">
+      <thead className="table-danger fw-bold align-middle">
         <tr>
-          <th className="text-light bg-info">#</th>
-          <th className="text-light bg-info">Draws</th>
-          <th className="text-light bg-info">Date</th>
+          <th className="text-success bg-info ">#</th>
+          <th className="text-success bg-info wider-column">Draws</th>
+          <th className="text-success bg-info wider-column">Date</th>
           {columns &&
             columns.map((no) =>
               no < cols ? (
@@ -53,7 +53,7 @@ function NumberDrawsInDistance(props) {
                   {no}
                 </th>
               ) : no === cols ? (
-                <th className="text-light bg-info">Sum of Hits</th>
+                <th className="text-success bg-info">Sum of Hits</th>
               ) : (
                 ""
               ),
@@ -66,16 +66,16 @@ function NumberDrawsInDistance(props) {
   return (
     <div>
       {lottoData && lottoData.length > 0 && (
-        <Table striped bordered hover className="table-secondary mb-4">
+        <Table striped bordered className="table-secondary mb-4">
           {getHeader()}
-          <tbody className="fw-bold">
+          <tbody className="fw-bold align-middle">
             {newList &&
               newList.length > 0 &&
               newList.map((row, index) => (
                 <tr key={row[0]}>
-                  <td className="text-secondary bg-info">{index + 1}</td>
-                  <td className="text-secondary bg-info">{row[0]}</td>
-                  <td className="text-secondary bg-info">{row[1]}</td>
+                  <td className="text-success bg-info">{index + 1}</td>
+                  <td className="text-success bg-info">{row[0]}</td>
+                  <td className="text-success bg-info">{row[1]}</td>
                   {row.slice(2, cols + 1).map((no) =>
                     no > 0 ? (
                       <td className="text-danger bg-warning wider-td" key={no}>
@@ -86,11 +86,11 @@ function NumberDrawsInDistance(props) {
                     ),
                   )}
                   {row[cols + 1] < 4 ? (
-                    <td className="text-danger bg-color11 text-center">
+                    <td className="text-danger bg-color11 text-center wider-column">
                       {row[cols + 1]}
                     </td>
                   ) : (
-                    <td className="text-secondary bg-info text-center">
+                    <td className="text-success bg-info text-center wider-column">
                       {row[cols + 1]}
                     </td>
                   )}

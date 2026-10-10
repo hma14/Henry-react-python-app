@@ -479,3 +479,8 @@ thead {
   border: 1px solid #ced4da;
   font-size: 20px;
 }
+
+.wider-column {
+  min-width: 120px;
+  white-space: nowrap;
+}

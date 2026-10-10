@@ -30,25 +30,17 @@ function LottoDraws(props) {
           <th className="text-light bg-info">#</th>
           <th className="text-light bg-info">Draws</th>
           <th className="text-light bg-info">Date</th>
-          {lottoData.slice(0, 1).map((row) =>
-            row.Numbers.sort((a, b) => a - b).map((no) =>
-              no.Value < columns ? (
-                <th
-                  key={no.Value}
-                  className="text-warning bg-success fst-italic"
-                >
-                  {no.Value}
-                </th>
-              ) : no.Value === columns ? (
-                <th
-                  key={no.Value}
-                  className="text-warning bg-success fst-italic"
-                >
-                  Bonus
-                </th>
-              ) : (
-                ""
-              ),
+          {Array.from({ length: columns + 1 }, (_, i) => i + 1).map((no) =>
+            no < columns ? (
+              <th key={no} className="text-warning bg-success fst-italic">
+                {no}
+              </th>
+            ) : no === columns ? (
+              <th key={no} className="text-warning bg-success fst-italic">
+                Bonus
+              </th>
+            ) : (
+              ""
             ),
           )}
         </tr>
