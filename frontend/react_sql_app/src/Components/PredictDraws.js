@@ -51,10 +51,7 @@ export const getTD = (number, rows, n = 1) => {
         ({number.Probability})
       </span>
       {n !== 3 && n !== 0 ? (
-        <span className="my-color-5 fs-7">
-          {" "}
-          [{number.NumberOfAppearing - 1}]
-        </span>
+        <span className="my-color-5 fs-7"> [{number.NumberOfAppearing}]</span>
       ) : null}
     </td>
   );
@@ -81,6 +78,7 @@ export const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
           NumberofDrawsWhenHit: number.NumberofDrawsWhenHit,
           Probability: number.Probability,
           Frequency: number.Frequency,
+          NumberOfAppearing: number.NumberOfAppearing,
         };
       }
     });
@@ -96,6 +94,7 @@ export const createMatchedDic = (allNumbers, matchedNumbers, targetDraw) => {
         NumberofDrawsWhenHit: number.NumberofDrawsWhenHit,
         Probability: number.Probability,
         Frequency: number.Frequency,
+        NumberOfAppearing: number.NumberOfAppearing,
       };
     }
   });

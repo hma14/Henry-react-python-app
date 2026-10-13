@@ -274,9 +274,9 @@ const ApiNumbers = (props) => {
                   {[...draw.Numbers]
                     .sort((a, b) =>
                       a[sortProperty] === b[sortProperty]
-                        ? sortProperty === "TotalHits"
-                          ? a.Frequency - b.Frequency
-                          : a.TotalHits - b.TotalHits
+                        ? sortProperty === "Frequency"
+                          ? a.TotalHits - b.TotalHits
+                          : a.Frequency - b.Frequency
                         : a[sortProperty] - b[sortProperty],
                     )
                     .map((no) => getColors(no))}
